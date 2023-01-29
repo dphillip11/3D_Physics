@@ -1,6 +1,18 @@
 using UnityEngine;
+using Unity.Jobs;
+using Unity.Burst;
 
 
+
+[BurstCompile]
+struct collisionsJob: IJob
+{
+    public int shapesCursor;
+    public void Execute()
+    {
+        CollisionManager.checkCollisionsJob(shapesCursor);
+    }
+}
 public static class CollisionManager
 {
 
@@ -13,64 +25,52 @@ public static class CollisionManager
         collisionCursor = 0;
     }
 
-    
     public static void checkCollisions()
     {
-        for (int i = 0; i < ShapeManager.shapes.Length; i ++)
-        {
-            for (int j = i + 1; j < ShapeManager.shapes.Length; j++)
-            {
-                if (ShapeManager.shapes[i] == null)
-                    return;
-                if (ShapeManager.shapes[j] == null) 
-                    break;
-
-                if (ShapeManager.shapes[i].getType() != "empty" && ShapeManager.shapes[j].getType() != "empty")
-                {
-                    CollisionManager.checkCollision(ShapeManager.shapes[i], ShapeManager.shapes[j]);
-                }
-
-            }
-
-        }
+        var job = new collisionsJob();
+        job.shapesCursor = ShapeManager.shapeCursor;
+        job.Run();
     }
-
-    public static void checkCollision(ShapeComponent shapeA, ShapeComponent shapeB)
+    public static void checkCollisionsJob(int shapeCursor)
     {
-        Collision col = new Collision();
-        if (shapeA.getType() == "sphere" && shapeB.getType() == "sphere")
+        for (int i = 0; i < shapeCursor; i++)
         {
-            //check how far apart
-            float distance = Vector3.Distance(shapeA.body.centre, shapeB.body.centre);
-            // check if overlapping
-            float sumOfRadii = ((SphereComponent)shapeA).radius + ((SphereComponent)shapeB).radius;
-            if (distance < sumOfRadii)
+            for (int j = i + 1; j < shapeCursor; j++)
             {
-                float overlap = sumOfRadii - distance;
-                // log collision properties
-                col.wasResolved = false;
-                col.normal = (shapeB.body.centre - shapeA.body.centre).normalized;
-                col.position = shapeA.body.centre + (col.normal * (((SphereComponent)shapeA).radius - (overlap/2)));
-                // adjust objects so they are just touching
-                shapeA.body.centre -= col.normal * (overlap/2);
-                shapeB.body.centre += col.normal * (overlap / 2);
-                col.collider0 = shapeA.body;
-                col.collider1 = shapeB.body;
-            }
-        }
-        if (!col.wasResolved)
-        {
-            //add to collision log
-            collisions[collisionCursor] = col;
+                Collision col = new Collision();
+                col.isActive = true;
 
-            if (collisionCursor < collisionBufferSize - 1)
-            {
-                collisionCursor++;
+                //check how far apart
+                float distance = Vector3.Distance(ShapeManager.shapes[i].body.centre, ShapeManager.shapes[j].body.centre);
+                // check if overlapping
+                float sumOfRadii = ((SphereComponent)ShapeManager.shapes[i]).radius + ((SphereComponent)ShapeManager.shapes[j]).radius;
+                if (distance < sumOfRadii)
+                {
+                    float overlap = sumOfRadii - distance;
+                    // log collision properties
+                    col.isResolved = false;
+                    col.normal = (ShapeManager.shapes[j].body.centre - ShapeManager.shapes[i].body.centre).normalized;
+                    col.position = ShapeManager.shapes[i].body.centre + (col.normal * (((SphereComponent)ShapeManager.shapes[i]).radius - (overlap / 2)));
+                    // adjust objects so they are just touching
+                    ShapeManager.shapes[i].body.centre -= col.normal * (overlap / 2);
+                    ShapeManager.shapes[j].body.centre += col.normal * (overlap / 2);
+                    col.collider0 = ShapeManager.shapes[i].shapeIdentifier;
+                    col.collider1 = ShapeManager.shapes[j].shapeIdentifier;
+                
+                    //add to collision log
+                    collisions[collisionCursor] = col;
+
+                    if (collisionCursor < collisionBufferSize - 1)
+                    {
+                        collisionCursor++;
+                    }
+                    else
+                    {
+                        collisionCursor = 0;
+                    }
+                }
             }
-            else
-            {
-                collisionCursor = 0;
-            }
+
         }
     }
 }

@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
         ShapeManager.init();
         CollisionManager.collisionBufferSize = ShapeManager.shapePoolSize * 2;
         CollisionManager.init();
-        ApplyMotion.BoundaryBoxSize = 20;
+        ApplyMotion.BoundaryBoxSize = 40;
     }
 
     public float randomPos()

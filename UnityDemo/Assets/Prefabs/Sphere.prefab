@@ -98,6 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a2a12baab52b114b855e917266e41bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shapeIdentifier: 0
   body: {fileID: 3871280407892788979}
   radius: 0.5
   material: {fileID: 2100000, guid: 0f28c84bf98afc746ab491e5dc277171, type: 2}
@@ -117,8 +118,8 @@ MonoBehaviour:
   velocity: {x: 20, y: 20, z: 20}
   acceleration: {x: 0, y: 0, z: 0}
   isStatic: 0
-  linearDrag: 0.1
-  mass: 1
+  linearDrag: 0
+  mass: 3
   restitution: 1
   shape: {fileID: 2983347828026326786}
 --- !u!114 &8811434434243110442

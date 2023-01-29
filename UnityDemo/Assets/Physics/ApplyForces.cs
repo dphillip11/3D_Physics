@@ -6,21 +6,22 @@ public static class ApplyForces
 {
     public static void resolveCollisions(float deltaTime)
     {
-        foreach(Collision col in CollisionManager.collisions)
+        for (int i = 0; i < CollisionManager.collisionBufferSize; i++)
         {
-            if (col == null)
+            if (!CollisionManager.collisions[i].isActive)
                 return;
-            if (col.wasResolved) continue;
-            Vector3 relativeVelocity = col.collider0.velocity - col.collider1.velocity;
-            float collisionSpeed = Vector3.Dot(relativeVelocity, col.normal);
+            if (!CollisionManager.collisions[i].isResolved) 
+                continue;
+            Vector3 relativeVelocity = ShapeManager.shapes[CollisionManager.collisions[i].collider0].body.velocity - ShapeManager.shapes[CollisionManager.collisions[i].collider1].body.velocity;
+            float collisionSpeed = Vector3.Dot(relativeVelocity, CollisionManager.collisions[i].normal);
             if (collisionSpeed > 0)
             {
-                float elasticity = (col.collider1.restitution + col.collider0.restitution) / 2;
-                Vector3 impulse = -(1 + elasticity) * col.normal * collisionSpeed/(col.collider0.mass + col.collider1.mass);
-                col.collider0.velocity += impulse * col.collider1.mass;
-                col.collider1.velocity -= impulse * col.collider0.mass;
+                float elasticity = (ShapeManager.shapes[CollisionManager.collisions[i].collider1].body.restitution + ShapeManager.shapes[CollisionManager.collisions[i].collider0].body.restitution) / 2;
+                Vector3 impulse = -(1 + elasticity) * CollisionManager.collisions[i].normal * collisionSpeed/(ShapeManager.shapes[CollisionManager.collisions[i].collider0].body.mass + ShapeManager.shapes[CollisionManager.collisions[i].collider1].body.mass);
+                ShapeManager.shapes[CollisionManager.collisions[i].collider0].body.velocity += impulse * ShapeManager.shapes[CollisionManager.collisions[i].collider1].body.mass;
+                ShapeManager.shapes[CollisionManager.collisions[i].collider1].body.velocity -= impulse * ShapeManager.shapes[CollisionManager.collisions[i].collider0].body.mass;
             }
-            col.wasResolved = true;
+            CollisionManager.collisions[i].isResolved = true;
         }
     }
 }

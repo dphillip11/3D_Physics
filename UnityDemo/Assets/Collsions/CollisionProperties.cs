@@ -1,10 +1,12 @@
 using UnityEngine;
 
-public class Collision
+public struct Collision
 {
-    public bool wasResolved = true;
+    public bool isActive;
+    public bool isResolved;
     public Vector3 position;
     public Vector3 normal;
-    public PointMass collider0;
-    public PointMass collider1;
+    //shape identifier
+    public int collider0;
+    public int collider1;
 };

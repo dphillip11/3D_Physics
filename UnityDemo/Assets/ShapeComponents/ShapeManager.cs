@@ -39,7 +39,7 @@ public static class ShapeManager
                 shapes = tempShapes;
             }
         }     
-        
+        shape.shapeIdentifier= shapeCursor;
         shapes[shapeCursor] = shape;
         ballCount.text = "Balls: " + (ShapeManager.shapeCursor + 1);
     }

@@ -10,6 +10,7 @@ interface ShapeInterface
 public abstract class ShapeComponent : MonoBehaviour, ShapeInterface
 {
     protected string type = "empty";
+    public int shapeIdentifier;
     public PointMass body;
 
     public void Start()
