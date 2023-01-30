@@ -1,79 +1,103 @@
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Jobs;
+using Unity.VisualScripting;
 using UnityEngine;
 
+
+[BurstCompile]
+public struct MoveJob : IJob
+{
+    public int ballCount;
+    public float deltaTime;
+    public NativeArray<bool> isStatic;
+    public NativeArray<Vector3> positions;
+    public NativeArray<Vector3> velocities;
+    public NativeArray<float> linearDrags;
+    public NativeArray<float> radii;
+    public float BoundaryBoxSize;
+
+    public void Execute()
+    {
+        //update movement
+        for (int i = 0; i < ballCount; i++)
+        {
+            if (!isStatic[i])
+            {
+                //apply drag
+                velocities[i] *= 1 - (linearDrags[i] * deltaTime);
+                //apply velocity
+                positions[i] += (velocities[i] * deltaTime);
+
+            }
+            //check if static element
+            if (isStatic[i])
+                continue;
+            //apply boundary conditions
+            float radius = radii[i];
+            Vector3 position = positions[i];
+            Vector3 velocity = velocities[i];
+
+            if (position.x > BoundaryBoxSize - radius)
+            {
+                position.x = BoundaryBoxSize - radius;
+                velocity.x = -velocity.x;
+            }
+            else if (position.x < -BoundaryBoxSize + radius)
+            {
+                position.x = -BoundaryBoxSize + radius;
+                velocity.x = -velocity.x;
+            }
+            if (position.y > BoundaryBoxSize - radius)
+            {
+                position.y = BoundaryBoxSize - radius;
+                velocity.y = -velocity.y;
+            }
+            else if (position.y < -BoundaryBoxSize + radius)
+            {
+                position.y = -BoundaryBoxSize + radius;
+                velocity.y = -velocity.y;
+            }
+            if (position.z > BoundaryBoxSize - radius)
+            {
+                position.z = BoundaryBoxSize - radius;
+                velocity.z = -velocity.z;
+            }
+            else if (position.z < -BoundaryBoxSize + radius)
+            {
+                position.z = -BoundaryBoxSize + radius;
+                velocity.z = -velocity.z;
+            }
+            positions[i] = position;
+            velocities[i] = velocity;
+
+        }
+    }
+}
 public static class ApplyMotion
 {
     public static float BoundaryBoxSize;
     public static DataManager arrays;
 
+
     public static void Apply(float deltaTime)
     {
-        for (int i = 0; i < arrays.ballCount; i++)
+        new MoveJob
         {
-            //check if empty element
-            if (arrays.mass[i] == 0)
-                return;
-            if (!arrays.isStatic[i])
-            {
-                //apply drag
-                arrays.velocity[i] *= 1 - (arrays.linearDrag[i] * deltaTime);
-                //apply velocity
-                arrays.position[i] += (arrays.velocity[i] * deltaTime);
+            ballCount = arrays.ballCount,
+            deltaTime = deltaTime,
+            isStatic = arrays.isStatic,
+            radii = arrays.radius,
+            positions = arrays.position,
+            velocities = arrays.velocity,
+            linearDrags = arrays.linearDrag,
+            BoundaryBoxSize = BoundaryBoxSize,
 
-            }
-
-        }
+        }.Execute();
     }
-    public static void ApplyBoundaryConditions()
-    {
-        for (int i = 0; i < arrays.ballCount; i++)
-        {
-            //check if empty element
-            if (arrays.mass[i] == 0)
-                return;
-            if (!arrays.isStatic[i])
-            {
-                float radius = arrays.radius[i];
-                Vector3 position = arrays.position[i];
-                Vector3 velocity = arrays.velocity[i];
 
-                if (position.x > BoundaryBoxSize - radius)
-                {
-                    position.x = BoundaryBoxSize - radius;
-                    velocity.x = -velocity.x;
-                }
-                else if (position.x < -BoundaryBoxSize + radius)
-                {
-                    position.x = -BoundaryBoxSize + radius;
-                    velocity.x = -velocity.x;
-                }
-                if (position.y > BoundaryBoxSize - radius)
-                {
-                    position.y = BoundaryBoxSize - radius;
-                    velocity.y = -velocity.y;
-                }
-                else if (position.y < -BoundaryBoxSize + radius)
-                {
-                    position.y = -BoundaryBoxSize + radius;
-                    velocity.y = -velocity.y;
-                }
-                if (position.z > BoundaryBoxSize - radius)
-                {
-                    position.z = BoundaryBoxSize - radius;
-                    velocity.z = -velocity.z;
-                }
-                else if (position.z < -BoundaryBoxSize + radius)
-                {
-                    position.z = -BoundaryBoxSize + radius;
-                    velocity.z = -velocity.z;
-                }
-                arrays.position[i] = position;
-                arrays.velocity[i] = velocity;
-
-            }
-
-        }
-    }
 }

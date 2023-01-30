@@ -90,7 +90,7 @@ public static class CollisionManager
     static public DataManager arrays;
     static private int collisionCursor = 0;
     static public int collisionBufferSize;
-    static private int CHECKING_METHOD = 2;
+    static private int CHECKING_METHOD = 1;
 
 
     public static void checkCollisions()
