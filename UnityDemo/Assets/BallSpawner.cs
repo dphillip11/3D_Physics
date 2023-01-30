@@ -3,54 +3,44 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 
-public class BallSpawner : MonoBehaviour
+public class BallSpawner
 {
- 
+    public DataManager arrays;
     public GameObject ballPrefab;
-    public int initialArraySize = 500;
     public TextMeshProUGUI ballCount;
-
-
-    public BallComponent getNewBallComponent()
+    public void initialiseBallComponents(int index)
     {
-        BallComponent newBall = new BallComponent();
-        newBall.velocity = Random.Range(-30,30) * Vector3.one;
-        newBall.isStatic = false;
-        newBall.linearDrag = 0;
-        newBall.mass = 1;
-        newBall.restitution = 1;
-        return newBall;
+        arrays.isStatic[index] = false;
+        arrays.position[index] = randomPos();
+        arrays.velocity[index] = randomPos().normalized * Random.Range(20,100);
+        arrays.radius[index] = 0.5f;
+        arrays.linearDrag[index] = 0.05f;
+        arrays.mass[index] = 1;
+        arrays.restitution[index] = 0.95f;
     }
-
-    void Start()
-    {
-        BallManager.arraySize= initialArraySize;
-        BallManager.ballTransforms = new Transform[initialArraySize];
-        BallManager.balls = new BallComponent[initialArraySize];
-        CollisionManager.collisions = new Collision[(initialArraySize * 2)];
-        CollisionManager.collisionBufferSize = initialArraySize * 2;
-    }
-
-
 
     public void CreateBall()
     {
-        var size = Random.Range(1, 10);
-        var spawnPos = new Vector3(randomPos(), randomPos(), randomPos());
+        int index = arrays.ballCount;
+        if (index > arrays.currentCapacity - 1)
+        {
+            Debug.Log("allocated memory filled");
+            return;
+        }
+        initialiseBallComponents(index);
+        var radius = Random.Range(1, 20);
+        arrays.radius[index] = radius;
+        arrays.mass[index] = radius * 4;
+        var spawnPos = arrays.position[index];
         //create game object
         var newSphere = GameObject.Instantiate(ballPrefab, spawnPos, Quaternion.identity);
-        newSphere.transform.localScale = size * Vector3.one;
-        newSphere.GetComponent<SpeedColor>().ID = BallManager.ballCount;
-        BallManager.ballTransforms[BallManager.ballCount] = newSphere.transform;
-        //create component
-        BallComponent newBall = getNewBallComponent();
-        newBall.radius = size/2;
-        newBall.position = spawnPos;
-        newBall.ID = BallManager.ballCount;
-        BallManager.balls[BallManager.ballCount] = newBall;
-        BallManager.increaseBallCount();
-        ballCount.text = "Balls: " + BallManager.ballCount;
+        newSphere.transform.localScale = radius * 2 * Vector3.one;
+        arrays.ballMaterials[arrays.ballCount] = newSphere.GetComponent<Renderer>().material;
+        arrays.bTransforms[index] = newSphere.transform;
+        arrays.ballCount++;
+        ballCount.text = "Balls: " + arrays.ballCount;
     }
 
     public void CreateBalls(int n)
@@ -61,9 +51,9 @@ public class BallSpawner : MonoBehaviour
         }
     }
 
-    public float randomPos()
+    public Vector3 randomPos()
     {
-        return Random.Range(-ApplyMotion.BoundaryBoxSize, ApplyMotion.BoundaryBoxSize);
+        return new Vector3(Random.Range(-ApplyMotion.BoundaryBoxSize, ApplyMotion.BoundaryBoxSize), Random.Range(-ApplyMotion.BoundaryBoxSize, ApplyMotion.BoundaryBoxSize), Random.Range(-ApplyMotion.BoundaryBoxSize, ApplyMotion.BoundaryBoxSize));
     }
 }
 

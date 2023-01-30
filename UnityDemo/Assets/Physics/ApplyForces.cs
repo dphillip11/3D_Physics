@@ -4,27 +4,30 @@ using UnityEngine;
 
 public static class ApplyForces 
 {
-
+    public static DataManager arrays;
     public static void resolveCollisions(float deltaTime)
     {
-        for (int i = 0; i < CollisionManager.collisionBufferSize; i++)
+        int collisionBufferSize = CollisionManager.collisionBufferSize;
+        for (int i = 0; i < collisionBufferSize; i++)
         {
-            if (!CollisionManager.collisions[i].isActive)
+            if (!arrays.collisions[i].isActive)
                 return;
-            if (CollisionManager.collisions[i].isResolved) 
+            if (arrays.collisions[i].isResolved) 
                 continue;
-            int ID1 = CollisionManager.collisions[i].bodyID1;
-            int ID2 = CollisionManager.collisions[i].bodyID2;
-            Vector3 relativeVelocity = BallManager.balls[ID1].velocity - BallManager.balls[ID2].velocity;
-            float collisionSpeed = Vector3.Dot(relativeVelocity, CollisionManager.collisions[i].normal);
+            int ID1 = arrays.collisions[i].bodyID1;
+            int ID2 = arrays.collisions[i].bodyID2;
+            Vector3 relativeVelocity = arrays.velocity[ID1] - arrays.velocity[ID2];
+            float collisionSpeed = Vector3.Dot(relativeVelocity, arrays.collisions[i].normal);
             if (collisionSpeed > 0)
             {
-                float elasticity = (BallManager.balls[ID2].restitution + BallManager.balls[ID1].restitution) / 2;
-                Vector3 impulse = -(1 + elasticity) * CollisionManager.collisions[i].normal * collisionSpeed/(BallManager.balls[ID1].mass + BallManager.balls[ID2].mass);
-                BallManager.balls[ID1].velocity += impulse * BallManager.balls[ID2].mass;
-                BallManager.balls[ID2].velocity -= impulse * BallManager.balls[ID1].mass;
+                float elasticity = (arrays.restitution[ID2] + arrays.restitution[ID1]) / 2;
+                Vector3 impulse = -(1 + elasticity) * arrays.collisions[i].normal * collisionSpeed / (arrays.mass[ID1] + arrays.mass[ID2]);
+                arrays.velocity[ID1] += impulse * arrays.mass[ID2];
+                arrays.velocity[ID2]-= impulse * arrays.mass[ID1];
             }
-            CollisionManager.collisions[i].isResolved = true;
+            var tmpCollision = arrays.collisions[i];
+            tmpCollision.isResolved= true;
+            arrays.collisions[i] = tmpCollision;
         }
     }
 }
