@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,67 +6,71 @@ using UnityEngine;
 public static class ApplyMotion
 {
     public static float BoundaryBoxSize;
+    public static DataManager arrays;
+
     public static void Apply(float deltaTime)
     {
-        foreach (PointMass body in PhysicsManager.bodies)
+        for (int i = 0; i < arrays.ballCount; i++)
         {
             //check if empty element
-            if (body == null)
+            if (arrays.mass[i] == 0)
                 return;
-            if (!body.isStatic)
+            if (!arrays.isStatic[i])
             {
-
-                body.velocity += (body.acceleration * deltaTime);
                 //apply drag
-                body.velocity *= 1 - (body.linearDrag * deltaTime);
-                body.acceleration *= 1 - (body.linearDrag * deltaTime);
-                body.centre += (body.velocity * deltaTime);
+                arrays.velocity[i] *= 1 - (arrays.linearDrag[i] * deltaTime);
+                //apply velocity
+                arrays.position[i] += (arrays.velocity[i] * deltaTime);
 
             }
 
         }
     }
-
     public static void ApplyBoundaryConditions()
     {
-        foreach (PointMass body in PhysicsManager.bodies)
+        for (int i = 0; i < arrays.ballCount; i++)
         {
             //check if empty element
-            if (body == null)
+            if (arrays.mass[i] == 0)
                 return;
-            if (!body.isStatic)
+            if (!arrays.isStatic[i])
             {
-                float radius = ((SphereComponent)body.shape).radius;
-                if (body.centre.x > BoundaryBoxSize - radius)
+                float radius = arrays.radius[i];
+                Vector3 position = arrays.position[i];
+                Vector3 velocity = arrays.velocity[i];
+
+                if (position.x > BoundaryBoxSize - radius)
                 {
-                    body.centre.x = BoundaryBoxSize - radius;
-                    body.velocity.x = -body.velocity.x;
+                    position.x = BoundaryBoxSize - radius;
+                    velocity.x = -velocity.x;
                 }
-                if (body.centre.x < -BoundaryBoxSize + radius)
+                else if (position.x < -BoundaryBoxSize + radius)
                 {
-                    body.centre.x = -BoundaryBoxSize + radius;
-                    body.velocity.x = -body.velocity.x;
+                    position.x = -BoundaryBoxSize + radius;
+                    velocity.x = -velocity.x;
                 }
-                if (body.centre.y > BoundaryBoxSize - radius)
+                if (position.y > BoundaryBoxSize - radius)
                 {
-                    body.centre.y = BoundaryBoxSize - radius;
-                    body.velocity.y = -body.velocity.y;
+                    position.y = BoundaryBoxSize - radius;
+                    velocity.y = -velocity.y;
                 }
-                if (body.centre.y < -BoundaryBoxSize + radius)
+                else if (position.y < -BoundaryBoxSize + radius)
                 {
-                    body.centre.y = -BoundaryBoxSize + radius;
-                    body.velocity.y = -body.velocity.y;
+                    position.y = -BoundaryBoxSize + radius;
+                    velocity.y = -velocity.y;
                 }
-                if (body.centre.z > BoundaryBoxSize - radius)
+                if (position.z > BoundaryBoxSize - radius)
                 {
-                    body.centre.z = BoundaryBoxSize - radius;
-                    body.velocity.z = -body.velocity.z;
+                    position.z = BoundaryBoxSize - radius;
+                    velocity.z = -velocity.z;
                 }
-                if (body.centre.z < -BoundaryBoxSize + radius)
+                else if (position.z < -BoundaryBoxSize + radius)
                 {
-                    body.centre.z = -BoundaryBoxSize + radius;
-                    body.velocity.z = -body.velocity.z;
+                    position.z = -BoundaryBoxSize + radius;
+                    velocity.z = -velocity.z;
                 }
+                arrays.position[i] = position;
+                arrays.velocity[i] = velocity;
 
             }
 

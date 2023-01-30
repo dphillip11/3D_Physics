@@ -4,24 +4,30 @@ using UnityEngine;
 
 public static class ApplyForces 
 {
+    public static DataManager arrays;
     public static void resolveCollisions(float deltaTime)
     {
-        for (int i = 0; i < CollisionManager.collisionBufferSize; i++)
+        int collisionBufferSize = CollisionManager.collisionBufferSize;
+        for (int i = 0; i < collisionBufferSize; i++)
         {
-            if (!CollisionManager.collisions[i].isActive)
+            if (!arrays.collisions[i].isActive)
                 return;
-            if (!CollisionManager.collisions[i].isResolved) 
+            if (arrays.collisions[i].isResolved) 
                 continue;
-            Vector3 relativeVelocity = ShapeManager.shapes[CollisionManager.collisions[i].collider0].body.velocity - ShapeManager.shapes[CollisionManager.collisions[i].collider1].body.velocity;
-            float collisionSpeed = Vector3.Dot(relativeVelocity, CollisionManager.collisions[i].normal);
+            int ID1 = arrays.collisions[i].bodyID1;
+            int ID2 = arrays.collisions[i].bodyID2;
+            Vector3 relativeVelocity = arrays.velocity[ID1] - arrays.velocity[ID2];
+            float collisionSpeed = Vector3.Dot(relativeVelocity, arrays.collisions[i].normal);
             if (collisionSpeed > 0)
             {
-                float elasticity = (ShapeManager.shapes[CollisionManager.collisions[i].collider1].body.restitution + ShapeManager.shapes[CollisionManager.collisions[i].collider0].body.restitution) / 2;
-                Vector3 impulse = -(1 + elasticity) * CollisionManager.collisions[i].normal * collisionSpeed/(ShapeManager.shapes[CollisionManager.collisions[i].collider0].body.mass + ShapeManager.shapes[CollisionManager.collisions[i].collider1].body.mass);
-                ShapeManager.shapes[CollisionManager.collisions[i].collider0].body.velocity += impulse * ShapeManager.shapes[CollisionManager.collisions[i].collider1].body.mass;
-                ShapeManager.shapes[CollisionManager.collisions[i].collider1].body.velocity -= impulse * ShapeManager.shapes[CollisionManager.collisions[i].collider0].body.mass;
+                float elasticity = (arrays.restitution[ID2] + arrays.restitution[ID1]) / 2;
+                Vector3 impulse = -(1 + elasticity) * arrays.collisions[i].normal * collisionSpeed / (arrays.mass[ID1] + arrays.mass[ID2]);
+                arrays.velocity[ID1] += impulse * arrays.mass[ID2];
+                arrays.velocity[ID2]-= impulse * arrays.mass[ID1];
             }
-            CollisionManager.collisions[i].isResolved = true;
+            var tmpCollision = arrays.collisions[i];
+            tmpCollision.isResolved= true;
+            arrays.collisions[i] = tmpCollision;
         }
     }
 }

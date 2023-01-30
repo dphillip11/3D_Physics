@@ -6,52 +6,80 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public float gameTime = 0;
-    public GameObject spherePrefab;
-    
+    public float initialBoundarySize;
+    public int poolSize;
+    DataManager arrays;
+    BallSpawner ballSpawner;
+    public GameObject ballPrefab;
+    public TextMeshProUGUI ballCount;
+    private bool inPlay = true;
     // Start is called before the first frame update
     void Start()
     {
-        PhysicsManager.poolOfBodiesSize = 100;
-        PhysicsManager.init();
-        ShapeManager.shapePoolSize = 100;
-        ShapeManager.init();
-        CollisionManager.collisionBufferSize = ShapeManager.shapePoolSize * 2;
-        CollisionManager.init();
-        ApplyMotion.BoundaryBoxSize = 40;
-    }
+        //create data structures
+        arrays= new DataManager();
+        arrays.initialSize = arrays.currentCapacity = poolSize;
+        arrays.Init();
+        //create ball spawner
+        ballSpawner= new BallSpawner();
+        ballSpawner.arrays = arrays;
+        ballSpawner.ballPrefab = ballPrefab;
+        ballSpawner.ballCount= ballCount;
+        //create references to data manager
+        ApplyMotion.arrays = arrays;
+        ApplyForces.arrays = arrays;
+        CollisionManager.arrays = arrays;
 
-    public float randomPos()
-    {
-        return Random.Range(-ApplyMotion.BoundaryBoxSize, ApplyMotion.BoundaryBoxSize);
-    }
-
-    public void CreateShape(string type)
-    {
-        if (type == "sphere")
-        {
-            var size = Random.Range(1, 10);
-            var spawnPos = new Vector3(randomPos(), randomPos(), randomPos());
-            var newSphere = GameObject.Instantiate(spherePrefab, spawnPos, Quaternion.identity);
-            newSphere.GetComponent<PointMass>().mass = size;
-            newSphere.GetComponent<SphereComponent>().radius = size / 2;
-            newSphere.transform.localScale = Vector3.one * size/2;
-        }
-    }
-
-    public void CreateShapes(int n)
-    {
-        for (int i = 0; i < n; i++)
-        {
-            CreateShape("sphere");
-        }
-    }
+        //set up boundary box
+        ApplyMotion.BoundaryBoxSize = initialBoundarySize * 5;
+        GameObject.Find("BoundingBox").transform.localScale = Vector3.one * initialBoundarySize;
+    }  
 
     // Update is called once per frame
     void Update()
     {
-        gameTime+= Time.deltaTime;
-        PhysicsManager.Apply(Time.deltaTime);
-        ShapeManager.Render(Time.deltaTime);
+        if (inPlay)
+        {
+            if (Input.GetKeyUp(KeyCode.Escape))
+            {
+                inPlay= false;
+                arrays.Dispose();
+                Application.Quit();
+                return;
+            }
+            PhysicsManager.Apply(Time.deltaTime);
+            UpdateTransforms();
+            updateBallColors();
+        }
+
+    }
+
+    void UpdateTransforms()
+    {
+        for ( int i = 0; i < arrays.ballCount; i++ )
+        {
+            arrays.bTransforms[i].position = arrays.position[i];
+        }
+        
+    }
+
+    private void updateBallColors()
+    {
+        for (int i=0; i < arrays.ballCount; i++)
+        {
+            int color = Mathf.Abs((int)(arrays.velocity[i].x) % 6);
+            arrays.ballMaterials[i].color = arrays.colors[color];
+        }
+       
+    }
+
+    public void spawnBalls(int n)
+    {
+        ballSpawner.CreateBalls(n);
+    }
+
+    private void OnApplicationQuit()
+    {
+        arrays.Dispose();
     }
 }
