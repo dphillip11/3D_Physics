@@ -9,8 +9,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 
-[BurstCompile]
-public struct MoveJob : IJob
+[BurstCompile(FloatMode = FloatMode.Fast)]
+public struct MoveJob : IJobParallelFor
 {
     public int ballCount;
     public float deltaTime;
@@ -21,11 +21,11 @@ public struct MoveJob : IJob
     public NativeArray<float> radii;
     public float BoundaryBoxSize;
 
-    public void Execute()
+    public void Execute(int i)
     {
         //update movement
-        for (int i = 0; i < ballCount; i++)
-        {
+        //for (int i = 0; i < ballCount; i++)
+        //{
             if (!isStatic[i])
             {
                 //apply drag
@@ -36,7 +36,7 @@ public struct MoveJob : IJob
             }
             //check if static element
             if (isStatic[i])
-                continue;
+                return;
             //apply boundary conditions
             float radius = radii[i];
             Vector3 position = positions[i];
@@ -77,7 +77,7 @@ public struct MoveJob : IJob
 
         }
     }
-}
+
 public static class ApplyMotion
 {
     public static float BoundaryBoxSize;
@@ -86,7 +86,7 @@ public static class ApplyMotion
 
     public static void Apply(float deltaTime)
     {
-        new MoveJob
+        var move = new MoveJob
         {
             ballCount = arrays.ballCount,
             deltaTime = deltaTime,
@@ -97,7 +97,12 @@ public static class ApplyMotion
             linearDrags = arrays.linearDrag,
             BoundaryBoxSize = BoundaryBoxSize,
 
-        }.Execute();
+        };
+        JobHandle handle = move.Schedule(arrays.ballCount, 1);
+
+        // Wait for the job to complete
+        handle.Complete();
+
     }
 
 }

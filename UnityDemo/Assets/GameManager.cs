@@ -78,6 +78,11 @@ public class GameManager : MonoBehaviour
         ballSpawner.CreateBalls(n);
     }
 
+    public void spawnOpposingBalls()
+    {
+        ballSpawner.CreateOpposingBalls();
+    }
+
     private void OnApplicationQuit()
     {
         arrays.Dispose();

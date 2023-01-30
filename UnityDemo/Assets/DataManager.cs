@@ -2,7 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Unity.Burst;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
+using Unity.Jobs;
 using UnityEngine;
 
 public class DataManager
@@ -13,14 +16,22 @@ public class DataManager
     public int ballCount = 0;
 
     // ball components
+    [NativeDisableContainerSafetyRestriction]
     public NativeArray<bool> isStatic;
+    [NativeDisableContainerSafetyRestriction]
     public NativeArray<Vector3> position;
+    [NativeDisableContainerSafetyRestriction]
     public NativeArray<Vector3> velocity;
+    [NativeDisableContainerSafetyRestriction]
     public NativeArray<float> radius;
+    [NativeDisableContainerSafetyRestriction]
     public NativeArray<float> linearDrag;
+    [NativeDisableContainerSafetyRestriction]
     public NativeArray<float> mass;
+    [NativeDisableContainerSafetyRestriction]
     public NativeArray<float> restitution;
     // collisions
+    [NativeDisableContainerSafetyRestriction]
     public NativeArray<Collision> collisions;
     //in game ball transforms
     public Transform[] bTransforms;
@@ -65,6 +76,68 @@ public class DataManager
         }
     }
 
+    //[BurstCompile(CompileSynchronously = true)]
+    //public struct CompleteJob : IJob
+    //{
+    //    public float deltaTime;
+    //    public DataManager DM;
+    //    public float BoundaryBoxSize;
+    //    public void Execute() 
+    //    {
+    //        //update movement
+    //        for (int i = 0; i < DM.ballCount; i++)
+    //        {
+    //            if (!DM.isStatic[i])
+    //            {
+    //                //apply drag
+    //                DM.velocity[i] *= 1 - (DM.linearDrag[i] * deltaTime);
+    //                //apply velocity
+    //                DM.position[i] += (DM.velocity[i] * deltaTime);
 
+    //            }
+    //            //check if static element
+    //            if (DM.isStatic[i])
+    //                continue;
+    //            //apply boundary conditions
+    //            float radius = DM.radius[i];
+    //            Vector3 position = DM.position[i];
+    //            Vector3 velocity = DM.velocity[i];
+
+    //            if (position.x > BoundaryBoxSize - radius)
+    //            {
+    //                position.x = BoundaryBoxSize - radius;
+    //                velocity.x = -velocity.x;
+    //            }
+    //            else if (position.x < -BoundaryBoxSize + radius)
+    //            {
+    //                position.x = -BoundaryBoxSize + radius;
+    //                velocity.x = -velocity.x;
+    //            }
+    //            if (position.y > BoundaryBoxSize - radius)
+    //            {
+    //                position.y = BoundaryBoxSize - radius;
+    //                velocity.y = -velocity.y;
+    //            }
+    //            else if (position.y < -BoundaryBoxSize + radius)
+    //            {
+    //                position.y = -BoundaryBoxSize + radius;
+    //                velocity.y = -velocity.y;
+    //            }
+    //            if (position.z > BoundaryBoxSize - radius)
+    //            {
+    //                position.z = BoundaryBoxSize - radius;
+    //                velocity.z = -velocity.z;
+    //            }
+    //            else if (position.z < -BoundaryBoxSize + radius)
+    //            {
+    //                position.z = -BoundaryBoxSize + radius;
+    //                velocity.z = -velocity.z;
+    //            }
+    //            DM.position[i] = position;
+    //            DM.velocity[i] = velocity;
+
+    //        }
+    //    }
+    //}
 
 }

@@ -5,8 +5,8 @@ using Unity.Collections;
 using Unity.VisualScripting;
 using JetBrains.Annotations;
 
-[BurstCompile]
-struct collisionsJob : IJob
+[BurstCompile(FloatMode = FloatMode.Fast)]
+struct collisionsJob : IJobParallelFor
 {
     public NativeArray<Collision> collisions;
     public NativeArray<float> radius;
@@ -15,10 +15,9 @@ struct collisionsJob : IJob
     public int collisionCursor;
     public int collisionBufferSize;
     public int CHECKING_METHOD;
-    public void Execute()
+    public void Execute(int i)
     {
-        for (int i = 0; i < ballCount; i++)
-        {
+        
             for (int j = i + 1; j < ballCount; j++)
             {
 
@@ -84,13 +83,13 @@ struct collisionsJob : IJob
 
         }
     }
-}
+
 public static class CollisionManager
 {
     static public DataManager arrays;
     static private int collisionCursor = 0;
     static public int collisionBufferSize;
-    static private int CHECKING_METHOD = 1;
+    static private int CHECKING_METHOD = 2;
 
 
     public static void checkCollisions()
@@ -99,7 +98,11 @@ public static class CollisionManager
 
         { position = arrays.position, collisions = arrays.collisions, ballCount = arrays.ballCount, radius = arrays.radius, collisionBufferSize = collisionBufferSize, collisionCursor = collisionCursor, CHECKING_METHOD=CHECKING_METHOD
         };
-        job.Run();
+
+        JobHandle handle = job.Schedule(arrays.ballCount, 1);
+
+        // Wait for the job to complete
+        handle.Complete();
     }
 
 }
