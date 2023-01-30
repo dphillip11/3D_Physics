@@ -1,11 +1,6 @@
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
-using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -23,9 +18,6 @@ public struct MoveJob : IJobParallelFor
 
     public void Execute(int i)
     {
-        //update movement
-        //for (int i = 0; i < ballCount; i++)
-        //{
             if (!isStatic[i])
             {
                 //apply drag

@@ -8,35 +8,30 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using UnityEngine;
 
+
 public class DataManager
 {
+    
     //initial alocation size
     public int initialSize = 2000;
     public int currentCapacity = 2000;
     public int ballCount = 0;
 
     // ball components
-    [NativeDisableContainerSafetyRestriction]
     public NativeArray<bool> isStatic;
-    [NativeDisableContainerSafetyRestriction]
     public NativeArray<Vector3> position;
-    [NativeDisableContainerSafetyRestriction]
     public NativeArray<Vector3> velocity;
-    [NativeDisableContainerSafetyRestriction]
     public NativeArray<float> radius;
-    [NativeDisableContainerSafetyRestriction]
     public NativeArray<float> linearDrag;
-    [NativeDisableContainerSafetyRestriction]
     public NativeArray<float> mass;
-    [NativeDisableContainerSafetyRestriction]
     public NativeArray<float> restitution;
     // collisions
-    [NativeDisableContainerSafetyRestriction]
     public NativeArray<Collision> collisions;
     //in game ball transforms
     public Transform[] bTransforms;
+    public NativeArray<int> color_id;
     public Material[] ballMaterials;
-    public Color[] colors =
+    public static readonly Color[] colors =
     {
         Color.cyan, Color.magenta, Color.red,Color.yellow, Color.blue,Color.green
     };
@@ -54,6 +49,7 @@ public class DataManager
         CollisionManager.collisionBufferSize = initialSize * 2;
         bTransforms = new Transform[initialSize];
         ballMaterials = new Material[initialSize];
+        color_id = new NativeArray<int> (initialSize, Allocator.Persistent);
     }
 
     public void Dispose()
@@ -68,6 +64,7 @@ public class DataManager
             mass.Dispose();
             restitution.Dispose();
             collisions.Dispose();
+            color_id.Dispose();
         }
         catch (ObjectDisposedException)
         {

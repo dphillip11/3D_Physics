@@ -49,7 +49,6 @@ public class GameManager : MonoBehaviour
             }
             PhysicsManager.Apply(Time.deltaTime);
             UpdateTransforms();
-            updateBallColors();
         }
 
     }
@@ -61,16 +60,6 @@ public class GameManager : MonoBehaviour
             arrays.bTransforms[i].position = arrays.position[i];
         }
         
-    }
-
-    private void updateBallColors()
-    {
-        for (int i=0; i < arrays.ballCount; i++)
-        {
-            int color = Mathf.Abs((int)(arrays.velocity[i].x) % 6);
-            arrays.ballMaterials[i].color = arrays.colors[color];
-        }
-       
     }
 
     public void spawnBalls(int n)

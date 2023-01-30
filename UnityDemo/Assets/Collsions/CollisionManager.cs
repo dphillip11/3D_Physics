@@ -2,14 +2,16 @@ using UnityEngine;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.VisualScripting;
-using JetBrains.Annotations;
+using Unity.Collections.LowLevel.Unsafe;
 
 [BurstCompile(FloatMode = FloatMode.Fast)]
 struct collisionsJob : IJobParallelFor
 {
+    [NativeDisableContainerSafetyRestriction]
     public NativeArray<Collision> collisions;
+    [NativeDisableContainerSafetyRestriction]
     public NativeArray<float> radius;
+    [NativeDisableContainerSafetyRestriction]
     public NativeArray<Vector3> position;
     public int ballCount;
     public int collisionCursor;
@@ -67,7 +69,18 @@ struct collisionsJob : IJobParallelFor
                 col.bodyID1 = i;
                 col.bodyID2 = j;
 
-                //add to collision log
+            //add to collision log
+            while (collisions[collisionCursor].isActive)
+            {
+                if (collisionCursor < collisionBufferSize - 1)
+                {
+                    collisionCursor++;
+                }
+                else
+                {
+                    collisionCursor = 0;
+                }
+            }
                 collisions[collisionCursor] = col;
 
                 if (collisionCursor < collisionBufferSize - 1)
