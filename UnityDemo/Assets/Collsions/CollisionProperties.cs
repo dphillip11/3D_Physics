@@ -7,6 +7,6 @@ public struct Collision
     public Vector3 position;
     public Vector3 normal;
     //shape identifier
-    public int collider0;
-    public int collider1;
+    public int bodyID1;
+    public int bodyID2;
 };

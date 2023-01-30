@@ -11,8 +11,6 @@ GameObject:
   - component: {fileID: 2983347828026326791}
   - component: {fileID: 2983347828026326788}
   - component: {fileID: 2983347828026326789}
-  - component: {fileID: 2983347828026326786}
-  - component: {fileID: 3871280407892788979}
   - component: {fileID: 8811434434243110442}
   m_Layer: 0
   m_Name: Sphere
@@ -86,42 +84,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2983347828026326786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2983347828026326787}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a2a12baab52b114b855e917266e41bf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shapeIdentifier: 0
-  body: {fileID: 3871280407892788979}
-  radius: 0.5
-  material: {fileID: 2100000, guid: 0f28c84bf98afc746ab491e5dc277171, type: 2}
---- !u!114 &3871280407892788979
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2983347828026326787}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23b92bce7339e58419b2b9597f6dce8a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  centre: {x: 0, y: 0, z: 0}
-  velocity: {x: 20, y: 20, z: 20}
-  acceleration: {x: 0, y: 0, z: 0}
-  isStatic: 0
-  linearDrag: 0
-  mass: 3
-  restitution: 1
-  shape: {fileID: 2983347828026326786}
 --- !u!114 &8811434434243110442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,3 +100,4 @@ MonoBehaviour:
   maxSpeed: 10
   minColor: {r: 0, g: 0, b: 1, a: 1}
   maxColor: {r: 1, g: 0, b: 0, a: 1}
+  ID: 0

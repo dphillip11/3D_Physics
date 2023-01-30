@@ -7,19 +7,16 @@ public static class ApplyMotion
     public static float BoundaryBoxSize;
     public static void Apply(float deltaTime)
     {
-        foreach (PointMass body in PhysicsManager.bodies)
+        for (int i = 0; i < BallManager.ballCount; i++)
         {
             //check if empty element
-            if (body == null)
+            if (BallManager.balls[i].mass == 0)
                 return;
-            if (!body.isStatic)
+            if (!BallManager.balls[i].isStatic)
             {
-
-                body.velocity += (body.acceleration * deltaTime);
                 //apply drag
-                body.velocity *= 1 - (body.linearDrag * deltaTime);
-                body.acceleration *= 1 - (body.linearDrag * deltaTime);
-                body.centre += (body.velocity * deltaTime);
+                BallManager.balls[i].velocity *= 1 - (BallManager.balls[i].linearDrag * deltaTime);
+                BallManager.balls[i].position += (BallManager.balls[i].velocity * deltaTime);
 
             }
 
@@ -28,43 +25,43 @@ public static class ApplyMotion
 
     public static void ApplyBoundaryConditions()
     {
-        foreach (PointMass body in PhysicsManager.bodies)
+        for (int i = 0; i < BallManager.ballCount; i++)
         {
             //check if empty element
-            if (body == null)
+            if (BallManager.balls[i].mass == 0)
                 return;
-            if (!body.isStatic)
+            if (!BallManager.balls[i].isStatic)
             {
-                float radius = ((SphereComponent)body.shape).radius;
-                if (body.centre.x > BoundaryBoxSize - radius)
+                float radius = BallManager.balls[i].radius;
+                if (BallManager.balls[i].position.x > BoundaryBoxSize - radius)
                 {
-                    body.centre.x = BoundaryBoxSize - radius;
-                    body.velocity.x = -body.velocity.x;
+                    BallManager.balls[i].position.x = BoundaryBoxSize - radius;
+                    BallManager.balls[i].velocity.x = -BallManager.balls[i].velocity.x;
                 }
-                if (body.centre.x < -BoundaryBoxSize + radius)
+                if (BallManager.balls[i].position.x < -BoundaryBoxSize + radius)
                 {
-                    body.centre.x = -BoundaryBoxSize + radius;
-                    body.velocity.x = -body.velocity.x;
+                    BallManager.balls[i].position.x = -BoundaryBoxSize + radius;
+                    BallManager.balls[i].velocity.x = -BallManager.balls[i].velocity.x;
                 }
-                if (body.centre.y > BoundaryBoxSize - radius)
+                if (BallManager.balls[i].position.y > BoundaryBoxSize - radius)
                 {
-                    body.centre.y = BoundaryBoxSize - radius;
-                    body.velocity.y = -body.velocity.y;
+                    BallManager.balls[i].position.y = BoundaryBoxSize - radius;
+                    BallManager.balls[i].velocity.y = -BallManager.balls[i].velocity.y;
                 }
-                if (body.centre.y < -BoundaryBoxSize + radius)
+                if (BallManager.balls[i].position.y < -BoundaryBoxSize + radius)
                 {
-                    body.centre.y = -BoundaryBoxSize + radius;
-                    body.velocity.y = -body.velocity.y;
+                    BallManager.balls[i].position.y = -BoundaryBoxSize + radius;
+                    BallManager.balls[i].velocity.y = -BallManager.balls[i].velocity.y;
                 }
-                if (body.centre.z > BoundaryBoxSize - radius)
+                if (BallManager.balls[i].position.z > BoundaryBoxSize - radius)
                 {
-                    body.centre.z = BoundaryBoxSize - radius;
-                    body.velocity.z = -body.velocity.z;
+                    BallManager.balls[i].position.z = BoundaryBoxSize - radius;
+                    BallManager.balls[i].velocity.z = -BallManager.balls[i].velocity.z;
                 }
-                if (body.centre.z < -BoundaryBoxSize + radius)
+                if (BallManager.balls[i].position.z < -BoundaryBoxSize + radius)
                 {
-                    body.centre.z = -BoundaryBoxSize + radius;
-                    body.velocity.z = -body.velocity.z;
+                    BallManager.balls[i].position.z = -BoundaryBoxSize + radius;
+                    BallManager.balls[i].velocity.z = -BallManager.balls[i].velocity.z;
                 }
 
             }

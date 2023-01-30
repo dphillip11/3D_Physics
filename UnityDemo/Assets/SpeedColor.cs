@@ -6,17 +6,13 @@ public class SpeedColor : MonoBehaviour
     public float maxSpeed = 10f;
     public Color minColor = Color.blue;
     public Color maxColor = Color.red;
+    public int ID;
 
-    private PointMass body;
-
-    void Start()
-    {
-        body = GetComponent<PointMass>();
-    }
+ 
 
     void Update()
     {
-        float speed = body.velocity.magnitude;
+        float speed = BallManager.balls[ID].velocity.magnitude;
         float t = Mathf.InverseLerp(minSpeed, maxSpeed, speed);
         GetComponent<Renderer>().material.color = Color.Lerp(minColor, maxColor, t);
     }
