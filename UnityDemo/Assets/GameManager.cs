@@ -8,6 +8,9 @@ public class GameManager : MonoBehaviour
 {
     public float initialBoundarySize;
     public int poolSize;
+    public float minBallSize;
+    public float maxBallSize;
+    public float maxBallSpeed;
     DataManager arrays;
     BallSpawner ballSpawner;
     public GameObject ballPrefab;
@@ -50,6 +53,9 @@ public class GameManager : MonoBehaviour
             PhysicsManager.Apply(Time.deltaTime);
             UpdateTransforms();
         }
+        BallSpawner.minBallSize = minBallSize;
+        BallSpawner.maxBallSize = maxBallSize;
+        BallSpawner.maxBallSpeed= maxBallSpeed;
 
     }
 

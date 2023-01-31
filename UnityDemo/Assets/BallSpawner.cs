@@ -10,11 +10,14 @@ public class BallSpawner
     public DataManager arrays;
     public GameObject ballPrefab;
     public TextMeshProUGUI ballCount;
+    public static float minBallSize;
+    public static float maxBallSize;
+    public static float maxBallSpeed;
     public void initialiseBallComponents(int index)
     {
         arrays.isStatic[index] = false;
         arrays.position[index] = randomPos();
-        arrays.velocity[index] = randomPos().normalized * Random.Range(20,100);
+        arrays.velocity[index] = new Vector3(Random.Range(-maxBallSpeed,maxBallSpeed), Random.Range(-maxBallSpeed, maxBallSpeed), Random.Range(-maxBallSpeed, maxBallSpeed));
         arrays.radius[index] = 0.5f;
         arrays.linearDrag[index] = 0.05f;
         arrays.mass[index] = 1;
@@ -30,7 +33,7 @@ public class BallSpawner
             return;
         }
         initialiseBallComponents(index);
-        var radius = Random.Range(1, 20);
+        var radius = Random.Range(minBallSize, maxBallSize);
         arrays.radius[index] = radius;
         arrays.mass[index] = radius * 4;
         var spawnPos = arrays.position[index];
