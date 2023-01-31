@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Unity.Burst;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using UnityEngine;
 
@@ -13,10 +14,15 @@ public static class ApplyForces
     [BurstCompile]
     public struct resolveCollisionsJob : IJobParallelFor
     {
+        [NativeDisableContainerSafetyRestriction]
         public NativeArray<Collision> collisions;
+        [NativeDisableContainerSafetyRestriction]
         public NativeArray<int> color_id;
+        [NativeDisableContainerSafetyRestriction]
         public NativeArray<Vector3> velocity;
+        [NativeDisableContainerSafetyRestriction]
         public NativeArray<float> mass;
+        [NativeDisableContainerSafetyRestriction]
         public NativeArray<float> restitution;
 
         public void Execute(int i)
