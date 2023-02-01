@@ -33,9 +33,10 @@ const char* fragmentShaderSource = "#version 330\n"
 //fragment shader source 2
 const char* fragmentShaderSource2 = "#version 330\n"
 "out vec4 FragColor;\n"
+"uniform float t;"
 "void main()\n"
 "{\n"
-"FragColor = vec4(0.2f,1.0f,0.5f,0.1f);\n"
+"FragColor = vec4(0.5*(sin(t) + 1),0.5*(sin(t + 2) + 1),0.5*(sin(t + 4) + 1),1.0f);\n"
 "}\0";
 
 
@@ -113,7 +114,8 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[1]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesT2), indicesT2, GL_STATIC_DRAW);
 
-    
+    int tLocation = glGetUniformLocation(shaderProgram2, "t");
+    float t = 0;
     
 
 
@@ -124,7 +126,8 @@ int main()
         // input
         // -----
         processInput(window);
-
+        t = (t + 0.001f);
+        glUniform1f(tLocation, t);
         // render
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(shaderProgram1);//draw plain color
