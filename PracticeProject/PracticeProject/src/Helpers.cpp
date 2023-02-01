@@ -39,7 +39,7 @@ GLFWwindow* InitialiseWindow(const unsigned int width, const unsigned int height
 }
 
 //takes source scripts, compiles them and links them into a program and sets it as active
-void CreateShaderProgram(const char* &vertexShaderSource, const char* &fragmentShaderSource) 
+void CreateShaderProgram(const char* &vertexShaderSource, const char* &fragmentShaderSource, unsigned int &programName) 
 {
     //create vertex shader
     unsigned int vertexShader;
@@ -73,23 +73,23 @@ void CreateShaderProgram(const char* &vertexShaderSource, const char* &fragmentS
         LOG("failed fragment shader compilation")
             LOG(infoLog)
     }
-    unsigned int shaderProgram;
+    
     //instantiate program
-    shaderProgram = glCreateProgram();
+    programName = glCreateProgram();
     //attach shaders
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
+    glAttachShader(programName, vertexShader);
+    glAttachShader(programName, fragmentShader);
     //link program
-    glLinkProgram(shaderProgram);
+    glLinkProgram(programName);
     //log errors
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    glGetProgramiv(programName, GL_LINK_STATUS, &success);
     if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        glGetProgramInfoLog(programName, 512, NULL, infoLog);
         LOG("failed shader program linking")
             LOG(infoLog)
     }
     //set active
-    glUseProgram(shaderProgram);
+    glUseProgram(programName);
     //delete redundant shaders
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
@@ -112,3 +112,5 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
+
+
