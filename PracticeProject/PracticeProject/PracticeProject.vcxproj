@@ -134,6 +134,10 @@
   <ItemGroup>
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\glad.cpp" />
+    <ClCompile Include="src\Helpers.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Header.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
