@@ -20,14 +20,23 @@ int main()
     GLFWwindow* window = InitialiseWindow(SCR_WIDTH, SCR_HEIGHT, windowName);
 
     Shader shader3D = Shader("src/shaders/3Dmoving.vs", "src/shaders/Red.fs");
+    Shader shaderColor = Shader("src/shaders/3DPos4DColor.vs", "src/shaders/3DPos4DColor.fs");
 
     //vertices for a square
     float vertices[] = {//clockwise
         -0.5f,0.5f,0.0f,//topleftfront,0
         0.5f,0.5f,0.0f,//toprightfront,1
         0.5f,-0.5f,0.0f,//bottomrightfront,2
-        -0.5f,-0.5f,0.0f//bottomleftfront,3
-        
+        -0.5f,-0.5f,0.0f//bottomleftfront,3  
+    };
+
+    //colored vertices for a square
+    float c_vertices[] = {//clockwise
+        //position          colors
+        -0.5f,0.5f,0.0f,    1.0f,0.0f,0.0f,1.0f,    //topleftfront,0
+        0.5f,0.5f,0.0f,     0.0f,1.0f,0.0f,1.0f,    //toprightfront,1
+        0.5f,-0.5f,0.0f,    0.0f,0.0f,1.0f,1.0f,//bottomrightfront,2
+        -0.5f,-0.5f,0.0f,    1.0f,1.0f,0.0f,1.0f   //bottomleftfront,3  
     };
 
     //indices to draw the triangles
@@ -37,9 +46,12 @@ int main()
 
    
     Model frontSquare = Model();
-    frontSquare.setVertices(vertices, sizeof(vertices) / sizeof(float));
+    frontSquare.setVertices(c_vertices, sizeof(c_vertices) / sizeof(float));
     frontSquare.setIndices(indices, 6);
-    frontSquare.setAttributes(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    //position attribute
+    frontSquare.setAttributes(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
+    //color attribute
+    frontSquare.setAttributes(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float)));
 
     Model rearSquare = Model();
     rearSquare.setVertices(vertices, sizeof(vertices) / sizeof(float));
@@ -80,16 +92,32 @@ int main()
         ScopedTimer timer(&deltaTime);
         processInput(window);
         glClear(GL_COLOR_BUFFER_BIT);
-        shader3D.use();
+        shaderColor.use();
         for (int i = 0; i < models.size(); i++)
         {
             positions[i] += velocities[i] * deltaTime;
             if (abs(positions[i].x) > 1)
+            {
                 velocities[i].x *= -1;
+                positions[i].x += velocities[i].x * deltaTime;
+            }
             if (abs(positions[i].y) > 1)
+            {
                 velocities[i].y *= -1;
+                positions[i].y += velocities[i].y * deltaTime;
+            }
             shader3D.setVec3("offset", positions[i]);
-            models[i].draw(GL_LINE);
+            shaderColor.setVec3("offset", positions[i]);
+            if (i == 0)
+            {
+                models[i].draw();
+                shader3D.use();
+            }
+            else
+                models[i].draw(GL_LINE);
+
+
+            
         }
         
 
