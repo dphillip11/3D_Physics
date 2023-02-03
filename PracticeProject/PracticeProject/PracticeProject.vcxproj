@@ -132,11 +132,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Classes\Cube.cpp" />
+    <ClCompile Include="src\Classes\Ball.cpp" />
+    <ClCompile Include="src\Classes\Model.cpp" />
+    <ClCompile Include="src\Classes\Shader.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\glad.cpp" />
     <ClCompile Include="src\Helpers.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Classes\Cube.h" />
+    <ClInclude Include="src\Classes\Ball.h" />
+    <ClInclude Include="src\Classes\Model.h" />
+    <ClInclude Include="src\Classes\Shader.h" />
     <ClInclude Include="src\Header.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

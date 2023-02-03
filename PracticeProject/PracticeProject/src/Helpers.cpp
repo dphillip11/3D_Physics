@@ -1,6 +1,9 @@
+#pragma once
 #include "Header.hpp"
+#include <iostream>
+#include <glad/glad.h>
 
-
+#define LOG(x) std::cout << x << std::endl;
 
 
 GLFWwindow* InitialiseWindow(const unsigned int width, const unsigned int height, const char* name)
@@ -38,63 +41,6 @@ GLFWwindow* InitialiseWindow(const unsigned int width, const unsigned int height
     return window;
 }
 
-//takes source scripts, compiles them and links them into a program and sets it as active
-void CreateShaderProgram(const char* &vertexShaderSource, const char* &fragmentShaderSource, unsigned int &programName) 
-{
-    //create vertex shader
-    unsigned int vertexShader;
-    //instantiate
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    //add script
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    //compile
-    glCompileShader(vertexShader);
-    //log compilation results
-    char infoLog[512];
-    int success;
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        //display error if failed
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        LOG("failed vertex shader compilation")
-            LOG(infoLog)
-    }
-    //create a fragment shader
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    //log errors
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        LOG("failed fragment shader compilation")
-            LOG(infoLog)
-    }
-    
-    //instantiate program
-    programName = glCreateProgram();
-    //attach shaders
-    glAttachShader(programName, vertexShader);
-    glAttachShader(programName, fragmentShader);
-    //link program
-    glLinkProgram(programName);
-    //log errors
-    glGetProgramiv(programName, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(programName, 512, NULL, infoLog);
-        LOG("failed shader program linking")
-            LOG(infoLog)
-    }
-    //set active
-    glUseProgram(programName);
-    //delete redundant shaders
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-    
-}
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
@@ -112,5 +58,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
+
+
+
 
 

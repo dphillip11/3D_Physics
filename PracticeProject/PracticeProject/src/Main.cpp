@@ -1,44 +1,15 @@
 
 #include "Header.hpp"
-
+#include <iostream>
+#include "Classes/Shader.h"
+#include "Classes/Model.h"
+#include "Classes/Ball.h"
+#include "Classes/Cube.h"
 
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-const char* windowName = "LearnOpenGl";
-
-//vertex shader source
-const char* vertexShaderSource = "#version 330\n"
-"layout(location = 0) in vec2 aPos;\n"
-"void main()\n"
-"{\n"
-"gl_Position = vec4(aPos,0,2.0f);"
-"}\0";
-
-const char* vertexShaderSource2 = "#version 330\n"
-"layout(location = 0) in vec2 aPos;\n"
-"void main()\n"
-"{\n"
-"gl_Position = vec4(aPos,0,3.0f);"
-"}\0";
-
-//fragment shader source
-const char* fragmentShaderSource = "#version 330\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"FragColor = vec4(gl_FragCoord.x / 800, 0.5f * gl_FragCoord.y / 600 ,0.0f,1.0f);\n"
-"}\0";
-
-//fragment shader source 2
-const char* fragmentShaderSource2 = "#version 330\n"
-"out vec4 FragColor;\n"
-"uniform float t;"
-"void main()\n"
-"{\n"
-"FragColor = vec4(0.5*(sin(t) + 1),0.5*(sin(t + 2) + 1),0.5*(sin(t + 4) + 1),1.0f);\n"
-"}\0";
-
+const char* windowName = "Balls";
 
 
 int main()
@@ -46,12 +17,25 @@ int main()
     //setup window and make a reference
     GLFWwindow* window = InitialiseWindow(SCR_WIDTH, SCR_HEIGHT, windowName);
 
-    unsigned int shaderProgram1;
-    //compile and link source code for shaders
-    CreateShaderProgram(vertexShaderSource, fragmentShaderSource, shaderProgram1);
+    Shader shader1 = Shader("src/shaders/2D.vs", "src/shaders/ColorByPosition.fs");
+    Shader shader2 = Shader("src/shaders/2D.vs", "src/shaders/ColorByTime.fs");
+    Shader shader3D = Shader("src/shaders/3D.vs", "src/shaders/ColorByTime.fs");
 
-    unsigned int shaderProgram2;
-    CreateShaderProgram(vertexShaderSource2, fragmentShaderSource2, shaderProgram2);
+      /*  double radius = 1.0;
+        int n_segments = 8;
+        auto vertices = sphere_vertices(radius, n_segments);
+        auto indices = sphere_indices(n_segments);
+        std::cout << "Vertices:" << std::endl;
+        for (int i = 0; i < vertices.size(); i++) {
+            auto [x, y, z] = vertices[i];
+            std::cout << x << " " << y << " " << z << std::endl;
+        }
+        std::cout << "Indices:" << std::endl;
+        for (int i = 0; i < indices.size(); i++) {
+            std::cout << indices[i] << " ";
+        }
+        std::cout << std::endl;
+        return 0;*/
 
 
     //create list of vertices
@@ -61,7 +45,7 @@ int main()
         0.5f,-0.5f,
         -0.25f,0.0f,
         0.25f,0.0f,
-        0.0f,-0.5f
+        0.0f,-0.76f
     };
 
     float vertices2[] = {
@@ -83,39 +67,23 @@ int main()
         3,4,5
     };
 
-    //create VAO to store VBO at attribute information
-    unsigned int VAO[2];
-    unsigned int VBO[2];
-    glGenVertexArrays(2, VAO);
-    glGenBuffers(2, VBO);
+    Ball ball = Ball();
+    ball.CreateVertices(0.5f);
+    Cube cube = Cube();
+    cube.CreateVertices(0.5f);
+   /* model.setVertices(vertices, sizeof(vertices)/sizeof(float));
+    model.setAttributes(0, 2, GL_FLOAT, false, 2 * sizeof(float), (void*)0);
+    model.setIndices(indicesT1, sizeof(indicesT1)/sizeof(int));*/
 
-    glBindVertexArray(VAO[0]);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-    //assign vertices to buffer
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    //set vertex attributes on currently assigned buffer
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    //assign vertice2 VAO,VBO
-    glBindVertexArray(VAO[1]);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-
-    //create EBO to index vertices
-    unsigned int EBO[2];
-    glGenBuffers(2, EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[0]);
-    //push indiecs to buffer
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesT1), indicesT1, GL_STATIC_DRAW);
-    //bind a second EBO
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[1]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesT2), indicesT2, GL_STATIC_DRAW);
-
-    int tLocation = glGetUniformLocation(shaderProgram2, "t");
     float t = 0;
+    float dx = 0;
+    float xPos = 0;
+    float dy = 0;
+    float yPos = 0;
+    float dz = -0.0001;
+    float zPos = 0;
+    
+    
     
 
 
@@ -123,28 +91,33 @@ int main()
     // -----------
     while (!glfwWindowShouldClose(window))
     {
-        // input
-        // -----
         processInput(window);
+        //set uniform float
         t = (t + 0.001f);
-        glUniform1f(tLocation, t);
-        // render
+        xPos += dx;
+        yPos += dy;
+        zPos += dz;
+        if (abs(xPos) > 1)
+        {
+            xPos -= dx;
+            dx = -dx;
+        }
+        if (abs(yPos) > 1)
+        {
+            yPos -= dy;
+            dy = -dy;
+        }
+        shader3D.setFloat("t", t);
+        // clear screen
         glClear(GL_COLOR_BUFFER_BIT);
-        glUseProgram(shaderProgram1);//draw plain color
-        glBindVertexArray(VAO[1]);//screen corners
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        glDrawArrays(GL_TRIANGLES, 0, 6);//fill screen
-
-        glUseProgram(shaderProgram2);//draw with varied color
-        glBindVertexArray(VAO[0]);//triangle vertices
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[0]);//smaller triangles
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//wireframe mode
-        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);//9 vertices
- 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//fill mode
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[1]);//inner triangle
-        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);//3 vertices
-
+        //set shader
+        shader3D.use();//draw with varied color
+        //draw model
+        shader3D.setFloat("x", xPos);
+        shader3D.setFloat("y", yPos);
+        shader3D.setFloat("z", zPos);
+        //cube.draw(GL_FILL);
+        ball.draw(GL_FILL);
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
