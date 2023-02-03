@@ -1,5 +1,6 @@
 #pragma once
 #include "../Header.hpp"
+#include "Vector3.h"
 
 class Shader
 {

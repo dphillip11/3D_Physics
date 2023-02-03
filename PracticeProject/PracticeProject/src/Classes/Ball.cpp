@@ -3,6 +3,7 @@
 #include <math.h>
 #include <iostream>
 #include <vector>
+#include "Vector3.h"
 
 #define LOG(x) std::cout << x << std::endl;
 

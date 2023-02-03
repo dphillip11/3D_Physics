@@ -53,5 +53,11 @@
     <ClInclude Include="src\Classes\Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Classes\ScopedTimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Classes\Vector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

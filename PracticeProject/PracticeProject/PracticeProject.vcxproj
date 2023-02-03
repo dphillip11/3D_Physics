@@ -141,6 +141,8 @@
     <ClCompile Include="src\Helpers.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Classes\Vector3.h" />
+    <ClInclude Include="src\Classes\ScopedTimer.h" />
     <ClInclude Include="src\Classes\Cube.h" />
     <ClInclude Include="src\Classes\Ball.h" />
     <ClInclude Include="src\Classes\Model.h" />

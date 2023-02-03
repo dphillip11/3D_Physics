@@ -5,6 +5,8 @@
 #include "Classes/Model.h"
 #include "Classes/Ball.h"
 #include "Classes/Cube.h"
+#include <vector>
+#include "Classes/ScopedTimer.h"
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -33,6 +35,7 @@ int main()
         0,1,2,
         0,2,3};
 
+   
     Model frontSquare = Model();
     frontSquare.setVertices(vertices, sizeof(vertices) / sizeof(float));
     frontSquare.setIndices(indices, 6);
@@ -43,19 +46,29 @@ int main()
     rearSquare.setIndices(indices, 6);
     rearSquare.setAttributes(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-    Ball ball;
-    ball.CreateVertices(0.25f);
+    Ball ball(0.25);
+    Cube cube(0.25);
 
-    Cube cube;
-    cube.CreateVertices(0.25f);
+    //create vector of models
+    std::vector<Model> models;
 
-    Vector3 Position1 = { 0.25,0.25,0 };
-    Vector3 Position2 = { -0.25,-0.25,0 };
-    Vector3 Position3 = { 0,0,0 };
-    Vector3 Velocity = { 0.0004,0.00025,0};
+    models.push_back(frontSquare);
+    models.push_back(rearSquare);
+    models.push_back(ball);
+    models.push_back(cube);
     
-    float t = 0;
+    std::vector<Vector3> velocities;
+    velocities.push_back({ 0.25,0.25,0 });
+    velocities.push_back({-0.25,-0.25,0 });
+    velocities.push_back({ -0.15,-0.35,0 });
+    velocities.push_back({ -0.05,-0.015,0 });
+    std::vector<Vector3> positions;
+    positions.push_back({ 0,0,0 });
+    positions.push_back({ 0,0,0 });
+    positions.push_back({ 0,0,0 });
+    positions.push_back({ 0,0,0 });
     
+    float deltaTime = 0;
     
     
 
@@ -64,24 +77,20 @@ int main()
     // -----------
     while (!glfwWindowShouldClose(window))
     {
+        ScopedTimer timer(&deltaTime);
         processInput(window);
-        // clear screen
         glClear(GL_COLOR_BUFFER_BIT);
-        //set shader
         shader3D.use();
-        shader3D.setVec3("offset", Position1);
-        //frontSquare.draw(GL_LINE);
-        //shader3D.setVec3("offset", Position2);
-        rearSquare.draw(GL_LINE);
-        Position2 += Velocity;
-        if (abs(Position2.x) > 0.75)
-            Velocity.x *= -1;
-        if (abs(Position2.y) > 0.75)
-            Velocity.y *= -1;
-        shader3D.setVec3("offset", Position2);
-        ball.draw(GL_LINE);
-        shader3D.setVec3("offset", Position3);
-        cube.draw();
+        for (int i = 0; i < models.size(); i++)
+        {
+            positions[i] += velocities[i] * deltaTime;
+            if (abs(positions[i].x) > 1)
+                velocities[i].x *= -1;
+            if (abs(positions[i].y) > 1)
+                velocities[i].y *= -1;
+            shader3D.setVec3("offset", positions[i]);
+            models[i].draw(GL_LINE);
+        }
         
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
