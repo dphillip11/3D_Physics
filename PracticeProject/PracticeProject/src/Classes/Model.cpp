@@ -1,6 +1,5 @@
 #include "Model.h"
-//#include "glad/glad.h"
-//#include <GLFW/glfw3.h>
+#include <iostream>
 
 Model::Model(): isSetEBO(false), isSetVBO(false), isSetVAO(false) {
 	glGenVertexArrays(1, &VAO);
@@ -8,24 +7,22 @@ Model::Model(): isSetEBO(false), isSetVBO(false), isSetVAO(false) {
 	glGenBuffers(1, &EBO);
 }
 
-void Model::setVertices(const float* vertices, int size) {
+void Model::setVertices(const void* vertices, int size) {
+	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, size * sizeof(float), vertices, GL_STATIC_DRAW);
 	vertexCount = size;
 	isSetVBO = true;
 }
-void Model::setIndices(const int* indices, int size) {
+void Model::setIndices(const void* indices, int size) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(int), indices, GL_STATIC_DRAW);
 	indexCount = size;
 	isSetEBO = true;
 }
-void Model::setAttributes(int vaoPos, int count, GLenum type, GLboolean normalized, int stride, const void* pos)
+void Model::setAttributes(int vaoPos, int count, GLenum type, bool normalized, int stride, const void* pos)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBindVertexArray(VAO);
-	//glVertexAttribPointer(vaoPos, count, type, normalized, stride, pos);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	glVertexAttribPointer(vaoPos, count, type, normalized?GL_TRUE:GL_FALSE, stride, pos);
 	glEnableVertexAttribArray(0);
 	isSetVAO = true;
 }
@@ -37,8 +34,7 @@ void Model::draw(GLenum fillMode, GLenum drawMode) {
 	if (isSetVAO && isSetEBO && isSetVBO)
 	{
 		glBindVertexArray(VAO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);	
-		glDrawElements(drawMode, indexCount, GL_UNSIGNED_INT, 0);//9 vertices
+		glDrawElements(drawMode, indexCount, GL_UNSIGNED_INT, 0);
 	}
 	else if (isSetVAO && isSetVBO)
 	{

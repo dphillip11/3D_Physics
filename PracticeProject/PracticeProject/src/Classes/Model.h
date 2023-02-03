@@ -14,9 +14,9 @@ protected:
 public:
 	
 	Model();
-	void setVertices(const float* vertices,int size);
-	void setIndices(const int* indices, int size);
-	void setAttributes(int vaoPos, int count, GLenum type, GLboolean normalized, int stride, const void* pos);
+	void setVertices(const void* vertices,int size);
+	void setIndices(const void* indices, int size);
+	void setAttributes(int vaoPos, int count, GLenum type, bool normalized, int stride, const void* pos);
 	void draw(GLenum fillMode = GL_FILL, GLenum drawMode = GL_TRIANGLES);
 };
 

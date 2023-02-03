@@ -17,71 +17,44 @@ int main()
     //setup window and make a reference
     GLFWwindow* window = InitialiseWindow(SCR_WIDTH, SCR_HEIGHT, windowName);
 
-    Shader shader1 = Shader("src/shaders/2D.vs", "src/shaders/ColorByPosition.fs");
-    Shader shader2 = Shader("src/shaders/2D.vs", "src/shaders/ColorByTime.fs");
-    Shader shader3D = Shader("src/shaders/3D.vs", "src/shaders/ColorByTime.fs");
+    Shader shader3D = Shader("src/shaders/3Dmoving.vs", "src/shaders/Red.fs");
 
-      /*  double radius = 1.0;
-        int n_segments = 8;
-        auto vertices = sphere_vertices(radius, n_segments);
-        auto indices = sphere_indices(n_segments);
-        std::cout << "Vertices:" << std::endl;
-        for (int i = 0; i < vertices.size(); i++) {
-            auto [x, y, z] = vertices[i];
-            std::cout << x << " " << y << " " << z << std::endl;
-        }
-        std::cout << "Indices:" << std::endl;
-        for (int i = 0; i < indices.size(); i++) {
-            std::cout << indices[i] << " ";
-        }
-        std::cout << std::endl;
-        return 0;*/
-
-
-    //create list of vertices
-    float vertices[] = {
-        -0.5f,-0.5f,
-        0.0f,0.5f,
-        0.5f,-0.5f,
-        -0.25f,0.0f,
-        0.25f,0.0f,
-        0.0f,-0.76f
+    //vertices for a square
+    float vertices[] = {//clockwise
+        -0.5f,0.5f,0.0f,//topleftfront,0
+        0.5f,0.5f,0.0f,//toprightfront,1
+        0.5f,-0.5f,0.0f,//bottomrightfront,2
+        -0.5f,-0.5f,0.0f//bottomleftfront,3
+        
     };
 
-    float vertices2[] = {
-         -0.9f, -0.9f,
-         0.9f, -0.9f,
-          0.9f,  0.9f,
+    //indices to draw the triangles
+    int indices[] = {
+        0,1,2,
+        0,2,3};
 
-         0.9f,  0.9f,
-         -0.9f,  0.9f,
-         -0.9f, -0.9f
-    };
+    Model frontSquare = Model();
+    frontSquare.setVertices(vertices, sizeof(vertices) / sizeof(float));
+    frontSquare.setIndices(indices, 6);
+    frontSquare.setAttributes(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-    int indicesT1[] = { 
-        0,3,5,
-        1,3,4,
-        5,4,2 };
+    Model rearSquare = Model();
+    rearSquare.setVertices(vertices, sizeof(vertices) / sizeof(float));
+    rearSquare.setIndices(indices, 6);
+    rearSquare.setAttributes(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-    int indicesT2[] = {
-        3,4,5
-    };
+    Ball ball;
+    ball.CreateVertices(0.25f);
 
-    Ball ball = Ball();
-    ball.CreateVertices(0.5f);
-    Cube cube = Cube();
-    cube.CreateVertices(0.5f);
-   /* model.setVertices(vertices, sizeof(vertices)/sizeof(float));
-    model.setAttributes(0, 2, GL_FLOAT, false, 2 * sizeof(float), (void*)0);
-    model.setIndices(indicesT1, sizeof(indicesT1)/sizeof(int));*/
+    Cube cube;
+    cube.CreateVertices(0.25f);
 
+    Vector3 Position1 = { 0.25,0.25,0 };
+    Vector3 Position2 = { -0.25,-0.25,0 };
+    Vector3 Position3 = { 0,0,0 };
+    Vector3 Velocity = { 0.0004,0.00025,0};
+    
     float t = 0;
-    float dx = 0;
-    float xPos = 0;
-    float dy = 0;
-    float yPos = 0;
-    float dz = -0.0001;
-    float zPos = 0;
     
     
     
@@ -92,32 +65,25 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
-        //set uniform float
-        t = (t + 0.001f);
-        xPos += dx;
-        yPos += dy;
-        zPos += dz;
-        if (abs(xPos) > 1)
-        {
-            xPos -= dx;
-            dx = -dx;
-        }
-        if (abs(yPos) > 1)
-        {
-            yPos -= dy;
-            dy = -dy;
-        }
-        shader3D.setFloat("t", t);
         // clear screen
         glClear(GL_COLOR_BUFFER_BIT);
         //set shader
-        shader3D.use();//draw with varied color
-        //draw model
-        shader3D.setFloat("x", xPos);
-        shader3D.setFloat("y", yPos);
-        shader3D.setFloat("z", zPos);
-        //cube.draw(GL_FILL);
-        ball.draw(GL_FILL);
+        shader3D.use();
+        shader3D.setVec3("offset", Position1);
+        //frontSquare.draw(GL_LINE);
+        //shader3D.setVec3("offset", Position2);
+        rearSquare.draw(GL_LINE);
+        Position2 += Velocity;
+        if (abs(Position2.x) > 0.75)
+            Velocity.x *= -1;
+        if (abs(Position2.y) > 0.75)
+            Velocity.y *= -1;
+        shader3D.setVec3("offset", Position2);
+        ball.draw(GL_LINE);
+        shader3D.setVec3("offset", Position3);
+        cube.draw();
+        
+
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);

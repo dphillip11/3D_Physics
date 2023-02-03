@@ -2,11 +2,6 @@
 #include "Model.h"
 #include "../Header.hpp"
 
-struct Vector3{
-	float x;
-	float y;
-	float z;
-};
 
 class Ball : public Model
 {

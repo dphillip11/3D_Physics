@@ -8,6 +8,7 @@
 
 
 
+
     Shader::Shader(const char* vertexPath, const char* fragmentPath)
     {
         // 1. retrieve the vertex/fragment source code from filePath
@@ -90,6 +91,12 @@
     void Shader::setFloat(const std::string& name, float value) const
     {
         glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+    }
+
+    void Shader::setVec3(const std::string& name, Vector3 value) const
+    {
+        float val[3] = { value.x,value.y,value.z };
+        glUniform3fv(glGetUniformLocation(ID, name.c_str()),1, val);
     }
 
 

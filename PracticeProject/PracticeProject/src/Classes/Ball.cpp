@@ -42,8 +42,9 @@ void Ball::CreateVertices(float radius)
 				index++;
 			}
 		}
-		setIndices(indices, 294);
+		
 	setVertices(vertices, 192);
+	setIndices(indices, 294);
 	setAttributes(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
 }
 
