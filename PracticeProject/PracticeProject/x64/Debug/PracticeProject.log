@@ -1,4 +1,2 @@
 ﻿  Main.cpp
-X:\3DRendering\PracticeProject\PracticeProject\src\Main.cpp(167,31): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-X:\3DRendering\PracticeProject\PracticeProject\src\Main.cpp(173,31): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   PracticeProject.vcxproj -> X:\3DRendering\PracticeProject\x64\Debug\PracticeProject.exe

@@ -8,6 +8,10 @@
 #include <vector>
 #include "Classes/ScopedTimer.h"
 
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
+
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -18,32 +22,15 @@ void ProcessInput(Window& window, float& blend_value, Shader& shader);
 
 int main()
 {
-    //setup window and make a reference
+   //setup window and make a reference
     Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
 
-    Shader shader3D = Shader("src/shaders/3Dmoving.vs", "src/shaders/Red.fs");
-    Shader shaderColor = Shader("src/shaders/3DPos4DColor.vs", "src/shaders/3DPos4DColor.fs");
     Shader shaderTexture = Shader("src/shaders/Pos3Color4Tex2.vs", "src/shaders/applyTexture.fs");
-    Shader shaderTM = Shader("src/shaders/3Dmoving.vs", "src/shaders/applyTexture.fs");
-    //vertices for a square
+
+    
+
+   //vertices with texture coordinates
     float vertices[] = {//clockwise
-        -0.5f,0.5f,0.0f,//topleftfront,0
-        0.5f,0.5f,0.0f,//toprightfront,1
-        0.5f,-0.5f,0.0f,//bottomrightfront,2
-        -0.5f,-0.5f,0.0f//bottomleftfront,3  
-    };
-
-    //colored vertices for a square
-    float c_vertices[] = {//clockwise
-        //position          colors
-        -0.5f,0.5f,0.0f,    1.0f,0.0f,0.0f,1.0f,    //topleftfront,0
-        0.5f,0.5f,0.0f,     0.0f,1.0f,0.0f,1.0f,    //toprightfront,1
-        0.5f,-0.5f,0.0f,    0.0f,0.0f,1.0f,1.0f,//bottomrightfront,2
-        -0.5f,-0.5f,0.0f,    1.0f,1.0f,0.0f,1.0f   //bottomleftfront,3  
-    };
-
-    //vertices with texture coordinates
-    float t_vertices[] = {//clockwise
         //position          colors                  texture coords
         -0.5f,0.5f,0.0f,    1.0f,0.0f,0.0f,1.0f,    0.0f, 1.0f,         //topleftfront,0
         0.5f,0.5f,0.0f,     0.0f,1.0f,0.0f,1.0f,    1.0f, 1.0f,         //toprightfront,1
@@ -58,7 +45,7 @@ int main()
 
    
     Model frontSquare = Model();
-    frontSquare.setVertices(t_vertices, sizeof(t_vertices) / sizeof(float));
+    frontSquare.setVertices(vertices, sizeof(vertices) / sizeof(float));
     frontSquare.setIndices(indices, 6);
     //position attribute
     frontSquare.setAttributes(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
@@ -67,30 +54,24 @@ int main()
     //texture attribute
     frontSquare.setAttributes(2, 2 , GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(7 * sizeof(float)));
 
-   // Model rearSquare = Model();
-    //rearSquare.setVertices(vertices, sizeof(vertices) / sizeof(float));
-    //rearSquare.setIndices(indices, 6);
-    //rearSquare.setAttributes(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-    //Ball ball(0.25);
-    //Cube cube(0.25);
+    Ball ball(0.25);
+    Cube cube(0.25);
 
     //create vector of models
     std::vector<Model> models;
 
     models.push_back(frontSquare);
-    //models.push_back(rearSquare);
     //models.push_back(ball);
     //models.push_back(cube);
     
     std::vector<Vector3> velocities;
     velocities.push_back({ 0.25,0.25,0 });
-    //velocities.push_back({-0.25,-0.25,0 });
     //velocities.push_back({ -0.15,-0.35,0 });
     //velocities.push_back({ -0.05,-0.015,0 });
+
     std::vector<Vector3> positions;
     positions.push_back({ 0,0,0 });
-    //positions.push_back({ 0,0,0 });
     //positions.push_back({ 0,0,0 });
     //positions.push_back({ 0,0,0 });
     
@@ -109,18 +90,24 @@ int main()
     texture2.bind();
 
     shaderTexture.use(); // don't forget to activate/use the shader before setting uniforms!
-
     shaderTexture.setInt("texture1", 0);
     shaderTexture.setInt("texture2", 1);
 
     float blend_value = 1.0f;
     shaderTexture.setFloat("blend", blend_value);
     float deltaTime = 0;
+    float time = 0;
    
     // render loop
     // -----------
     while (!window.closed())
     {
+        time += deltaTime;
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = glm::rotate(trans, glm::radians(400 * time), glm::vec3(0.0, 0.0, 1.0));
+        trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+        unsigned int transformLoc = glGetUniformLocation(shaderTexture.ID, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
         
         ScopedTimer timer(&deltaTime);
         
@@ -164,13 +151,13 @@ void ProcessInput(Window& window, float& blend_value, Shader& shader)
     {
         if (window.input.front() == 1)
         {
-            blend_value = fmin(blend_value + 0.0001f, 1);
+            blend_value = fmin(blend_value + 0.0001f, (float)1);
             window.input.pop();
             shader.setFloat("blend", blend_value);
         }
         else
         {
-            blend_value = fmax(blend_value - 0.0001f, 0);
+            blend_value = fmax(blend_value - 0.0001f, (float)0);
             window.input.pop();
             shader.setFloat("blend", blend_value);
         }
