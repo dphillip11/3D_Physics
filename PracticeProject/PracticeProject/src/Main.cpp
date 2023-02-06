@@ -26,6 +26,7 @@ int main()
     Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
 
     Shader shaderTexture = Shader("src/shaders/Pos3Color4Tex2.vs", "src/shaders/applyTexture.fs");
+    Shader shaderTransform = Shader("src/shaders/3D.vs", "src/shaders/Red.fs");
 
     
 
@@ -55,8 +56,8 @@ int main()
     frontSquare.setAttributes(2, 2 , GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(7 * sizeof(float)));
 
 
-    Ball ball(0.25);
-    Cube cube(0.25);
+    Ball ball(0.5);
+    Cube cube(0.5);
 
     //create vector of models
     std::vector<Model> models;
@@ -102,23 +103,39 @@ int main()
     // -----------
     while (!window.closed())
     {
-        time += deltaTime;
+        glClear(GL_COLOR_BUFFER_BIT);
         glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::rotate(trans, glm::radians(400 * time), glm::vec3(0.0, 0.0, 1.0));
-        trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
-        unsigned int transformLoc = glGetUniformLocation(shaderTexture.ID, "transform");
+        trans = glm::rotate(trans, glm::radians(100 * time), glm::vec3(1.0, 1.0, 1.0));
+        trans = glm::scale(trans, glm::vec3(sin(time), sin(time), sin(time)));
+        unsigned int transformLoc = glGetUniformLocation(shaderTransform.ID, "transform");
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-        
+        shaderTransform.use();
+        //cube.draw();
+        ball.draw();
+        //shaderTexture.use();
+        time += deltaTime;
+        /*trans = glm::mat4(1.0f);
+        trans = glm::translate(trans, glm::vec3(-positions[0].x - 1,-positions[0].y + 1,-positions[0].z));
+        trans = glm::scale(trans, glm::vec3(1 + sin(time), 1 + sin(time), 0.5));
+        transformLoc = glGetUniformLocation(shaderTexture.ID, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));*/
+        //models[0].draw();
+
+       /* trans = glm::mat4(1.0f);
+        glm::rotate(trans, glm::radians(400 * time), glm::vec3(0.0, 0.0, 1.0));
+        trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+        */
         ScopedTimer timer(&deltaTime);
         
         ProcessInput(window, blend_value, shaderTexture);
 
-        glClear(GL_COLOR_BUFFER_BIT);
+       
         
-        shaderTexture.use();
+        //shaderTexture.use();
         
         
-        for (int i = 0; i < models.size(); i++)
+       /* for (int i = 0; i < models.size(); i++)
         {
             positions[i] += velocities[i] * deltaTime;
             if (abs(positions[i].x) > 1)
@@ -132,11 +149,11 @@ int main()
                 positions[i].y += velocities[i].y * deltaTime;
             }
             
-            shaderTexture.setVec3("offset", positions[i]);
-            models[i].draw();
+            shaderTexture.setVec3("offset", positions[i]);*/
+            //models[i].draw();
                
             
-        }
+        //}
         
         window.update();
         
