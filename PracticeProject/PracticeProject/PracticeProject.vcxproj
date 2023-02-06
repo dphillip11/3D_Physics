@@ -136,18 +136,22 @@
     <ClCompile Include="src\Classes\Ball.cpp" />
     <ClCompile Include="src\Classes\Model.cpp" />
     <ClCompile Include="src\Classes\Shader.cpp" />
+    <ClCompile Include="src\Classes\Window.cpp" />
+    <ClCompile Include="src\stb_image.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\glad.cpp" />
-    <ClCompile Include="src\Helpers.cpp" />
+    <ClCompile Include="src\Classes\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Classes\Window.h" />
     <ClInclude Include="src\Classes\Vector3.h" />
     <ClInclude Include="src\Classes\ScopedTimer.h" />
     <ClInclude Include="src\Classes\Cube.h" />
     <ClInclude Include="src\Classes\Ball.h" />
     <ClInclude Include="src\Classes\Model.h" />
     <ClInclude Include="src\Classes\Shader.h" />
-    <ClInclude Include="src\Header.hpp" />
+    <ClInclude Include="src\stb_image.h" />
+    <ClInclude Include="src\Classes\Texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

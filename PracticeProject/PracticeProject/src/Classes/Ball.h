@@ -1,6 +1,5 @@
 #pragma once
 #include "Model.h"
-#include "../Header.hpp"
 #include "Vector3.h"
 
 

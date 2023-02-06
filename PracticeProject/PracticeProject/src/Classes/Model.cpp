@@ -20,6 +20,7 @@ void Model::setIndices(const void* indices, int size) {
 	indexCount = size;
 	isSetEBO = true;
 }
+
 void Model::setAttributes(int vaoPos, int count, GLenum type, bool normalized, int stride, const void* pos)
 {
 	glVertexAttribPointer(vaoPos, count, type, normalized?GL_TRUE:GL_FALSE, stride, pos);
