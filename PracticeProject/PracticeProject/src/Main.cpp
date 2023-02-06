@@ -7,7 +7,6 @@
 #include "Classes/Texture.h"
 #include <vector>
 #include "Classes/ScopedTimer.h"
-
 #include <glm/glm/glm.hpp>
 #include <glm/glm/gtc/matrix_transform.hpp>
 #include <glm/glm/gtc/type_ptr.hpp>
@@ -25,8 +24,9 @@ int main()
    //setup window and make a reference
     Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
 
-    Shader shaderTexture = Shader("src/shaders/Pos3Color4Tex2.vs", "src/shaders/applyTexture.fs");
-    Shader shaderTransform = Shader("src/shaders/3D.vs", "src/shaders/Red.fs");
+    //Shader shaderTexture = Shader("src/shaders/Pos3Color4Tex2.vs", "src/shaders/applyTexture.fs");
+    //Shader shaderTransform = Shader("src/shaders/3D.vs", "src/shaders/Red.fs");
+    Shader shaderGeom = Shader("src/shaders/3D.vs", "src/shaders/Red.fs", "src/shaders/subdivide.gs");
 
     
 
@@ -56,7 +56,7 @@ int main()
     frontSquare.setAttributes(2, 2 , GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(7 * sizeof(float)));
 
 
-    Ball ball(0.5);
+    Ball ball(0.4);
     Cube cube(0.5);
 
     //create vector of models
@@ -90,12 +90,12 @@ int main()
     glActiveTexture(GL_TEXTURE1);
     texture2.bind();
 
-    shaderTexture.use(); // don't forget to activate/use the shader before setting uniforms!
-    shaderTexture.setInt("texture1", 0);
-    shaderTexture.setInt("texture2", 1);
+    //shaderTexture.use(); // don't forget to activate/use the shader before setting uniforms!
+    //shaderTexture.setInt("texture1", 0);
+    //shaderTexture.setInt("texture2", 1);
 
     float blend_value = 1.0f;
-    shaderTexture.setFloat("blend", blend_value);
+    //shaderTexture.setFloat("blend", blend_value);
     float deltaTime = 0;
     float time = 0;
    
@@ -104,14 +104,16 @@ int main()
     while (!window.closed())
     {
         glClear(GL_COLOR_BUFFER_BIT);
-        glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::rotate(trans, glm::radians(100 * time), glm::vec3(1.0, 1.0, 1.0));
-        trans = glm::scale(trans, glm::vec3(sin(time), sin(time), sin(time)));
-        unsigned int transformLoc = glGetUniformLocation(shaderTransform.ID, "transform");
+        shaderGeom.use();
+        
+       glm::mat4 trans = glm::mat4(1.0f);
+       trans = glm::rotate(trans, glm::radians(30 * time), glm::vec3(1.0, 1.0, 1.0));
+        unsigned int transformLoc = glGetUniformLocation(shaderGeom.ID, "transform");
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-        shaderTransform.use();
+ 
         //cube.draw();
-        ball.draw();
+        ball.draw(GL_LINE);
+        //ball.draw();
         //shaderTexture.use();
         time += deltaTime;
         /*trans = glm::mat4(1.0f);
@@ -128,7 +130,7 @@ int main()
         */
         ScopedTimer timer(&deltaTime);
         
-        ProcessInput(window, blend_value, shaderTexture);
+        //ProcessInput(window, blend_value, shaderTexture);
 
        
         
