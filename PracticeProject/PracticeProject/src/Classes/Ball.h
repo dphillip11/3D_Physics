@@ -23,8 +23,7 @@ public:
 
 	Ball(float RADIUS) {
 		usePremadeVertices(); 
-		//CreateVertices(RADIUS);
-		radius = RADIUS; sphereShader = new Shader("src/shaders/3D.vs", "src/shaders/Red.fs", "src/shaders/sphereShader.hlsl");
+		radius = RADIUS; sphereShader = new Shader("src/shaders/basic.vs", "src/shaders/applytexture.fs", "src/shaders/sphereShader.hlsl");
 	}
 	void CreateVertices(float radius);
 	void usePremadeVertices();

@@ -25,9 +25,9 @@ int main()
     Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
 
     //Shader shaderTexture = Shader("src/shaders/Pos3Color4Tex2.vs", "src/shaders/applyTexture.fs");
-    Shader shader = Shader("src/shaders/Basic.fs", "src/shaders/Red.fs");
-    Shader shaderGeom = Shader("src/shaders/3D.vs", "src/shaders/Red.fs", "src/shaders/sphereShader.hlsl");
-
+    //Shader shader = Shader("src/shaders/Basic.fs", "src/shaders/Red.fs");
+    //Shader shaderGeom = Shader("src/shaders/3D.vs", "src/shaders/Red.fs", "src/shaders/sphereShader.hlsl");
+    Shader shaderTex = Shader("src/shaders/basic.vs", "src/shaders/applytexture.fs", "src/shaders/sphereShader.hlsl");
     
 
    //vertices with texture coordinates
@@ -81,14 +81,14 @@ int main()
     //Texture texture1;
     //texture1.setParameters();
     //texture1.loadImage("src/Textures/container.jpg");
-    //Texture texture2;
-    //texture2.setParameters();
-    //texture2.loadImage("src/Textures/awesomeface.png", GL_RGBA, true);
+    Texture texture2;
+    texture2.setParameters();
+    texture2.loadImage("src/Textures/awesomeface.png", GL_RGBA, true);
     //// bind textures on corresponding texture units
     //glActiveTexture(GL_TEXTURE0);
     //texture1.bind();
-    //glActiveTexture(GL_TEXTURE1);
-    //texture2.bind();
+    glActiveTexture(GL_TEXTURE1);
+    texture2.bind();
 
     //shaderTexture.use(); // don't forget to activate/use the shader before setting uniforms!
     //shaderTexture.setInt("texture1", 0);
@@ -106,12 +106,12 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         //glEnable(GL_DEPTH_TEST);
-        ball.position = glm::vec3(0.5 * sin(time), -0.75 * sin(time), 0);
+        ball.position = glm::vec3(0.5 * sin(time), 0.5 * sin(time), 0);
         ball.rotation.x = 360 * sin(time/6);
         ball.shadedDraw();
         
-        shader.use();
-        ball.draw(GL_LINE);
+        //shaderTex.use();
+        //ball.draw(GL_LINE);
 
         time += deltaTime;
 

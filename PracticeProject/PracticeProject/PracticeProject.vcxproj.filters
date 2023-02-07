@@ -73,6 +73,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\shaders\Basic.fs" />
+    <None Include="src\shaders\basic.vs" />
   </ItemGroup>
 </Project>
