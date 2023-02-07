@@ -1,3 +1,2 @@
 ﻿  Main.cpp
-X:\3DRendering\PracticeProject\PracticeProject\src\Main.cpp(59,18): warning C4305: 'argument': truncation from 'double' to 'float'
   PracticeProject.vcxproj -> X:\3DRendering\PracticeProject\x64\Debug\PracticeProject.exe
