@@ -47,7 +47,7 @@ void Ball::shadedDraw(GLenum fillMode, GLenum drawMode)
 
 void Ball::CreateVertices(float radius)
 {
-	const int NUM_SEGMENTS = 6;
+	const int NUM_SEGMENTS = 8;
 	const float PI = (float)3.14159265;
 	float vertices[NUM_SEGMENTS * NUM_SEGMENTS * 3];
 	int indices[NUM_SEGMENTS * NUM_SEGMENTS * 6];
@@ -58,7 +58,7 @@ void Ball::CreateVertices(float radius)
 		float r = cos(angle1);
 
 		for (int j = 0; j < NUM_SEGMENTS; j++) {
-			float angle2 = j / NUM_SEGMENTS * (float)2.0 * (float)PI;
+			float angle2 = (float)j / NUM_SEGMENTS * 2.0 * PI;
 			float x = r * cos(angle2);
 			float z = r * sin(angle2);
 

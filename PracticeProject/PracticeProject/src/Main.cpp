@@ -108,7 +108,8 @@ int main()
         //glEnable(GL_DEPTH_TEST);
         ball.position = glm::vec3(0.5 * sin(time), -0.75 * sin(time), 0);
         ball.rotation.x = 360 * sin(time/6);
-        ball.shadedDraw(GL_LINE);
+        ball.shadedDraw();
+        
         shader.use();
         ball.draw(GL_LINE);
 
