@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Classes\Box.cpp" />
     <ClCompile Include="src\Classes\Cube.cpp" />
     <ClCompile Include="src\Classes\Ball.cpp" />
     <ClCompile Include="src\Classes\Model.cpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="src\Classes\WoodenPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Classes\Box.h" />
     <ClInclude Include="src\Classes\Window.h" />
     <ClInclude Include="src\Classes\Vector3.h" />
     <ClInclude Include="src\Classes\ScopedTimer.h" />

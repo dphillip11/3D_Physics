@@ -13,8 +13,8 @@ public:
 
 	WoodenPanel();
 	void shadedDraw(GLenum fillMode = GL_FILL, GLenum drawMode = GL_TRIANGLES);
-	
-	~WoodenPanel() { delete(shader); }
+	~WoodenPanel() { }
+		//delete(shader); }
 
 };
 

@@ -31,3 +31,4 @@ void WoodenPanel::shadedDraw(GLenum fillMode, GLenum drawMode)
 	texture.bind();
 	draw(fillMode, drawMode);
 }
+
