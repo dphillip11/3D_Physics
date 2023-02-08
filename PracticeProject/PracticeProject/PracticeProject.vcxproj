@@ -141,6 +141,7 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\glad.cpp" />
     <ClCompile Include="src\Classes\Texture.cpp" />
+    <ClCompile Include="src\Classes\WoodenPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Classes\Window.h" />
@@ -152,9 +153,7 @@
     <ClInclude Include="src\Classes\Shader.h" />
     <ClInclude Include="src\stb_image.h" />
     <ClInclude Include="src\Classes\Texture.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\shaders\basic.vs" />
+    <ClInclude Include="src\Classes\WoodenPanel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

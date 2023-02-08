@@ -28,7 +28,6 @@ glm::uvec3(3, 10, 7),glm::uvec3(10, 6, 7),glm::uvec3(6, 11, 7),glm::uvec3(6, 0, 
 glm::uvec3(10, 1, 6),glm::uvec3(11, 0, 9),glm::uvec3(2, 11, 9),glm::uvec3(5, 2, 9),glm::uvec3(11, 2, 7)
 };
 
-Shader* Ball::sphereShader = nullptr;
 
 void Ball::shadedDraw(GLenum fillMode, GLenum drawMode)
 {

@@ -16,14 +16,14 @@ class Ball : public Model
 	
 
 public:
-	static Shader* sphereShader;
+	Shader* sphereShader;
 	glm::vec3 position = glm::vec3(0,0,0);
 	glm::vec3 rotation = glm::vec3(0, 0, 0);
 	float radius;
 
 	Ball(float RADIUS) {
 		usePremadeVertices(); 
-		radius = RADIUS; sphereShader = new Shader("src/shaders/basic.vs", "src/shaders/applytexture.fs", "src/shaders/sphereShader.hlsl");
+		radius = RADIUS; sphereShader = new Shader("src/shaders/vertex/ball.hlsl", "src/shaders/fragment/ball.hlsl", "src/shaders/geometry/ball.hlsl");
 	}
 	void CreateVertices(float radius);
 	void usePremadeVertices();
