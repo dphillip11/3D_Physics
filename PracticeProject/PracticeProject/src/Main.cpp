@@ -32,7 +32,7 @@ int main()
     projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
     glm::mat4 view = glm::mat4(1.0f);
     //move camera
-    //view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
     
 
@@ -54,8 +54,8 @@ int main()
         ball.sphereShader->use();
         glm::mat4 ball_model = glm::mat4(1);
         ball_model = ball.generate_transform();
-        ball.sphereShader->setMat4("model", view);
-        ball.sphereShader->setMat4("projection", view);
+        ball.sphereShader->setMat4("model", ball_model);
+        ball.sphereShader->setMat4("projection", projection);
         ball.sphereShader->setMat4("view", view);
         ball.shadedDraw(GL_LINE);
 

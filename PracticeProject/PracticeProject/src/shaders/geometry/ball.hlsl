@@ -5,15 +5,15 @@ out vec4 colorGS;
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 48) out;
 
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
 vec4 colors[18];
 vec3 positions[18];
 
 
 float radius;
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
 
 //this script splits the edges of the triangle in half then do it agin, then fills the hole
 void subdivideTriangle(int A, int B, int C, int index, bool emit)
@@ -23,19 +23,21 @@ void subdivideTriangle(int A, int B, int C, int index, bool emit)
     positions[index + 1]    = radius * normalize(positions[A] + positions[C]);
     positions[index + 2]    = radius * normalize(positions[B] + positions[C]);
     //mix colors
-    colors[index]           = mix(colors[A], colors[B], 0.5);
-    colors[index + 1]       = mix(colors[A], colors[C], 0.5);
-    colors[index + 2]       = mix(colors[B], colors[C], 0.5);
+    colors[index]       = mix(colors[A], colors[B], 0.5);
+    colors[index + 1]   = mix(colors[A], colors[C], 0.5);
+    colors[index + 2]   = mix(colors[B], colors[C], 0.5);
+    //mix textures
 
-    int indices[12] = int[12](A, index, index + 1, index, B, index + 2, index + 1, index + 2, C, index, index+1, index+ 2);
+    //emit all vertice
+    int indices[12] = int[12](A, index, index + 1, index, B, index + 2, index + 1, index + 2, C, index, index + 1, index + 2);
     //0,3,4, 3,1,5, 4,5,2
 
     int i;
     for (i = 0; i < 12; i++)
     {
-        gl_Position = projection * view * model * vec4(positions[i],1);
+        gl_Position = projection * view * model * vec4(positions[indices[i]],1);
         colorGS = colors[indices[i]];
-      
+
         if (emit)
         {
             EmitVertex();
@@ -68,15 +70,15 @@ void main()
     subdivideTriangle(3, 4, 5, 15, true);
 
     //emit final triangle
-    gl_Position = projection * view * model * vec4(positions[15],1);
+    gl_Position = projection * view * model * vec4(positions[15],1) ;
     colorGS = colors[15];
     EmitVertex();
 
-    gl_Position = projection * view * model * vec4(positions[16],1);
+    gl_Position = projection * view * model * vec4(positions[16],1) ;
     colorGS = colors[16];
     EmitVertex();
 
-    gl_Position = projection * view * model * vec4(positions[17],1);
+    gl_Position = projection * view * model * vec4(positions[17],1) ;
     colorGS = colors[17];
     EmitVertex();
 

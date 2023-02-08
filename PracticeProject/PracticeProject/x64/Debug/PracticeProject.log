@@ -1,3 +1,4 @@
 ﻿  Main.cpp
+  LINK : X:\3DRendering\PracticeProject\x64\Debug\PracticeProject.exe not found or not built by the last incremental link; performing full link
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   PracticeProject.vcxproj -> X:\3DRendering\PracticeProject\x64\Debug\PracticeProject.exe
