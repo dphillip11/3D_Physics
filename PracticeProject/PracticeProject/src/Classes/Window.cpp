@@ -51,6 +51,14 @@ void Window::captureInput()
     {
         input.push(2);
     }
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    {
+        input.push(3);
+    }
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
+        input.push(4);
+    }
 }
 
 bool Window::closed() {

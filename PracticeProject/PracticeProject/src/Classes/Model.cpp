@@ -1,5 +1,6 @@
 #include "Model.h"
 #include <iostream>
+#include <glm/glm/gtc/matrix_transform.hpp>
 
 Model::Model(): isSetEBO(false), isSetVBO(false), isSetVAO(false) {
 	glGenVertexArrays(1, &VAO);
@@ -43,4 +44,16 @@ void Model::draw(GLenum fillMode, GLenum drawMode) {
 		glDrawArrays(drawMode,0, vertexCount);
 	}
 
+}
+
+glm::mat4 Model::generate_transform()
+{
+	//TransformedVector = TranslationMatrix * RotationMatrix * ScaleMatrix * OriginalVector;
+	glm::mat4 model = glm::mat4(1);
+	model = glm::scale(model, scale);
+	model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1,0,0));
+	model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0,1, 0));
+	model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1));
+	model = glm::translate(model, position);
+	return model;
 }

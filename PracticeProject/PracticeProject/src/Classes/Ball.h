@@ -17,8 +17,6 @@ class Ball : public Model
 
 public:
 	Shader* sphereShader;
-	glm::vec3 position = glm::vec3(0,0,0);
-	glm::vec3 rotation = glm::vec3(0, 0, 0);
 	float radius;
 
 	Ball(float RADIUS) {

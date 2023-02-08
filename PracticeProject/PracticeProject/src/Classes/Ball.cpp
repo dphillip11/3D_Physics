@@ -32,15 +32,6 @@ glm::uvec3(10, 1, 6),glm::uvec3(11, 0, 9),glm::uvec3(2, 11, 9),glm::uvec3(5, 2, 
 void Ball::shadedDraw(GLenum fillMode, GLenum drawMode)
 {
 	sphereShader->use();
-	glm::mat4 trans = glm::mat4(1.0f);
-	trans = glm::translate(trans, position);
-	trans = glm::rotate(trans, glm::radians(rotation.x), glm::vec3(1.0, 0.0, 0.0));
-	trans = glm::rotate(trans, glm::radians(rotation.y), glm::vec3(0.0, 1.0, 0.0));
-	trans = glm::rotate(trans, glm::radians(rotation.z), glm::vec3(0.0, 0.0, 1.0));
-	sphereShader->setFloat("radius", radius);
-	sphereShader->setVec3("spherePos", position);
-	unsigned int transformLoc = glGetUniformLocation(sphereShader->ID, "transform");
-	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 	draw(fillMode, drawMode);
 }
 
