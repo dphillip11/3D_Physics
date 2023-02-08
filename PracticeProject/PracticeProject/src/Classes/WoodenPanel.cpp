@@ -8,10 +8,10 @@ WoodenPanel::WoodenPanel()
 {
 	shader = new Shader("src/shaders/vertex/container.hlsl", "src/shaders/fragment/container.hlsl");
 	float vertices[12] = {
-		1,1,0, 
-		-1,-1,0, 
-		1,-1,0,
-		-1,1,0
+		0.5,0.5,0, 
+		-0.5,-0.5,0, 
+		0.5,-0.5,0,
+		-0.5,0.5,0
 	};
 	int indices[6] = {
 		0,3,1, 1,0,2
