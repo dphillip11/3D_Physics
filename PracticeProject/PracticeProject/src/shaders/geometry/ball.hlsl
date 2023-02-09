@@ -5,9 +5,7 @@ out vec4 colorGS;
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 48) out;
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+uniform mat4 MVP;
 
 vec4 colors[18];
 vec3 positions[18];
@@ -35,7 +33,7 @@ void subdivideTriangle(int A, int B, int C, int index, bool emit)
     int i;
     for (i = 0; i < 12; i++)
     {
-        gl_Position = projection * view * model * vec4(positions[indices[i]],1);
+        gl_Position = MVP * vec4(positions[indices[i]],1);
         colorGS = colors[indices[i]];
 
         if (emit)
@@ -69,15 +67,15 @@ void main()
     subdivideTriangle(3, 4, 5, 15, true);
 
     //emit final triangle
-    gl_Position = projection * view * model * vec4(positions[15],1) ;
+    gl_Position = MVP * vec4(positions[15],1) ;
     colorGS = colors[15];
     EmitVertex();
 
-    gl_Position = projection * view * model * vec4(positions[16],1) ;
+    gl_Position = MVP * vec4(positions[16],1) ;
     colorGS = colors[16];
     EmitVertex();
 
-    gl_Position = projection * view * model * vec4(positions[17],1) ;
+    gl_Position = MVP * vec4(positions[17],1) ;
     colorGS = colors[17];
     EmitVertex();
 

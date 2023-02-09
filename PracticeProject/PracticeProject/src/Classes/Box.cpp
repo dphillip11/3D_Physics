@@ -3,44 +3,88 @@
 #include <glm/glm/ext/matrix_transform.hpp>
 
 Box::Box() {
-	for (int i = 0; i < 6; i++)
-	{
-		panels.push_back(WoodenPanel());
-	}
+
 	//left
-	panels[0].transform = glm::translate(panels[0].transform, glm::vec3(-0.5, 0, 0));
-	panels[0].transform = glm::rotate(panels[0].transform, glm::radians(90.0f), glm::vec3(0, 1, 0));
+	positions.push_back(glm::vec3(-0.5, 0, 0));
+	rotations.push_back(glm::vec3(0, 1, 0));
 	//right
-	panels[1].transform = glm::translate(panels[1].transform, glm::vec3(0.5, 0, 0));
-	panels[1].transform = glm::rotate(panels[1].transform, glm::radians(90.0f), glm::vec3(0, 1, 0));
+	positions.push_back(glm::vec3(0.5, 0, 0));
+	rotations.push_back(glm::vec3(0, 1, 0));
 	//top
-	panels[2].transform = glm::translate(panels[2].transform, glm::vec3(0, 0.5, 0.0));
-	panels[2].transform = glm::rotate(panels[2].transform, glm::radians(90.0f), glm::vec3(1, 0, 0));	
+	positions.push_back(glm::vec3(0, 0.5, 0));
+	rotations.push_back(glm::vec3(1, 0, 0));	
 	//bottom
-	panels[3].transform = glm::translate(panels[3].transform, glm::vec3(0, -0.5, 0));
-	panels[3].transform = glm::rotate(panels[3].transform, glm::radians(90.0f), glm::vec3(1, 0, 0));	
+	positions.push_back(glm::vec3(0, -0.5, 0));
+	rotations.push_back(glm::vec3(1, 0, 0));	
 	//front
-	panels[4].transform = glm::translate(panels[4].transform, glm::vec3(0, 0, 0.5));
+	positions.push_back(glm::vec3(0, 0, 0.5));
+	rotations.push_back(glm::vec3(0, 0, 0));
 	//back
-	panels[5].transform = glm::translate(panels[5].transform, glm::vec3(0, 0, -0.5));
+	positions.push_back(glm::vec3(0, 0, -0.5));
+	rotations.push_back(glm::vec3(0, 0, 0));
 }
 
 void Box::draw(glm::mat4& view, glm::mat4& projection)
 {
-	for (WoodenPanel panel : panels)
-	{
+	//setup shader
 		panel.shader->use();
-		panel.shader->setMat4("model", panel.transform);
+		glActiveTexture(GL_TEXTURE0);
+		panel.texture.bind();
 		panel.shader->setMat4("view", view);
 		panel.shader->setMat4("projection", projection);
-		panel.shadedDraw();
-	}
-}
+
+		
+	//calculate instance specific model
+		for (int i = 0; i < 6; i++)
+		{
+			glm::mat4 rotate = glm::mat4(1);
+			glm::mat4 translate = glm::translate(glm::mat4(1), positions[i]);
+			if (i < 4)
+				rotate = glm::rotate(glm::mat4(1), glm::radians(90.0f), rotations[i]);	
+			glm::mat4 model = _transform * translate * rotate;
+			panel.shader->setMat4("model", model);
+			panel.draw();
+		}
+		
+		}
 
 void Box::transform(glm::mat4 &transformation)
 {
-	for (WoodenPanel &panel : panels)
+		_transform = _transform * transformation;
+}
+
+void Box::createBoxTransforms(int n)
+{
+	for (int i = 0; i < n; i++)
 	{
-		panel.transform = transformation * panel.transform;
+		boxTransforms.push_back(glm::translate(glm::mat4(1), glm::vec3(rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5)));
+		boxTransformations.push_back(glm::rotate(glm::mat4(1), glm::radians((float)(rand() % 10)/10000), glm::vec3(rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5)));
 	}
+}
+
+void Box::drawBoxes(glm::mat4& view, glm::mat4& projection)
+{
+	//setup shader
+	panel.shader->use();
+	glActiveTexture(GL_TEXTURE0);
+	panel.texture.bind();
+	panel.shader->setMat4("view", view);
+	panel.shader->setMat4("projection", projection);
+
+	for (int j =0; j < boxTransforms.size(); j++)
+	{
+		//calculate instance specific model
+		for (int i = 0; i < 6; i++)
+		{
+			glm::mat4 rotate = glm::mat4(1);
+			glm::mat4 translate = glm::translate(glm::mat4(1), positions[i]);
+			if (i < 4)
+				rotate = glm::rotate(glm::mat4(1), glm::radians(90.0f), rotations[i]);
+			boxTransforms[j] = boxTransformations[j] * boxTransforms[j];
+			glm::mat4 model = boxTransforms[j] * translate * rotate;
+			panel.shader->setMat4("model", model);
+			panel.draw();
+		}
+	}
+
 }

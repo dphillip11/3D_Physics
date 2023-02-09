@@ -25,6 +25,8 @@ Window::Window(const unsigned int width, const unsigned int height, const char* 
         }
         glfwMakeContextCurrent(window);
         glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetCursorPosCallback(window, mouse_callback);
 
         // glad: load all OpenGL function pointers
         // ---------------------------------------
@@ -38,6 +40,15 @@ void Window::framebuffer_size_callback(GLFWwindow* window, int WIDTH, int HEIGHT
 {
     glViewport(0, 0, WIDTH, HEIGHT);
 }
+
+void Window::mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    mouseX = (float)xpos;
+    mouseY = (float)ypos;
+}
+
+float Window::mouseX = 400;
+float Window::mouseY = 300;
 
 void Window::captureInput() 
 {
@@ -76,6 +87,7 @@ bool Window::closed() {
 void Window::update()
 {
     glfwSwapBuffers(window);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glfwPollEvents();
     captureInput();
 }
