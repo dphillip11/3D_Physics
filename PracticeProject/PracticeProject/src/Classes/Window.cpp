@@ -1,9 +1,13 @@
 #include "Window.h"
 #include <iostream>
 #include <glad/glad.h>
+#include "Input.h"
+
+std::unique_ptr<Input> Window::input(new Input);
+
 
 Window::Window(const unsigned int width, const unsigned int height, const char* name)
-{
+{   
         // glfw: initialize and configure
         // ------------------------------
         glfwInit();
@@ -43,12 +47,10 @@ void Window::framebuffer_size_callback(GLFWwindow* window, int WIDTH, int HEIGHT
 
 void Window::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    mouseX = (float)xpos;
-    mouseY = (float)ypos;
+    input->mouseX = (float)xpos;
+    input->mouseY = (float)ypos;
 }
 
-float Window::mouseX = 400;
-float Window::mouseY = 300;
 
 void Window::captureInput() 
 {
@@ -56,28 +58,41 @@ void Window::captureInput()
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     {
-        input.push(1);
+        input->input.push(KEYS::UP);
     }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        input.push(2);
+        input->input.push(KEYS::DOWN);
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
-        input.push(3);
+        input->input.push(KEYS::LEFT);
     }
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
-        input.push(4);
+        input->input.push(KEYS::RIGHT);
     }
-    if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        input.push(5);
+        input->input.push(KEYS::W);
     }
-    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        input.push(6);
+        input->input.push(KEYS::A);
     }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        input->input.push(KEYS::S);
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        input->input.push(KEYS::D);
+    }
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        input->input.push(KEYS::SPACE);
+    }
+    
 }
 
 bool Window::closed() {

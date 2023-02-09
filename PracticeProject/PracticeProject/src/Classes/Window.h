@@ -1,14 +1,14 @@
 #pragma once
 #include <GLFW/glfw3.h>
 #include <queue>
+#include <memory>
+#include "Input.h"
+
 
 class Window {
-	GLFWwindow* window = NULL;
-
+	GLFWwindow* window = nullptr;
 public:
-	std::queue<int> input;
-	static float mouseX;
-	static float mouseY;
+	static std::unique_ptr<Input> input;
 	Window(const unsigned int width, const unsigned int height, const char* name);
 	void captureInput();
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -17,3 +17,6 @@ public:
 	void update();
 	void terminate();
 };
+
+
+
