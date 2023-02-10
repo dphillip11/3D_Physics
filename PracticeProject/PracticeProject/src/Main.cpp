@@ -15,6 +15,7 @@
 #include <glm/glm/gtc/quaternion.hpp>
 #include "Classes/Camera.h"
 #include "Classes/Input.h"
+#include "Classes/BallManager.h"
    
 
 void displayFrameRate(float& timer, float& deltaTime, int& frames)
@@ -50,7 +51,8 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames)
         Ball ball = Ball();
         Box box = Box();
         box.createBoxTransforms(100);
-
+        BallManager ballManager;
+        ballManager.spawnBalls(8000);
 
         float deltaTime = 0;
         float time = 0;
@@ -63,15 +65,16 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames)
         // -----------
         while (!window.closed())
         {
+            glm::mat4 view = camera.lookAt();
             ScopedTimer timer(&deltaTime);
             time += deltaTime;
-            
-            //displayFrameRate(frame_timer, deltaTime, frames);
+            ballManager.updatePositions(deltaTime);
+            ballManager.drawBalls(view, camera.projection);
+            displayFrameRate(frame_timer, deltaTime, frames);
             window.input->ProcessInput(deltaTime,camera);
-            glm::mat4 view = camera.lookAt();
+            
             ball.sphereShader->use();
             ball.sphereShader->setMat4("MVP", camera.projection * view * ball.transform);
-            ball.sphereShader->setFloat("radius", 10);
             ball.shadedDraw();
             box.drawBoxes(view, camera.projection);
             box.transform(rotation);

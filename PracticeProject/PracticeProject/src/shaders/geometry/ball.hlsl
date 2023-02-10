@@ -11,15 +11,14 @@ vec4 colors[18];
 vec3 positions[18];
 
 
-uniform float radius;
 
 //this script splits the edges of the triangle in half then do it agin, then fills the hole
 void subdivideTriangle(int A, int B, int C, int index, bool emit)
 {
     //mix positions
-    positions[index]        = radius * normalize(positions[A] + positions[B]);
-    positions[index + 1]    = radius * normalize(positions[A] + positions[C]);
-    positions[index + 2]    = radius * normalize(positions[B] + positions[C]);
+    positions[index]        = normalize(positions[A] + positions[B]);
+    positions[index + 1]    = normalize(positions[A] + positions[C]);
+    positions[index + 2]    = normalize(positions[B] + positions[C]);
     //mix colors
     colors[index]       = mix(colors[A], colors[B], 0.5);
     colors[index + 1]   = mix(colors[A], colors[C], 0.5);
@@ -50,9 +49,9 @@ void subdivideTriangle(int A, int B, int C, int index, bool emit)
 
 void main()
 {
-    positions[0] = radius * normalize(gl_in[0].gl_Position.xyz);
-    positions[1] = radius * normalize(gl_in[1].gl_Position.xyz);
-    positions[2] = radius * normalize(gl_in[2].gl_Position.xyz);
+    positions[0] = normalize(gl_in[0].gl_Position.xyz);
+    positions[1] = normalize(gl_in[1].gl_Position.xyz);
+    positions[2] = normalize(gl_in[2].gl_Position.xyz);
 
 
     colors[0] = color[0];

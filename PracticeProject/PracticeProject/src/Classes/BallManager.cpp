@@ -1,4 +1,5 @@
 #include "BallManager.h"
+#include <glm/glm/gtc/matrix_transform.hpp>
 
 void BallManager::updatePositions(float deltaTime)
 {
@@ -31,16 +32,26 @@ void BallManager::spawnBalls(int n)
 {
 	for (int i = 0; i < n; i++)
 	{
-		position[ballCount] = randomVec3(boundarySize);
-		velocity[ballCount] = randomVec3(maxSpeed);
-		radius[ballCount] = randomVal(maxRadius, true);
+		position.push_back(randomVec3(boundarySize));
+		velocity.push_back(randomVec3(maxSpeed));
+		radius.push_back(randomVal(maxRadius, true));
 		ballCount++;
 	}
 }
 
-void BallManager::drawBalls() 
+void BallManager::drawBalls(glm::mat4 view, glm::mat4 projection) 
 {
+	//setup shader
+	ball->sphereShader->use();
 
+	for (int i = 0; i < ballCount; i++)
+	{	
+		glm::mat4 model = glm::translate(glm::mat4(1), position[i]);
+		model = glm::scale(model, glm::vec3(radius[i], radius[i], radius[i]));
+		ball->sphereShader->setMat4("MVP", projection * view * model);
+		ball->draw();
+	}
+	
 }
 
 float BallManager::randomVal(float magnitude, bool onlyPositive)
