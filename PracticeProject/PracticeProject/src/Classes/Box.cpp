@@ -58,7 +58,7 @@ void Box::createBoxTransforms(int n)
 	for (int i = 0; i < n; i++)
 	{
 		boxTransforms.push_back(glm::translate(glm::mat4(1), glm::vec3(rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5)));
-		boxTransformations.push_back(glm::rotate(glm::mat4(1), glm::radians((float)(rand() % 10)/10000), glm::vec3(rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5)));
+		boxTransformations.push_back(glm::rotate(glm::mat4(1), glm::radians((float)(rand() % 10)/1000), glm::vec3(rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5)));
 	}
 }
 
@@ -80,7 +80,7 @@ void Box::drawBoxes(glm::mat4& view, glm::mat4& projection)
 			glm::mat4 translate = glm::translate(glm::mat4(1), positions[i]);
 			if (i < 4)
 				rotate = glm::rotate(glm::mat4(1), glm::radians(90.0f), rotations[i]);
-			boxTransforms[j] = boxTransformations[j] * boxTransforms[j];
+			boxTransforms[j] = boxTransformations[j] * boxTransforms[j] * boxTransformations[j];
 			glm::mat4 model = boxTransforms[j] * translate * rotate;
 			panel.shader->setMat4("model", model);
 			panel.draw();

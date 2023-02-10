@@ -17,19 +17,30 @@ enum KEYS {
 
 class Input {
 public:
-    float pitch = 0;
-    float yaw = -90;
+    const float cameraSpeed = 0.08f;
+    const float mouseSensitivity = 0.1f;
+    const float scrollSensitivity = 1.5f;
+
+    float scrollOffset = 0;
+
     float previousMouseX = 0;
     float mouseX = 0;
     float previousMouseY = 0;
     float mouseY = 0;
+
     bool firstMouse = true;
+    int coolDown = 0;
+
     ::std::queue<int> input;
 
     void ProcessInput(float deltaTime, Camera& camera)
     {
-        const float cameraSpeed = 0.05f;
-        const float mouseSensitivity = 0.1f;
+        if (scrollOffset != 0)
+        {
+            camera.zoom(scrollOffset * scrollSensitivity);
+            scrollOffset = 0;
+        }
+       
         if (firstMouse)
         {
             previousMouseX = mouseX;
@@ -42,7 +53,8 @@ public:
             previousMouseX = mouseX;
             float mouseDY = mouseSensitivity * (mouseY - previousMouseY);
             previousMouseY = mouseY;
-            camera.rotate(mouseDX, mouseDY);
+            if (!camera.isLockedOn)
+                camera.rotate(mouseDX, mouseDY);
         }
         while (!input.empty())
         {
@@ -73,6 +85,14 @@ public:
             //SPACE
             else if (input.front() == KEYS::SPACE)
             {
+                if (coolDown <= 0)
+                {
+                    camera.isLockedOn = !camera.isLockedOn;
+                    coolDown = 30;
+                }
+                else
+                    coolDown--;
+
                 //transform = glm::translate(transform, glm::vec3(0.001, 0, 0));
                 //view = glm::translate(view, glm::vec3(0.0f, 0.0f, -0.001f));
                 input.pop();

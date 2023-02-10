@@ -31,6 +31,7 @@ Window::Window(const unsigned int width, const unsigned int height, const char* 
         glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetCursorPosCallback(window, mouse_callback);
+        glfwSetScrollCallback(window, scroll_callback);
 
         // glad: load all OpenGL function pointers
         // ---------------------------------------
@@ -49,6 +50,11 @@ void Window::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     input->mouseX = (float)xpos;
     input->mouseY = (float)ypos;
+}
+
+void Window::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    input->scrollOffset -= (float)yoffset;
 }
 
 

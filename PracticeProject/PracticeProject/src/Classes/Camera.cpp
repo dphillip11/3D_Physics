@@ -1,8 +1,10 @@
 #include "Camera.h"
-#include <glm/glm/detail/func_trigonometric.inl>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 Camera::Camera(glm::vec3 position, glm::vec3 target)
 {
+	setFOV(_FOV);
 	_position = position;
 	_target = target;
 	updateValues();
@@ -11,6 +13,21 @@ Camera::Camera(glm::vec3 position, glm::vec3 target)
 glm::mat4 Camera::view()
 {
 	return lookAt();
+}
+
+void Camera::zoom(float offset)
+{
+	_FOV += offset;
+	if (_FOV < 1.0f)
+		_FOV = 1.0f;
+	if (_FOV > 80.0f)
+		_FOV = 80.0f;
+	setFOV(_FOV);
+}
+
+void Camera::setFOV(float fov)
+{
+	projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, 0.1f, 100.0f);
 }
 
 void Camera::moveForward(float distance)
@@ -24,10 +41,12 @@ void Camera::moveRight(float distance)
 
 void Camera::setPosition(glm::vec3 position) {
 	_position = position;
+	_direction = glm::normalize(_position - _target);
 	updateValues();
 }
 void Camera::setTarget(glm::vec3 target) {
 	_target = target;
+	_direction = glm::normalize(_position - _target);
 	updateValues();
 }
 
@@ -39,26 +58,39 @@ void Camera::rotate(float dx, float dy)
 		_pitch = 89.0f;
 	if (_pitch < -89.0f)
 		_pitch = -89.0f;
+
 	glm::vec3 direction;
+
 	direction.x = cos(glm::radians(_yaw)) * cos(glm::radians(_pitch));
 	direction.y = sin(glm::radians(_pitch));
 	direction.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
+
 	_direction = glm::normalize(direction);
+
+	updateValues();
+}
+
+
+void Camera::updateValues()
+{
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	_right = glm::normalize(glm::cross(up, _direction));
 	_up = glm::cross(_direction, _right);
 }
 
-void Camera::updateValues()
+void Camera::resetPitch()
 {
-	_direction = glm::normalize(_position - _target);
-	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-	_right = glm::normalize(glm::cross(up, _direction));
-	_up = glm::cross(_direction, _right);
+	_pitch = glm::degrees(asin(_direction.y));
+	_yaw = glm::degrees(atan2(-_direction.y,_direction.x));
 }
 
 glm::mat4 Camera::lookAt()
 {
+	if (isLockedOn)
+	{
+		setTarget(_target);
+		resetPitch();
+	}
 	glm::mat4 lookat = glm::mat4(1);
 	lookat[0] = glm::vec4(_right.x, _up.x, _direction.x, 0);
 	lookat[1] = glm::vec4((float)_right.y, _up.y, _direction.y, 0);
