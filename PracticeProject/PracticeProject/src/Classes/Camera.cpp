@@ -81,7 +81,7 @@ void Camera::updateValues()
 void Camera::resetPitch()
 {
 	_pitch = glm::degrees(asin(_direction.y));
-	_yaw = glm::degrees(atan2(-_direction.y,_direction.x));
+	_yaw = glm::degrees(atan2(_direction.z, _direction.x));
 }
 
 glm::mat4 Camera::lookAt()
