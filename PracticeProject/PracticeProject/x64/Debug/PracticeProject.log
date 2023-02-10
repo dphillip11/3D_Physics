@@ -1,2 +1,7 @@
-﻿  Main.cpp
+﻿  BallManager.cpp
+  Box.cpp
+  Ball.cpp
+  Shader.cpp
+  WoodenPanel.cpp
+  Generating Code...
   PracticeProject.vcxproj -> X:\3DRendering\PracticeProject\x64\Debug\PracticeProject.exe

@@ -1,6 +1,6 @@
 #include "Model.h"
 #include <iostream>
-#include <glm/glm/gtc/matrix_transform.hpp>
+#include "../Libraries/glm/glm/gtc/matrix_transform.hpp"
 
 Model::Model(): isSetEBO(false), isSetVBO(false), isSetVAO(false) {
 	glGenVertexArrays(1, &VAO);

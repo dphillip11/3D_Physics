@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include <glm/glm/gtc/matrix_transform.hpp>
+#include "../Libraries/glm/glm/gtc/matrix_transform.hpp"
 #include <iostream>
 
 Camera::Camera(glm::vec3 position, glm::vec3 target)

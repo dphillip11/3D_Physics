@@ -1,6 +1,6 @@
 #pragma once
-#include "glad/glad.h"
-#include <glm/glm/matrix.hpp>
+#include "../Libraries/glad/glad.h"
+#include "../Libraries/glm/glm/matrix.hpp"
 
 class Model
 {

@@ -1,5 +1,5 @@
 #include "BallManager.h"
-#include <glm/glm/gtc/matrix_transform.hpp>
+#include "../Libraries/glm/glm/gtc/matrix_transform.hpp"
 
 void BallManager::updatePositions(float deltaTime)
 {

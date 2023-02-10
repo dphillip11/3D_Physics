@@ -1,6 +1,6 @@
 #include "Texture.h"
 #include "../stb_image.h"
-#include <glad/glad.h>
+#include "../Libraries/glad/glad.h"
 #include <iostream>
 
 Texture::Texture()

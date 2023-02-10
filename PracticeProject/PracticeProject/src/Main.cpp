@@ -8,11 +8,11 @@
 #include "Classes/Texture.h"
 #include <vector>
 #include "Classes/ScopedTimer.h"
-#include <glm/glm/glm.hpp>
-#include <glm/glm/gtc/matrix_transform.hpp>
-#include <glm/glm/gtc/type_ptr.hpp>
+#include "Libraries/glm/glm/glm.hpp"
+#include "Libraries/glm/glm/gtc/matrix_transform.hpp"
+#include "Libraries/glm/glm/gtc/type_ptr.hpp"
 #include "Classes/Box.h"
-#include <glm/glm/gtc/quaternion.hpp>
+#include "Libraries/glm/glm/gtc/quaternion.hpp"
 #include "Classes/Camera.h"
 #include "Classes/Input.h"
 #include "Classes/BallManager.h"
@@ -32,8 +32,8 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames)
 
 
     // settings
-    const unsigned int SCR_WIDTH = 800;
-    const unsigned int SCR_HEIGHT = 600;
+    const unsigned int SCR_WIDTH = 1920;
+    const unsigned int SCR_HEIGHT = 1080;
     const char* windowName = "Balls";
 
 
