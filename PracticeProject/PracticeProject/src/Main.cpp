@@ -47,7 +47,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames)
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
        
-        Ball ball = Ball(0.5);
+        Ball ball = Ball();
         Box box = Box();
         box.createBoxTransforms(100);
 
@@ -71,7 +71,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames)
             glm::mat4 view = camera.lookAt();
             ball.sphereShader->use();
             ball.sphereShader->setMat4("MVP", camera.projection * view * ball.transform);
-            ball.sphereShader->setFloat("radius", ball.radius);
+            ball.sphereShader->setFloat("radius", 10);
             ball.shadedDraw();
             box.drawBoxes(view, camera.projection);
             box.transform(rotation);

@@ -13,14 +13,14 @@
 
 const float Ball::X = 0.525731f;
 const float Ball::Z = 0.850651f;
-const std::vector<glm::vec3> Ball::positions =
+const std::vector<glm::vec3> Ball::_vertices =
 {
 glm::vec3(-X, 0.0f, Z), glm::vec3(X, 0.0f, Z), glm::vec3(-X, 0.0f, -Z), glm::vec3(X, 0.0f, -Z),
 glm::vec3(0.0f, Z, X), glm::vec3(0.0f, Z, -X), glm::vec3(0.0f, -Z, X), glm::vec3(0.0f, -Z, -X),
 glm::vec3(Z, X, 0.0f), glm::vec3(-Z, X, 0.0f), glm::vec3(Z, -X, 0.0f), glm::vec3(-Z, -X, 0.0f)
 };
 
-const std::vector<glm::uvec3> Ball::indices =
+const std::vector<glm::uvec3> Ball::_indices =
 {
 glm::uvec3(1, 4, 0),glm::uvec3(4, 9, 0),glm::uvec3(4, 5, 9),glm::uvec3(8, 5, 4),glm::uvec3(1, 8, 4),
 glm::uvec3(1, 10, 8),glm::uvec3(10, 3, 8),glm::uvec3(8, 3, 5),glm::uvec3(3, 2, 5),glm::uvec3(3, 7, 2),
@@ -48,7 +48,8 @@ void Ball::CreateVertices(float radius)
 		float r = cos(angle1);
 
 		for (int j = 0; j < NUM_SEGMENTS; j++) {
-			float angle2 = (float)j / NUM_SEGMENTS * 2.0 * PI;
+			//this extra float sometimes causes issues with the secondary draw method
+			float angle2 = (float)((float)j / NUM_SEGMENTS * 2.0 * PI);
 			float x = r * cos(angle2);
 			float z = r * sin(angle2);
 
@@ -79,10 +80,10 @@ void Ball::CreateVertices(float radius)
 
 }
 
-void Ball::usePremadeVertices()
+void Ball::useSimpleVertices()
 {
-	setVertices(&positions[0], (int)positions.size() * 3);
-	setIndices(&indices[0], (int)indices.size() * 3);
+	setVertices(&_vertices[0], (int)_vertices.size() * 3);
+	setIndices(&_indices[0], (int)_indices.size() * 3);
 	setAttributes(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
 }
 

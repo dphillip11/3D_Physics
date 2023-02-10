@@ -3,6 +3,7 @@
 #include <vector>
 #include <glm/glm/vec3.hpp>
 #include "Shader.h"
+#include <memory>
 
 
 
@@ -11,22 +12,21 @@ class Ball : public Model
 {	
 	static const float X;
 	static const float Z;
-	static const std::vector<glm::vec3> positions;
-	static const std::vector<glm::uvec3> indices;
+	static const std::vector<glm::vec3> _vertices;
+	static const std::vector<glm::uvec3> _indices;
 	
 
 public:
-	Shader* sphereShader;
-	float radius;
+	std::unique_ptr<Shader> sphereShader;
 
-	Ball(float RADIUS) {
-		usePremadeVertices(); 
-		radius = RADIUS; sphereShader = new Shader("src/shaders/vertex/ball.hlsl", "src/shaders/fragment/ball.hlsl", "src/shaders/geometry/ball.hlsl");
+	Ball()
+	{
+		sphereShader = std::make_unique<Shader>("src/shaders/vertex/ball.hlsl", "src/shaders/fragment/ball.hlsl", "src/shaders/geometry/ball.hlsl");
+		useSimpleVertices(); 
 	}
 	void CreateVertices(float radius);
-	void usePremadeVertices();
+	void useSimpleVertices();
 	void shadedDraw(GLenum fillMode = GL_FILL, GLenum drawMode = GL_TRIANGLES);
-	~Ball() { delete(sphereShader);}
 };
 
 	
