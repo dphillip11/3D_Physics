@@ -46,7 +46,7 @@ void BallManager::resolveCollisions()
 	std::vector<int> Bucket2;
 	std::vector<int> Bucket3;
 	std::vector<int> Bucket4;
-
+	//add element for assigning pointer
 	Bucket1.push_back(0);
 	Bucket2.push_back(0);
 	Bucket3.push_back(0);
@@ -74,8 +74,9 @@ void BallManager::resolveCollisions()
 
 			if (bucketSize[B] > 1)
 			{
-				//for (int i = 0; i < bucketSize[B] - 1; i++)
-				::concurrency::parallel_for(size_t(0), (size_t)(bucketSize[B] - 1), [&](size_t i)
+				//start in the second position to avoid the dummy 0
+				//for (int i = 1; i < bucketSize[B] - 1; i++)
+				::concurrency::parallel_for(size_t(1), (size_t)(bucketSize[B] - 1), [&](size_t i)
 					{
 						int ID1 = bucket[i];
 
@@ -147,8 +148,8 @@ void BallManager::updatePositions(float deltaTime)
 				velocity[i].z *= -1;
 			}
 		}
-		resolveCollisions();
-		//resolveCollisions_no_buckets();
+		//resolveCollisions();
+		resolveCollisions_no_buckets();
 }
 
 void BallManager::spawnBalls(int n)
@@ -164,14 +165,26 @@ void BallManager::spawnBalls(int n)
 
 void BallManager::spawnOpposingBalls()
 {
-	for (int i = 0; i < 8; i++)
-	{
-		int x = i == 0 ? 1 : -1;
-		position.push_back(glm::vec3(x*5,0,i*x));
-		velocity.push_back(glm::vec3(-x * (i+1), 0, 0));
-		radius.push_back(1);
-		ballCount++;
-	}
+	position.push_back(glm::vec3(5, 0, 0));
+	velocity.push_back(glm::vec3(-5, 0, 0));
+	radius.push_back(1);
+	ballCount++;
+
+	position.push_back(glm::vec3(-5, 0, 0));
+	velocity.push_back(glm::vec3(5, 0, 0));
+	radius.push_back(1);
+	ballCount++;
+
+	position.push_back(glm::vec3(5, 0, 5));
+	velocity.push_back(glm::vec3(3, 0, 0));
+	radius.push_back(1);
+	ballCount++;
+
+	position.push_back(glm::vec3(-5, 0, 5));
+	velocity.push_back(glm::vec3(-6, 0, 0));
+	radius.push_back(1);
+	ballCount++;
+
 }
 
 void BallManager::drawBalls(glm::mat4 view, glm::mat4 projection) 
