@@ -3,59 +3,122 @@
 #include <ppl.h>
 #include "../Libraries/glm/glm/geometric.hpp"
 
-
+void BallManager::resolveCollisions_no_buckets()
+{
+	::concurrency::parallel_for(size_t(0), (size_t)ballCount, [&](size_t i)
+		//for (int i = 0; i < ballCount; i++)
+		{
+			for (int j = i + 1; j < ballCount; j++)
+			{
+				float sumOfRadii = radius[i] + radius[j];
+				float x_diff = position[i].x - position[j].x;
+				if (x_diff > sumOfRadii)
+					continue;
+				float y_diff = position[i].y - position[j].y;
+				if (y_diff > sumOfRadii)
+					continue;
+				float z_diff = position[i].z - position[j].z;
+				if (z_diff > sumOfRadii)
+					continue;
+				auto distance = glm::length(glm::vec3(x_diff, y_diff, z_diff));
+				auto difference = distance - sumOfRadii;
+				if (difference < 0)
+				{
+					auto normal = glm::normalize(position[j] - position[i]);
+					position[j] -= (0.5f * difference * normal);
+					position[i] += (0.5f * difference * glm::normalize(normal));
+					auto relativeVelocity = velocity[i] - velocity[j];
+					float collisionSpeed = glm::dot(relativeVelocity, normal);
+					if (collisionSpeed > 0)
+					{
+						glm::vec3 impulse = normal * collisionSpeed;
+						velocity[i] -= impulse;
+						velocity[j] += impulse;
+					}
+				}
+			}
+		}
+	);
+}
 
 void BallManager::resolveCollisions()
 {
 	//split indexes into buckets based on x position
-	std::vector<int> buckets[2];
+	std::vector<int> Bucket1;
+	std::vector<int> Bucket2;
+	std::vector<int> Bucket3;
+	std::vector<int> Bucket4;
+
+	Bucket1.push_back(0);
+	Bucket2.push_back(0);
+	Bucket3.push_back(0);
+	Bucket4.push_back(0);
+
 	for (int i = 0; i < ballCount; i++)
+	{
+		if (position[i].x < (- boundarySize / 2))
+			Bucket1.push_back(i);
+		else if (position[i].x < 0)
+			Bucket2.push_back(i);
+		else if (position[i].x < boundarySize / 2)
+			Bucket3.push_back(i);
+		else
+			Bucket4.push_back(i);
+	}
+
+	int* buckets[] = {&Bucket1[0], &Bucket2[0], &Bucket3[0] , &Bucket4[0] };
+	int bucketSize[] = {Bucket1.size(), Bucket2.size(), Bucket3.size(), Bucket4.size()};
+
+	//for (int B = 0; B < 4; B++)
+	::concurrency::parallel_for(size_t(0), (size_t)4, [&](size_t B)
 		{
-			if (position[i].x < (2 * maxRadius))
-				buckets[0].push_back(i);
-			if (position[i].x > (-2 * maxRadius))
-				buckets[1].push_back(i);
-		}
-	//run each bucket concurrently
-	::concurrency::parallel_for(size_t(0), (size_t)2, [&](size_t b)
-		{
-			//run each element concurrently
-			::concurrency::parallel_for(size_t(0), (size_t)sizeof(buckets[b]), [&](size_t i)
-			//for (int i = 0; i < ballCount; i++)
-				{
-					for (int j = i + 1; j < sizeof(buckets[b]); j++)
+			int* bucket = buckets[B];
+
+			if (bucketSize[B] > 1)
+			{
+				//for (int i = 0; i < bucketSize[B] - 1; i++)
+				::concurrency::parallel_for(size_t(0), (size_t)(bucketSize[B] - 1), [&](size_t i)
 					{
-						float sumOfRadii = radius[buckets[b][i]] + radius[buckets[b][j]];
-						float x_diff = position[buckets[b][i]].x - position[buckets[b][j]].x;
-						if (x_diff > sumOfRadii)
-							continue;
-						float y_diff = position[buckets[b][i]].y - position[buckets[b][j]].y;
-						if (y_diff > sumOfRadii)
-							continue;
-						float z_diff = position[buckets[b][i]].z - position[buckets[b][j]].z;
-						if (z_diff > sumOfRadii)
-							continue;
-						auto distance = glm::length(glm::vec3(x_diff, y_diff, z_diff));
-						auto difference = distance - sumOfRadii;
-						if (difference < 0)
+						int ID1 = bucket[i];
+
+				for (int j = i + 1; j < bucketSize[B]; j++)
+				{
+					int ID2 = bucket[j];
+
+					float sumOfRadii = radius[bucket[i]] + radius[bucket[j]];
+					float x_diff = position[bucket[i]].x - position[bucket[j]].x;
+					if (x_diff > sumOfRadii)
+						continue;
+					float y_diff = position[bucket[i]].y - position[bucket[j]].y;
+					if (y_diff > sumOfRadii)
+						continue;
+					float z_diff = position[bucket[i]].z - position[bucket[j]].z;
+					if (z_diff > sumOfRadii)
+						continue;
+					auto distance = glm::length(glm::vec3(x_diff, y_diff, z_diff));
+					auto difference = distance - sumOfRadii;
+					if (difference < 0)
+					{
+						auto normal = glm::normalize(position[bucket[j]] - position[bucket[i]]);
+						position[bucket[j]] -= (0.5f * difference * normal);
+						position[bucket[i]] += (0.5f * difference * glm::normalize(normal));
+						auto relativeVelocity = velocity[bucket[i]] - velocity[bucket[j]];
+						float collisionSpeed = glm::dot(relativeVelocity, normal);
+						if (collisionSpeed > 0)
 						{
-							auto normal = glm::normalize(position[buckets[b][j]] - position[buckets[b][i]]);
-							position[buckets[b][j]] -= (0.5f * difference * normal);
-							position[i] += (0.5f * difference * glm::normalize(normal));
-							auto relativeVelocity = velocity[buckets[b][i]] - velocity[buckets[b][j]];
-							float collisionSpeed = glm::dot(relativeVelocity, normal);
-							if (collisionSpeed > 0)
-							{
-								glm::vec3 impulse = normal * collisionSpeed;
-								velocity[buckets[b][i]] -= impulse;
-								velocity[buckets[b][j]] += impulse;
-							}
+							glm::vec3 impulse = normal * collisionSpeed;
+							velocity[bucket[i]] -= impulse;
+							velocity[bucket[j]] += impulse;
 						}
 					}
+
+
 				}
-	);
-		}
-	);
+
+					});
+			}
+		});
+
 
 	
 }
@@ -87,22 +150,28 @@ void BallManager::updatePositions(float deltaTime)
 			}
 		}
 		resolveCollisions();
+		//resolveCollisions_no_buckets();
 }
 
 void BallManager::spawnBalls(int n)
 {
 	for (int i = 0; i < n; i++)
 	{
-		//testing/////
-		/*int x = i % 2 == 0 ? 1 : -1;
-		position.push_back(glm::vec3(x*5,0,0));
-		velocity.push_back(glm::vec3(-x, 0, 0));
-		radius.push_back(1);*/
-		/////////////
-
 		position.push_back(randomVec3(boundarySize));
 		velocity.push_back(randomVec3(maxSpeed));
 		radius.push_back(randomVal(maxRadius, true));
+		ballCount++;
+	}
+}
+
+void BallManager::spawnOpposingBalls()
+{
+	for (int i = 0; i < 8; i++)
+	{
+		int x = i == 0 ? 1 : -1;
+		position.push_back(glm::vec3(x*5,0,i*x));
+		velocity.push_back(glm::vec3(-x * (i+1), 0, 0));
+		radius.push_back(1);
 		ballCount++;
 	}
 }

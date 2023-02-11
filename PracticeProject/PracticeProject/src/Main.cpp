@@ -43,15 +43,15 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames)
         //setup window and make a reference
         Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
         //setup camera
-        Camera camera  = Camera(glm::vec3(0, 2, -3), glm::vec3(0, 0, 0));
+        Camera camera  = Camera(glm::vec3(0, 0, -5), glm::vec3(0, 0, 0));
         //set background color
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
        
        
         BallManager ballManager;
-        ballManager.spawnBalls(1000);
-
+        ballManager.spawnBalls(10000);
+        //ballManager.spawnOpposingBalls();
         float deltaTime = 0;
         float time = 0;
         int frames = 0;

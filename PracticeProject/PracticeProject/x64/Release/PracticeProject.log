@@ -1,0 +1,14 @@
+﻿  BallManager.cpp
+X:\3DRendering\PracticeProject\PracticeProject\src\Classes\BallManager.cpp(40,3): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+X:\3DRendering\PracticeProject\PracticeProject\src\Classes\BallManager.cpp(70,34): warning C4838: conversion from 'unsigned __int64' to 'int' requires a narrowing conversion
+X:\3DRendering\PracticeProject\PracticeProject\src\Classes\BallManager.cpp(70,84): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+X:\3DRendering\PracticeProject\PracticeProject\src\Classes\BallManager.cpp(70,50): warning C4838: conversion from 'unsigned __int64' to 'int' requires a narrowing conversion
+X:\3DRendering\PracticeProject\PracticeProject\src\Classes\BallManager.cpp(70,66): warning C4838: conversion from 'unsigned __int64' to 'int' requires a narrowing conversion
+X:\3DRendering\PracticeProject\PracticeProject\src\Classes\BallManager.cpp(70,82): warning C4838: conversion from 'unsigned __int64' to 'int' requires a narrowing conversion
+X:\3DRendering\PracticeProject\PracticeProject\src\Classes\BallManager.cpp(120,3): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Generating code
+  140 of 862 functions (16.2%) were compiled, the rest were copied from previous compilation.
+    14 functions were new in current compilation
+    32 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  PracticeProject.vcxproj -> X:\3DRendering\PracticeProject\x64\Release\PracticeProject.exe

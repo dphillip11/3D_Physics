@@ -29,6 +29,9 @@ public:
 	BallManager() : ball(std::make_unique<Ball>()) {}
 
 	void resolveCollisions();
+	void resolveCollisions_no_buckets();
+
+	void spawnOpposingBalls();
 
 };
 
