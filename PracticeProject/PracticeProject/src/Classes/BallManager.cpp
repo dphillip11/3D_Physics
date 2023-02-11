@@ -5,8 +5,7 @@
 
 void BallManager::resolveCollisions_no_buckets()
 {
-	::concurrency::parallel_for(size_t(0), (size_t)ballCount, [&](size_t i)
-		//for (int i = 0; i < ballCount; i++)
+		for (int i = 0; i < ballCount; i++)
 		{
 			for (int j = i + 1; j < ballCount; j++)
 			{
@@ -38,7 +37,6 @@ void BallManager::resolveCollisions_no_buckets()
 				}
 			}
 		}
-	);
 }
 
 void BallManager::resolveCollisions()
