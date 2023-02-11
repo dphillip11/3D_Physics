@@ -4,10 +4,10 @@
 #include <iostream>
 #include <vector>
 #include "Vector3.h"
-#include "../Libraries/glm/glm/vec3.hpp"
-#include "../Libraries/glm/glm/matrix.hpp"
-#include "../Libraries/glm/glm/gtc/matrix_transform.hpp"
-#include "../Libraries/glm/glm/gtc/type_ptr.hpp"
+#include <glm/glm/vec3.hpp>
+#include <glm/glm/matrix.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
 
 #define LOG(x) std::cout << x << std::endl;
 

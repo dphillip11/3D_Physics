@@ -1,6 +1,6 @@
 #include "Window.h"
 #include <iostream>
-#include "../Libraries/glad/glad.h"
+#include "glad/glad.h"
 #include "Input.h"
 
 std::unique_ptr<Input> Window::input(new Input);

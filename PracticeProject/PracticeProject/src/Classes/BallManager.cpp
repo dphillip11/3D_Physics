@@ -1,7 +1,7 @@
 #include "BallManager.h"
-#include "../Libraries/glm/glm/gtc/matrix_transform.hpp"
+#include <glm/glm/gtc/matrix_transform.hpp>
 #include <ppl.h>
-#include "../Libraries/glm/glm/geometric.hpp"
+#include <glm/glm/geometric.hpp>
 
 void BallManager::resolveCollisions_no_buckets()
 {

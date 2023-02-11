@@ -75,8 +75,8 @@
     <LibraryPath>X:\DependenciesOpenGL\Libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>X:\DependenciesOpenGL\Include\GLFW;$(IncludePath)</IncludePath>
-    <LibraryPath>X:\DependenciesOpenGL\Libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>X:\DependenciesOpenGL\Include\;$(IncludePath)</IncludePath>
+    <LibraryPath>X:\DependenciesOpenGL\Libs;\Libraries;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

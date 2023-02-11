@@ -1,6 +1,6 @@
 #include "Box.h"
-#include "../Libraries/glm/glm/vec3.hpp"
-#include "../Libraries/glm/glm/ext/matrix_transform.hpp"
+#include <glm/glm/vec3.hpp>
+#include <glm/glm/ext/matrix_transform.hpp>
 
 Box::Box() {
 

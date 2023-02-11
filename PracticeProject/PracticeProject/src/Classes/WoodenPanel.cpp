@@ -1,7 +1,7 @@
 #include "WoodenPanel.h"
-#include "../Libraries/glm/glm/matrix.hpp"
-#include "../Libraries/glm/glm/gtc/matrix_transform.hpp"
-#include "../Libraries/glm/glm/gtc/type_ptr.hpp"
+#include <glm/glm/matrix.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
 
 
 WoodenPanel::WoodenPanel()

@@ -1,5 +1,5 @@
 #pragma once
-#include "../Libraries/glm/glm/matrix.hpp"
+#include <glm/glm/matrix.hpp>
 class Camera
 {
 private:

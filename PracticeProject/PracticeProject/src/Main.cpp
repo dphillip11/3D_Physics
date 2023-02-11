@@ -8,11 +8,11 @@
 #include "Classes/Texture.h"
 #include <vector>
 #include "Classes/ScopedTimer.h"
-#include "Libraries/glm/glm/glm.hpp"
-#include "Libraries/glm/glm/gtc/matrix_transform.hpp"
-#include "Libraries/glm/glm/gtc/type_ptr.hpp"
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
 #include "Classes/Box.h"
-#include "Libraries/glm/glm/gtc/quaternion.hpp"
+#include <glm/glm/gtc/quaternion.hpp>
 #include "Classes/Camera.h"
 #include "Classes/Input.h"
 #include "Classes/BallManager.h"

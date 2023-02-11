@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-#include "../Libraries/glm/glm/vec3.hpp"
-#include "../Libraries/glm/glm/matrix.hpp"
+#include <glm/glm/vec3.hpp>
+#include <glm/glm/matrix.hpp>
 
 class Shader
 {

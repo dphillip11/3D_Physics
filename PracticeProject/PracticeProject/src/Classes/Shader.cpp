@@ -4,8 +4,8 @@
 #include <sstream>
 #include "Shader.h"
 #include <iostream>
-#include "../Libraries/glad/glad.h"
-#include "../Libraries/glm/glm/gtc/type_ptr.hpp"
+#include <glad/glad.h>
+#include <glm/glm/gtc/type_ptr.hpp>
 
 
 
