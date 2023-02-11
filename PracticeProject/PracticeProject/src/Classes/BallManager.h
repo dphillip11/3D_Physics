@@ -1,6 +1,10 @@
 #pragma once
 #include "Ball.h"
 
+struct pair {
+	int a;
+	int b;
+};
 
 class BallManager
 {
@@ -8,6 +12,7 @@ class BallManager
 	std::vector<glm::vec3> position;
 	std::vector<glm::vec3> velocity;
 	std::vector<float> radius;
+	std::vector<pair> collisionPairs;
 	
 
 public:
@@ -22,6 +27,8 @@ public:
 	float randomVal(float magnitude, bool onlyPositive = false);
 	glm::vec3 randomVec3(float magnitude);
 	BallManager() : ball(std::make_unique<Ball>()) {}
+
+	void resolveCollisions();
 
 };
 

@@ -32,8 +32,8 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames)
 
 
     // settings
-    const unsigned int SCR_WIDTH = 1920;
-    const unsigned int SCR_HEIGHT = 1080;
+    const unsigned int SCR_WIDTH = 800;
+    const unsigned int SCR_HEIGHT = 600;
     const char* windowName = "Balls";
 
 
@@ -48,11 +48,9 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames)
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
        
-        Ball ball = Ball();
-        Box box = Box();
-        box.createBoxTransforms(100);
+       
         BallManager ballManager;
-        ballManager.spawnBalls(8000);
+        ballManager.spawnBalls(1000);
 
         float deltaTime = 0;
         float time = 0;
@@ -71,13 +69,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames)
             ballManager.updatePositions(deltaTime);
             ballManager.drawBalls(view, camera.projection);
             displayFrameRate(frame_timer, deltaTime, frames);
-            window.input->ProcessInput(deltaTime,camera);
-            
-            ball.sphereShader->use();
-            ball.sphereShader->setMat4("MVP", camera.projection * view * ball.transform);
-            ball.shadedDraw();
-            box.drawBoxes(view, camera.projection);
-            box.transform(rotation);
+            window.input->ProcessInput(deltaTime, camera, ballManager);
             window.update();
 
         }

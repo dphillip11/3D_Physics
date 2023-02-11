@@ -1,7 +1,8 @@
 #pragma once
 #include <queue>
 #include "Camera.h"
-
+#include<iostream>
+#include "../Classes/BallManager.h"
 
 enum KEYS {
     UP,
@@ -17,7 +18,7 @@ enum KEYS {
 
 class Input {
 public:
-    const float cameraSpeed = 0.08f;
+    const float cameraSpeed = 50.0f;
     const float mouseSensitivity = 0.1f;
     const float scrollSensitivity = 1.5f;
 
@@ -33,7 +34,7 @@ public:
 
     ::std::queue<int> input;
 
-    void ProcessInput(float deltaTime, Camera& camera)
+    void ProcessInput(float deltaTime, Camera& camera, BallManager& ballManager)
     {
         if (scrollOffset != 0)
         {
@@ -61,25 +62,25 @@ public:
             //up
             if (input.front() == KEYS::UP)
             {
-                camera.moveForward(deltaTime * 5);
+                camera.moveForward(deltaTime * cameraSpeed);
                 input.pop();
             }
             //down
             else if (input.front() == KEYS::DOWN)
             {
-                camera.moveForward(-deltaTime * 5);
+                camera.moveForward(-deltaTime * cameraSpeed);
                 input.pop();
             }
             //left
             else if (input.front() == KEYS::LEFT)
             {
-                camera.moveRight(-deltaTime * 5);
+                camera.moveRight(-deltaTime * cameraSpeed);
                 input.pop();
             }
             //right
             else if (input.front() == KEYS::RIGHT)
             {
-                camera.moveRight(deltaTime * 5);
+                camera.moveRight(deltaTime * cameraSpeed);
                 input.pop();
             }
             //SPACE
@@ -100,8 +101,8 @@ public:
             //X
             else if (input.front() == KEYS::W)
             {
-                //transform = glm::translate(transform, glm::vec3(- 0.001, 0, 0));
-                //view = glm::translate(view, glm::vec3(0.0f, 0.0f, 0.001f));
+                ballManager.spawnBalls(10);
+                std::cout << ballManager.ballCount << std::endl;
                 input.pop();
             }
             else

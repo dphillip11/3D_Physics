@@ -1,7 +1,5 @@
 ﻿  BallManager.cpp
-  Box.cpp
-  Ball.cpp
-  Shader.cpp
-  WoodenPanel.cpp
+X:\3DRendering\PracticeProject\PracticeProject\src\Classes\BallManager.cpp(57,3): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Main.cpp
   Generating Code...
   PracticeProject.vcxproj -> X:\3DRendering\PracticeProject\x64\Debug\PracticeProject.exe
