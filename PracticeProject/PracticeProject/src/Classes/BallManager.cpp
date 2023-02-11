@@ -54,13 +54,13 @@ void BallManager::resolveCollisions()
 
 	for (int i = 0; i < ballCount; i++)
 	{
-		if (position[i].x < (- boundarySize / 2))
+		if (position[i].x < (- boundarySize / 2) + 2 * maxRadius)
 			Bucket1.push_back(i);
-		else if (position[i].x < 0)
+		if (position[i].x > (-boundarySize / 2) && position[i].x < 2 * maxRadius)
 			Bucket2.push_back(i);
-		else if (position[i].x < boundarySize / 2)
+		if (position[i].x > 0 && position[i].x < 2 * maxRadius + 2 * maxRadius)
 			Bucket3.push_back(i);
-		else
+		if (position[i].x > boundarySize/2)
 			Bucket4.push_back(i);
 	}
 
