@@ -1,37 +1,24 @@
 #pragma once
 #include "Ball.h"
+#include "Manager.h"
 
-struct pair {
-	int a;
-	int b;
-};
-
-class BallManager
+class BallManager:public Manager
 {
-	std::unique_ptr<Ball> ball;
-	std::vector<glm::vec3> position;
-	std::vector<glm::vec3> velocity;
-	std::vector<float> radius;
-	std::vector<pair> collisionPairs;
 	
 
 public:
-	const float boundarySize = 100;
-	const float maxSpeed = 20;
-	const float maxRadius = 5;
-	int ballCount = 0;
+	std::unique_ptr<Ball> ball;
 
-	void updatePositions(float deltaTime);
+	void update(float deltaTime);
 	void spawnBalls(int n);
 	void drawBalls(glm::mat4 view, glm::mat4 projection);
-	float randomVal(float magnitude, bool onlyPositive = false);
-	glm::vec3 randomVec3(float magnitude);
+
 	BallManager() : ball(std::make_unique<Ball>()) {}
 
 	void resolveCollisions();
 	void resolveCollisions_no_buckets();
 
-	void spawnOpposingBalls();
+	void spawnFlattenedBalls(int n);
 
 };
 

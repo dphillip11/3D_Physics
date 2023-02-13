@@ -34,7 +34,7 @@ public:
 
     ::std::queue<int> input;
 
-    void ProcessInput(float deltaTime, Camera& camera, BallManager& ballManager)
+    void ProcessInput(float deltaTime, Camera& camera)
     {
         if (scrollOffset != 0)
         {
@@ -93,16 +93,13 @@ public:
                 }
                 else
                     coolDown--;
-
-                //transform = glm::translate(transform, glm::vec3(0.001, 0, 0));
-                //view = glm::translate(view, glm::vec3(0.0f, 0.0f, -0.001f));
                 input.pop();
             }
             //X
             else if (input.front() == KEYS::W)
             {
-                ballManager.spawnBalls(10);
-                std::cout << ballManager.ballCount << std::endl;
+                //ballManager.spawnBalls(10);
+                //std::cout << ballManager.ballCount << std::endl;
                 input.pop();
             }
             else

@@ -5,11 +5,11 @@
 
 void BallManager::resolveCollisions_no_buckets()
 {
-		for (int i = 0; i < ballCount; i++)
+		for (int i = 0; i < count; i++)
 		{
-			for (int j = i + 1; j < ballCount; j++)
+			for (int j = i + 1; j < count; j++)
 			{
-				float sumOfRadii = radius[i] + radius[j];
+				float sumOfRadii = halfWidth[i] + halfWidth[j];
 				float x_diff = position[i].x - position[j].x;
 				if (x_diff > sumOfRadii)
 					continue;
@@ -52,13 +52,13 @@ void BallManager::resolveCollisions()
 	Bucket3.push_back(0);
 	Bucket4.push_back(0);
 
-	for (int i = 0; i < ballCount; i++)
+	for (int i = 0; i < count; i++)
 	{
-		if (position[i].x < (- boundarySize / 2) + 2 * maxRadius)
+		if (position[i].x < (- boundarySize / 2) + maxWidth)
 			Bucket1.push_back(i);
-		if (position[i].x > (-boundarySize / 2) && position[i].x < 2 * maxRadius)
+		if (position[i].x > (-boundarySize / 2) && position[i].x < maxWidth)
 			Bucket2.push_back(i);
-		if (position[i].x > 0 && position[i].x < 2 * maxRadius + 2 * maxRadius)
+		if (position[i].x > 0 && position[i].x < (boundarySize / 2) + maxWidth)
 			Bucket3.push_back(i);
 		if (position[i].x > boundarySize/2)
 			Bucket4.push_back(i);
@@ -67,15 +67,13 @@ void BallManager::resolveCollisions()
 	int* buckets[] = {&Bucket1[0], &Bucket2[0], &Bucket3[0] , &Bucket4[0] };
 	int bucketSize[] = {Bucket1.size(), Bucket2.size(), Bucket3.size(), Bucket4.size()};
 
-	//for (int B = 0; B < 4; B++)
+
 	::concurrency::parallel_for(size_t(0), (size_t)4, [&](size_t B)
 		{
 			int* bucket = buckets[B];
 
 			if (bucketSize[B] > 1)
 			{
-				//start in the second position to avoid the dummy 0
-				//for (int i = 1; i < bucketSize[B] - 1; i++)
 				::concurrency::parallel_for(size_t(1), (size_t)(bucketSize[B] - 1), [&](size_t i)
 					{
 						int ID1 = bucket[i];
@@ -84,7 +82,7 @@ void BallManager::resolveCollisions()
 				{
 					int ID2 = bucket[j];
 
-					float sumOfRadii = radius[bucket[i]] + radius[bucket[j]];
+					float sumOfRadii = halfWidth[bucket[i]] + halfWidth[bucket[j]];
 					float x_diff = position[bucket[i]].x - position[bucket[j]].x;
 					if (x_diff > sumOfRadii)
 						continue;
@@ -122,35 +120,13 @@ void BallManager::resolveCollisions()
 	
 }
 
-
-void BallManager::updatePositions(float deltaTime)
+void BallManager::update(float deltaTime)
 {
-		for (int i = 0; i < ballCount; i++)
-		{
-			position[i] += (velocity[i] * deltaTime);
-		}
-
-		for (int i = 0; i < ballCount; i++)
-		{
-			if (abs(position[i].x) > boundarySize - radius[i])
-			{
-				position[i].x -= (velocity[i].x * deltaTime);
-				velocity[i].x *= -1;
-			}
-			if (abs(position[i].y) > boundarySize - radius[i])
-			{
-				position[i].y -= (velocity[i].y * deltaTime);
-				velocity[i].y *= -1;
-			}
-			if (abs(position[i].z) > boundarySize - radius[i])
-			{
-				position[i].z -= (velocity[i].z * deltaTime);
-				velocity[i].z *= -1;
-			}
-		}
-		//resolveCollisions();
-		resolveCollisions_no_buckets();
+	updatePositions(deltaTime);
+	resolveCollisions();
+	//resolveCollisions_no_buckets();
 }
+
 
 void BallManager::spawnBalls(int n)
 {
@@ -158,61 +134,34 @@ void BallManager::spawnBalls(int n)
 	{
 		position.push_back(randomVec3(boundarySize));
 		velocity.push_back(randomVec3(maxSpeed));
-		radius.push_back(randomVal(maxRadius, true));
-		ballCount++;
+		halfWidth.push_back(randomVal(maxWidth/2, true));
+		count++;
 	}
 }
 
-void BallManager::spawnOpposingBalls()
+void BallManager::spawnFlattenedBalls(int n)
 {
-	position.push_back(glm::vec3(5, 0, 0));
-	velocity.push_back(glm::vec3(-5, 0, 0));
-	radius.push_back(1);
-	ballCount++;
-
-	position.push_back(glm::vec3(-5, 0, 0));
-	velocity.push_back(glm::vec3(5, 0, 0));
-	radius.push_back(1);
-	ballCount++;
-
-	position.push_back(glm::vec3(5, 0, 5));
-	velocity.push_back(glm::vec3(3, 0, 0));
-	radius.push_back(1);
-	ballCount++;
-
-	position.push_back(glm::vec3(-5, 0, 5));
-	velocity.push_back(glm::vec3(-6, 0, 0));
-	radius.push_back(1);
-	ballCount++;
-
+	for (int i = 0; i < n; i++)
+	{
+		position.push_back(glm::vec3(randomVal(boundarySize), 0, randomVal(boundarySize)) );
+		velocity.push_back(glm::vec3(randomVal(boundarySize), 0, randomVal(boundarySize)));
+		halfWidth.push_back(randomVal(maxWidth / 2, true));
+		count++;
+	}
 }
 
 void BallManager::drawBalls(glm::mat4 view, glm::mat4 projection) 
 {
 	//setup shader
-	ball->sphereShader->use();
+	ball->shader->use();
 
-	for (int i = 0; i < ballCount; i++)
+	for (int i = 0; i < count; i++)
 	{	
 		glm::mat4 model = glm::translate(glm::mat4(1), position[i]);
-		model = glm::scale(model, glm::vec3(radius[i], radius[i], radius[i]));
-		ball->sphereShader->setMat4("MVP", projection * view * model);
+		model = glm::scale(model, glm::vec3(halfWidth[i], halfWidth[i], halfWidth[i]));
+		ball->shader->setMat4("MVP", projection * view * model);
 		ball->draw();
 	}
 	
 }
 
-float BallManager::randomVal(float magnitude, bool onlyPositive)
-{
-	//create a random number of a given magnitude with 2 decimal places
-	float value = ((rand() % (int)(200 * magnitude)) / 100 - magnitude);
-	if (onlyPositive)
-		return abs(value);
-	else
-		return value;
-}
-
-glm::vec3 BallManager::randomVec3(float magnitude)
-{
-	return glm::vec3(randomVal(magnitude), randomVal(magnitude), randomVal(magnitude));
-}

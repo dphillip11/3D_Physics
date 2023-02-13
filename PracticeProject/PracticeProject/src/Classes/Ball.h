@@ -14,17 +14,28 @@ class Ball : public Model
 	static const float Z;
 	static const std::vector<glm::vec3> _vertices;
 	static const std::vector<glm::uvec3> _indices;
+	//using subdivision improves memory usage, whereas not using it improves computational load on rendering
+	static const int subdivided = false;
+	static const int NUM_SEGMENTS = 40;
 	
 
 public:
-	std::unique_ptr<Shader> sphereShader;
+	std::unique_ptr<Shader> shader;
 
 	Ball()
 	{
-		sphereShader = std::make_unique<Shader>("src/shaders/vertex/ball.hlsl", "src/shaders/fragment/ball.hlsl", "src/shaders/geometry/ball.hlsl");
-		useSimpleVertices(); 
+		if (subdivided)
+		{
+		shader = std::make_unique<Shader>("src/shaders/vertex/ball.hlsl", "src/shaders/fragment/ball.hlsl", "src/shaders/geometry/ball.hlsl");
+		useSimpleVertices();
+		}
+		else
+		{
+			shader = std::make_unique<Shader>("src/shaders/vertex/ballS.hlsl", "src/shaders/fragment/ball.hlsl");
+			CreateVertices();
+		}
 	}
-	void CreateVertices(float radius);
+	void CreateVertices();
 	void useSimpleVertices();
 	void shadedDraw(GLenum fillMode = GL_FILL, GLenum drawMode = GL_TRIANGLES);
 };

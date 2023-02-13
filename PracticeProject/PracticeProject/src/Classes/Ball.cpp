@@ -31,13 +31,12 @@ glm::uvec3(10, 1, 6),glm::uvec3(11, 0, 9),glm::uvec3(2, 11, 9),glm::uvec3(5, 2, 
 
 void Ball::shadedDraw(GLenum fillMode, GLenum drawMode)
 {
-	sphereShader->use();
+	shader->use();
 	draw(fillMode, drawMode);
 }
 
-void Ball::CreateVertices(float radius)
+void Ball::CreateVertices()
 {
-	const int NUM_SEGMENTS = 8;
 	const float PI = (float)3.14159265;
 	float vertices[NUM_SEGMENTS * NUM_SEGMENTS * 3];
 	int indices[NUM_SEGMENTS * NUM_SEGMENTS * 6];
@@ -54,9 +53,9 @@ void Ball::CreateVertices(float radius)
 			float z = r * sin(angle2);
 
 			int vertexIndex = (i * NUM_SEGMENTS + j) * 3;
-			vertices[vertexIndex + 0] = x * radius;
-			vertices[vertexIndex + 1] = y * radius;
-			vertices[vertexIndex + 2] = z * radius;
+			vertices[vertexIndex + 0] = x;
+			vertices[vertexIndex + 1] = y;
+			vertices[vertexIndex + 2] = z;
 		}
 	}
 
