@@ -3,9 +3,7 @@
 class Camera
 {
 private:
-	glm::vec3 _position;
 	glm::vec3 _target;
-	glm::vec3 _direction;
 	glm::vec3 _up;
 	glm::vec3 _right;
 	float _FOV = 50;
@@ -13,6 +11,8 @@ private:
 	float _pitch = 0;
 	void updateValues();
 public:
+	glm::vec3 _direction;
+	glm::vec3 _position;
 	bool isLockedOn = false;
 	glm::mat4 projection;
 	Camera(glm::vec3 position, glm::vec3 target);

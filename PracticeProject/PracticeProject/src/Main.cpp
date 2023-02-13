@@ -17,14 +17,15 @@
 #include "Classes/Input.h"
 #include "Classes/BallManager.h"
 #include "Classes/CubeManager.h"
+#include "Classes/ShaderExperiment.h"
 
 void displayFrameRate(float& timer, float& deltaTime, int& frames);
 
 
 
     // settings
-    const unsigned int SCR_WIDTH = 1000;
-    const unsigned int SCR_HEIGHT = 700;
+    const unsigned int SCR_WIDTH = 1920;
+    const unsigned int SCR_HEIGHT = 1080;
     const char* windowName = "Balls";
 
 
@@ -43,10 +44,9 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         float time = 0;
         int frames = 0;
         float frame_timer = 0;
-
+        ShaderExperiment experiment;
+  
        
-        CubeManager cubeManager;
-        cubeManager.spawnCoplanarObjects(100);
 
         // render loop
         // -----------
@@ -55,9 +55,8 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
             glm::mat4 view = camera.lookAt();
             ScopedTimer timer(&deltaTime);
             time += deltaTime;
-           
-            cubeManager.drawObjects(camera.lookAt(), camera.projection);
-            cubeManager.update(deltaTime);
+
+            experiment.draw(camera, time);
 
             displayFrameRate(frame_timer, deltaTime, frames);
             window.input->ProcessInput(deltaTime, camera);
