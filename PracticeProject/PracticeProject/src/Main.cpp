@@ -16,7 +16,7 @@
 #include "Classes/Camera.h"
 #include "Classes/Input.h"
 #include "Classes/BallManager.h"
-   
+#include "Classes/CubeManager.h"
 
 void displayFrameRate(float& timer, float& deltaTime, int& frames);
 
@@ -45,7 +45,8 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         float frame_timer = 0;
 
        
-        Cube cube;
+        CubeManager cubeManager;
+        cubeManager.spawnCoplanarObjects(100);
 
         // render loop
         // -----------
@@ -54,13 +55,11 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
             glm::mat4 view = camera.lookAt();
             ScopedTimer timer(&deltaTime);
             time += deltaTime;
+           
+            cubeManager.drawObjects(camera.lookAt(), camera.projection);
+            cubeManager.update(deltaTime);
 
-            
-            cube.shader->setMat4("MVP", camera.projection * camera.lookAt());
-            cube.shadedDraw();
-            
-
-            //displayFrameRate(frame_timer, deltaTime, frames);
+            displayFrameRate(frame_timer, deltaTime, frames);
             window.input->ProcessInput(deltaTime, camera);
             window.update();
 

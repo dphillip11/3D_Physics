@@ -1,6 +1,8 @@
 #pragma once
 #include <glad/glad.h>
 #include <glm/glm/matrix.hpp>
+#include "Shader.h"
+#include <memory>
 
 class Model
 {
@@ -14,7 +16,7 @@ protected:
 
 public:
 	glm::mat4 transform = glm::mat4(1);
-	
+	std::unique_ptr<Shader> shader;
 	Model();
 	void setVertices(const void* vertices,int size);
 	void setIndices(const void* indices, int size);

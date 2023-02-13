@@ -20,7 +20,6 @@ class Ball : public Model
 	
 
 public:
-	std::unique_ptr<Shader> shader;
 
 	Ball()
 	{

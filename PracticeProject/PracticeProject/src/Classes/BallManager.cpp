@@ -128,40 +128,4 @@ void BallManager::update(float deltaTime)
 }
 
 
-void BallManager::spawnBalls(int n)
-{
-	for (int i = 0; i < n; i++)
-	{
-		position.push_back(randomVec3(boundarySize));
-		velocity.push_back(randomVec3(maxSpeed));
-		halfWidth.push_back(randomVal(maxWidth/2, true));
-		count++;
-	}
-}
-
-void BallManager::spawnFlattenedBalls(int n)
-{
-	for (int i = 0; i < n; i++)
-	{
-		position.push_back(glm::vec3(randomVal(boundarySize), 0, randomVal(boundarySize)) );
-		velocity.push_back(glm::vec3(randomVal(boundarySize), 0, randomVal(boundarySize)));
-		halfWidth.push_back(randomVal(maxWidth / 2, true));
-		count++;
-	}
-}
-
-void BallManager::drawBalls(glm::mat4 view, glm::mat4 projection) 
-{
-	//setup shader
-	ball->shader->use();
-
-	for (int i = 0; i < count; i++)
-	{	
-		glm::mat4 model = glm::translate(glm::mat4(1), position[i]);
-		model = glm::scale(model, glm::vec3(halfWidth[i], halfWidth[i], halfWidth[i]));
-		ball->shader->setMat4("MVP", projection * view * model);
-		ball->draw();
-	}
-	
-}
 
