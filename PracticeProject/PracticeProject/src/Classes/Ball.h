@@ -25,8 +25,8 @@ public:
 	{
 		if (subdivided)
 		{
-		shader = std::make_unique<Shader>("src/shaders/vertex/ball.hlsl", "src/shaders/fragment/ball.hlsl", "src/shaders/geometry/ball.hlsl");
-		useSimpleVertices();
+			shader = std::make_unique<Shader>("src/shaders/vertex/ball.hlsl", "src/shaders/fragment/ball.hlsl", "src/shaders/geometry/ball.hlsl");
+			useSimpleVertices();
 		}
 		else
 		{

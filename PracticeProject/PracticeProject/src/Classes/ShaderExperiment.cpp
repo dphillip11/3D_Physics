@@ -23,11 +23,14 @@ void ShaderExperiment::draw(Camera camera, float time)
     shader->setFloat("time", time);
     shader->setInt("columns", COLUMNS);
     shader->setMat4("MVP", camera.projection * camera.lookAt());
-    shader->setVec3("lightDirection", glm::normalize(glm::vec3(-1,-1,-1)));
-    shader->setVec3("viewDirection", camera._direction);
-    shader->setVec3("ambientColor", glm::vec3(1,1,0));
-    shader->setVec3("diffuseColor", glm::vec3(0,1,1));
-    shader->setVec3("specularColor", glm::vec3(0.5f, 1, 0));
-    shader->setFloat("shininess", 200.0f);
+    shader->setVec3("lightPosition", glm::vec3(50,50,100));
+    shader->setVec3("camPosition", camera._position);
+    shader->setVec3("ambientColor", glm::vec3(1));
+    shader->setVec3("diffuseColor", glm::vec3(1));
+    shader->setVec3("specularColor", glm::vec3(1));
+    shader->setFloat("shininess", 250.0f);
+    shader->setFloat("ambientIntensity", 0.2f);
+    shader->setFloat("diffuseIntensity",0.4f);
+    shader->setFloat("specularIntensity",0.5f);
     model->draw();
 }

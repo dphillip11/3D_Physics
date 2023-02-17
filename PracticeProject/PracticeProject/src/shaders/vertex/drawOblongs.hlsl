@@ -20,6 +20,6 @@ void main()
 	float heightF = (20 - height);
 	float yPos = heightF * sin(i * 23 + j * 227 + time/4);
 	position = vec4(blockSpacing * i, yPos, blockSpacing * j, 1);
-	//color = vec4(sin(params.z), sin(1 + params.z), sin(2 + params.z), 1.0f);
-	color = vec4(1);
+	color = vec4(0.5 * sin(params.z)+1, 0.5 * sin(1 + params.z)+1, 0.5*sin(2 + params.z)+1, 1.0f);
+	//color = vec4(1,0,1,0);
 }

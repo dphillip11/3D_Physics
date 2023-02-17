@@ -2,6 +2,7 @@
 #include <string>
 #include <glm/glm/vec3.hpp>
 #include <glm/glm/matrix.hpp>
+#include "Material.h"
 
 class Shader
 {
@@ -20,6 +21,8 @@ public:
     void setFloat(const std::string& name, float value) const;
     void setVec3(const std::string& name, glm::vec3 value) const;
     void setMat4(const std::string& name, const glm::mat4& mat) const;
+    void setMaterial(Material material) const;
+    void setLight(Light light) const;
     void checkCompileErrors(unsigned int shader, std::string type);
 
 };  

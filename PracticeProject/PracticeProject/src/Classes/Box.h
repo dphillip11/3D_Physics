@@ -2,6 +2,7 @@
 #include <vector>
 #include "WoodenPanel.h"
 
+//this class shows an example of a hierarchy of objects, each box is a parent to 6 panels
 class Box
 {
 	WoodenPanel panel;

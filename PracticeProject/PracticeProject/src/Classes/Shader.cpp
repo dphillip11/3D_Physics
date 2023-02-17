@@ -181,6 +181,23 @@
         glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }
 
+    void Shader::setMaterial(Material material) const
+    {
+        setVec3("material.diffuse", material.diffuse);
+        setVec3("material.specular", material.specular);
+        setVec3("material.ambient", material.ambient);
+        setFloat("material.shininess", material.shininess);
+    }
+
+    void Shader::setLight(Light light) const
+    {
+        setVec3("light.position", light.position);
+        setVec3("light.ambient", light.ambient);
+        setVec3("light.diffuse", light.ambient);
+        setVec3("light.specular", light.ambient);
+
+    }
+
 
     // utility function for checking shader compilation/linking errors.
     // ------------------------------------------------------------------------

@@ -3,6 +3,7 @@
 #include <memory>
 #include <glm/glm/vec3.hpp>
 #include "Model.h"
+#include "Camera.h"
 
 
 struct pair {
@@ -21,8 +22,8 @@ protected:
 
 public:
 	int count = 0;
-	const float boundarySize = 20;
-	const float maxSpeed = 20;
+	const float boundarySize = 500;
+	const float maxSpeed = 50;
 	const float maxWidth = 10;
 
 	std::unique_ptr<Model> object;
@@ -39,6 +40,6 @@ public:
 	//pure virtual function for maintaining abstract class status, can iclude collsion detection in this loop
 	virtual void update(float delataTime) = 0;
 
-	void drawObjects(glm::mat4 view, glm::mat4 projection);
+	void drawObjects(Camera camera);
 };
 
