@@ -19,6 +19,7 @@
 #include "Classes/CubeManager.h"
 #include "Classes/ShaderExperiment.h"
 #include "Classes/WoodenBox.h"
+#include "Classes/rayTracing.h"
 
 void displayFrameRate(float& timer, float& deltaTime, int& frames);
 
@@ -49,6 +50,8 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         int frames = 0;
         float frame_timer = 0;
         //Shader lit = Shader("src/shaders/vertex/ballLit.hlsl", "src/shaders/fragment/ballLit.hlsl");
+        rayTracing rt;
+        
 
 
         Light light =
@@ -76,7 +79,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
             glm::mat4 view = camera.lookAt();
             ScopedTimer timer(&deltaTime);
             time += deltaTime;
-            box.shader->use();
+            /*box.shader->use();
             box.transform = glm::mat4(1);
             box.setUniforms(camera);
             box.shader->setLight(light);
@@ -86,13 +89,16 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
             box.transform = glm::translate(glm::mat4(1), glm::vec3(5, 5, 5));
             box.setUniforms(camera);
             box.shader->setMaterial(lightbox);
-            box.shadedDraw();
+            box.shadedDraw();*/
             //light source
             /*ball.shader->use();
             ball.shader->setMat4("MVP", camera.projection * camera.lookAt() * glm::translate(glm::mat4(1), glm::vec3(5, 5, 5)));
             ball.shadedDraw();*/
-            
-            //displayFrameRate(frame_timer, deltaTime, frames);
+            rt.shader->use();
+            rt.shader->setFloat("iTime", time);
+            rt.shader->setVec3("iResolution", glm::vec3(SCR_WIDTH, SCR_HEIGHT, 0));
+            rt.draw();
+            displayFrameRate(frame_timer, deltaTime, frames);
             window.input->ProcessInput(deltaTime, camera);
             window.update();
 

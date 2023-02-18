@@ -5,6 +5,21 @@ int SCR_WIDTH = 1200;
 int SCR_HEIGHT = 800;
 int MAX_ITER = 100;
 
+
+int calculateIter(vec2 c)
+{
+	vec2 z = c;
+	int iter = 0;
+	while (length(z) < 2. && iter < MAX_ITER)
+	{
+		float real = z.x * z.x + (-z.y * z.y) + c.x;
+		float imaginary = (2. * z.x * z.y) + c.y;
+		z = vec2(real, imaginary);
+		iter++;
+	}
+	return iter;
+}
+
 void main()
 {
 	//normalize coordinates between -2 and 2 in both directions
@@ -14,18 +29,8 @@ void main()
 
 	vec2 complex = vec2(real, imaginary);
 	vec2 z = complex;
-	int iterations = 0;
+	int iterations = calculateIter(complex);
 
-	for (int i = 0; i < MAX_ITER; i++)
-	{
-		if (length(z) < 2)
-			break;
-		vec2 temp;
-		temp = vec2( pow(z.x, 2) + complex.x, -pow(z.y, 2) + complex.y);
-		z = temp;
-		iterations++;
-	}
-
-	FragColor = vec4((sin(iterations) + 1)/2, (sin(iterations + 1) + 1)/2, (sin(iterations + 2) + 1)/2, 1);
+	FragColor = vec4((sin(iterations%10) + 1)/2, (sin(iterations + 1) + 1)/2, (sin(iterations + 2) + 1)/2, 1);
 	
 }
