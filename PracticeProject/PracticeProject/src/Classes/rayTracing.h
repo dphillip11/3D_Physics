@@ -45,12 +45,14 @@ public:
 				cam_y = fmin(fmax(0.1, cam_y), 30);
 				window.input->input.pop();
 			}
-			if (window.input->input.front() == KEYS::DOWN)
+			else if (window.input->input.front() == KEYS::DOWN)
 			{
 				cam_y -= 0.1;
 				cam_y = fmin(fmax(0.1, cam_y), 30);
 				window.input->input.pop();
 			}
+			else
+				window.input->input.pop();
 		}
 	}
 	

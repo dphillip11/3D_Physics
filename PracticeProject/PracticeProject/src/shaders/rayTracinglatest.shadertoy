@@ -1,15 +1,7 @@
-#version 330 core
-out vec4 fragColor;
+﻿
 
 #define MAX_RANGE 1000.
 #define SPHERES_N 5
-
-uniform float iTime;
-uniform float cam_y;
-uniform vec3 iResolution;
-uniform vec3 iMouse = vec3(0, 0, 0);
-uniform sampler2D marble;
-uniform float cam_depth = 0.5f;
 
 struct cylinder
 {
@@ -19,26 +11,66 @@ struct cylinder
     float radius;
 };
 
-cylinder cylinders[1] = cylinder[1](cylinder(vec3(0., 8., 5.), vec3(1,0,0), 8., 0.5));
+cylinder cylinders[4] = cylinder[4](cylinder(vec3(0., 8., 8.), vec3(1, 0, 0), 10., 0.25),
+                                    cylinder(vec3(0., 8., 2.), vec3(1, 0, 0), 10., 0.25),
+                                    cylinder(vec3(-4.75, 8., 5.), vec3(0, 0, 1), 6.5, 0.25),
+                                    cylinder(vec3(4.75, 8., 5.), vec3(0, 0, 1), 6.5, 0.25));
 vec4 spheres[5] = vec4[5](vec4(-4., 2, 5, 1), vec4(-2, 2, 5, 1), vec4(0., 2, 5, 1), vec4(2, 2, 5, 1), vec4(4, 2, 5, 1));
-vec3 colors[5] = vec3[5](vec3(1, 0, 0), vec3(0, 1, 0), vec3(0, 0, 0), vec3(0, 0, 1), vec3(1, 1, 0));
+vec3 colors[6] = vec3[6](vec3(1, 0, 0), vec3(0, 1, 0), vec3(0, 0, 0), vec3(0, 0, 1), vec3(1, 1, 0), vec3(0.3, 0.3, 0.3));
 vec3 groundColor = vec3(0.2, 0.2, 0.8);
 vec3 skyColor = vec3(0.5, 0.8, 1);
-vec3 light_pos ;
+vec3 light_pos;
 vec3 cam_pos;
-//regulates perspective
+float cam_depth = 0.5f;//regulates perspective
 float ambientIntensity = 0.2;
 
-/*collider ID 
-- 2     none
- -1     ground,
- 0+     sphereIndex
+/*collider ID
+        - 2     none
+         -1     ground,
+         0+     sphereIndex
+ SPHERES_N+     cylinder
  */
 
 struct contactPoint {
     int collider;
     float distance;
 };
+
+
+
+float GetDistanceToCylinder(cylinder cyl, vec3 ray_origin, vec3 ray_direction)
+{    
+    //∥Point−A∥2−[(Point−A)⋅axis^]2=r2
+    //L(t)=L0+tv
+   //a=(v⋅v)−(v⋅h^)2
+   //b=2[(v⋅w)−(v⋅h^)(w⋅h^)]
+   //c=(w⋅w)−(w⋅h^)2−r2
+   
+   //get perpendicular distance to cylinder, left side of cylinder axis is A, right side is B, ray origin is O
+   //positions of end point
+   vec3 A = cyl.centre - cyl.axis * (cyl.length * 0.5);
+   vec3 OA = ray_origin - A;
+   float a = dot(ray_direction, ray_direction) -pow(dot(ray_direction, cyl.axis),2.);
+   float b = 2. * (dot(ray_direction,OA) - dot(ray_direction,cyl.axis) * dot(OA, cyl.axis));
+   float c = dot(OA,OA) - pow(dot(OA,cyl.axis),2.) - pow(cyl.radius,2.);
+   
+   float det = b*b - 4.*a*c;
+   if (det<0.)
+       return -1.;
+   float t1 = (-b+sqrt(det))/(2.*a);
+   float t2 = (-b-sqrt(det))/(2.*a);
+   float distance = min(t1,t2);
+   vec3 t = ray_origin + distance * ray_direction;
+   vec3 At = t-A;
+   float axisPos = dot(At, cyl.axis);
+   if (axisPos > cyl.length || axisPos < 0.)
+      return -1.;
+   
+   return distance;
+    
+}
+
+
 
 contactPoint getIntersection(vec3 ray_origin, vec3 ray_direction)
 {
@@ -78,14 +110,33 @@ contactPoint getIntersection(vec3 ray_origin, vec3 ray_direction)
             }
         }
     }
+    //check cylinder intersections
+    for (int i = 0; i < 4; i++)
+    {
+        float distance = GetDistanceToCylinder(cylinders[i], ray_origin, ray_direction);
+
+        if (distance >= 0. && distance < collision.distance)
+        {
+            collision.collider = SPHERES_N + i;
+            collision.distance = distance;
+        }
+    }
     return collision;
 
 }
+
+
 
 vec3 GetNormal(int collider, vec3 point)
 {
     if (collider == -1)
         return vec3(0, 1, 0);
+    if (collider >= SPHERES_N)
+    {
+        vec3 c2p = point - cylinders[collider - SPHERES_N].centre;
+        vec3 normal = c2p - dot(c2p, cylinders[collider - SPHERES_N].axis) * cylinders[collider - SPHERES_N].axis;
+        return normalize(normal);
+    }
     return normalize(point - spheres[collider].xyz);
 }
 
@@ -111,14 +162,14 @@ vec3 GetReflectedColor(vec3 point, vec3 normal, vec3 ray_direction)
     //check for reflected objects
     contactPoint reflectedLight = getIntersection(point, reflectDir);
     vec3  reflectedColor;
-    if (reflectedLight.collider == -2)
+    if (reflectedLight.collider == -2 || reflectedLight.collider == 5)
         //specular calculation
         return pow(max(dot(light_dir, reflectDir), 0.), 32.) * skyColor;
     else if (reflectedLight.collider == -1)
     {
-        reflectedColor = texture(marble, point.xz / 40. + vec2(0.5,0.5)).rgb;
+        reflectedColor = texture(iChannel0, point.xz / 10.).rgb;
     }
-    else
+    else if (reflectedLight.collider < SPHERES_N)
     {
         reflectedColor = colors[reflectedLight.collider];
     }
@@ -148,7 +199,7 @@ vec3 GetColor(vec3 ray_origin, vec3 ray_direction)
 
     if (collision.collider == -1)
     {
-        materialColor = texture(marble, point.xz / 40. + vec2(0.5, 0.5)).rgb;;
+        materialColor = texture(iChannel0, point.xz / 10.).rgb;;
     }
     else
     {
@@ -167,19 +218,24 @@ vec3 GetColor(vec3 ray_origin, vec3 ray_direction)
 }
 
 
-void main()
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
-    spheres[0].x = -4. - max(0., 2. * sin(iTime));
-    spheres[0].y = 2. + max(0., 2. * sin(iTime));
-    spheres[4].x = 4. - min(0., 2. * sin(iTime));
-    spheres[4].y = 2. - min(0., 2. * sin(iTime));
+    float time = 3. * iTime;
+    spheres[0].x = -4. - max(0., 2. * sin(time));
+    spheres[0].y = 2. + max(0., 2. * sin(time));
+    spheres[1].x = -2. - max(0., 0.1 * sin(time));
+    spheres[1].y = 2. + max(0., 0.1 * sin(time));
+    spheres[3].x = 2. - min(0., 0.1 * sin(time));
+    spheres[3].y = 2. - min(0., 0.1 * sin(time));
+    spheres[4].x = 4. - min(0., 2. * sin(time));
+    spheres[4].y = 2. - min(0., 2. * sin(time));
 
     light_pos = vec3((iMouse.x - iResolution.x / 2.) / 10., 10., (iMouse.y - iResolution.y / 2.) / 5. + 10.);
     // Normalized pixel coordinates (from -1 to 1)
-    vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution.xy) / iResolution.y;
-    cam_pos = vec3(10. * sin(iTime / 20.), cam_y, 5. + 10. * cos(iTime / 20.));
+    vec2 uv = (fragCoord.xy - 0.5 * iResolution.xy) / iResolution.y;
+    cam_pos = vec3(10. * sin(iTime / 10.), 7., 5. + 10. * cos(iTime / 10.));
     //cam_pos = vec3(0., 20.,-10.);
-
     //align with camera
     vec3 cam_forward = normalize(spheres[2].xyz - cam_pos);
     vec3 cam_right = normalize(cross(vec3(0., 1., 0.), cam_forward));
