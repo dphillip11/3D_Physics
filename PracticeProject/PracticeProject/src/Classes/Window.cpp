@@ -8,6 +8,8 @@ std::unique_ptr<Input> Window::input(new Input);
 
 Window::Window(const unsigned int width, const unsigned int height, const char* name)
 {   
+    _height = height;
+    _width = width;
         // glfw: initialize and configure
         // ------------------------------
         glfwInit();
@@ -44,6 +46,8 @@ Window::Window(const unsigned int width, const unsigned int height, const char* 
 void Window::framebuffer_size_callback(GLFWwindow* window, int WIDTH, int HEIGHT)
 {
     glViewport(0, 0, WIDTH, HEIGHT);
+    _height = HEIGHT;
+    _width = WIDTH;
 }
 
 void Window::mouse_callback(GLFWwindow* window, double xpos, double ypos)

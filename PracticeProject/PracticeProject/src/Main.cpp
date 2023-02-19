@@ -26,8 +26,11 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
 
 
     // settings
-    const unsigned int SCR_WIDTH = 1200;
-    const unsigned int SCR_HEIGHT = 800;
+    const unsigned int SCR_WIDTH = 1920;
+    const unsigned int SCR_HEIGHT = 1080;
+
+    int Window::_height = 1;
+    int Window::_width = 1;
     const char* windowName = "Balls";
 
 
@@ -51,6 +54,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         float frame_timer = 0;
         //Shader lit = Shader("src/shaders/vertex/ballLit.hlsl", "src/shaders/fragment/ballLit.hlsl");
         rayTracing rt;
+        
         
 
 
@@ -94,10 +98,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
             /*ball.shader->use();
             ball.shader->setMat4("MVP", camera.projection * camera.lookAt() * glm::translate(glm::mat4(1), glm::vec3(5, 5, 5)));
             ball.shadedDraw();*/
-            rt.shader->use();
-            rt.shader->setFloat("iTime", time);
-            rt.shader->setVec3("iResolution", glm::vec3(SCR_WIDTH, SCR_HEIGHT, 0));
-            rt.draw();
+            rt.shadedDraw(time, window);
             displayFrameRate(frame_timer, deltaTime, frames);
             window.input->ProcessInput(deltaTime, camera);
             window.update();

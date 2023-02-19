@@ -8,6 +8,8 @@
 class Window {
 	GLFWwindow* window = nullptr;
 public:
+	static int _height;
+	static int _width;
 	static std::unique_ptr<Input> input;
 	Window(const unsigned int width, const unsigned int height, const char* name);
 	void captureInput();
@@ -18,6 +20,7 @@ public:
 	void update();
 	void terminate();
 };
+
 
 
 
