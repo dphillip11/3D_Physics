@@ -26,8 +26,8 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
 
 
     // settings
-    const unsigned int SCR_WIDTH = 1920;
-    const unsigned int SCR_HEIGHT = 1080;
+    const unsigned int SCR_WIDTH = 1800;
+    const unsigned int SCR_HEIGHT = 1350;
 
     int Window::_height = 1;
     int Window::_width = 1;
