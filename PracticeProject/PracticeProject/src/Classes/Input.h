@@ -20,7 +20,7 @@ class Input {
 public:
     const float cameraSpeed = 10.0f;
     const float mouseSensitivity = 0.1f;
-    const float scrollSensitivity = 0.1f;
+    const float scrollSensitivity = 10.0f;
 
     float scrollOffset = 0;
 

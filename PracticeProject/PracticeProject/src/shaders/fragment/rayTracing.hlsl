@@ -8,9 +8,10 @@ uniform vec3 iResolution;
 uniform vec3 iMouse = vec3(0, 0, 0);
 uniform float cam_depth = 0.5f;
 
-//increase smoothing if you can handle te performance
+//smoothing repeats calcuations and averages values between pixels, set to zero for best performance
 #define SMOOTHING 0
-
+//number of light bounces
+int BOUNCES = 1;
 struct cylinder
 {
     vec3 centre;
@@ -77,7 +78,7 @@ Box cubeMap = Box(vec3(0, 0, 5), vec3(MAP_SIZE, 90., MAP_SIZE));
 
 vec3 ballColor[5] = vec3[5](vec3(1, 0, 0), vec3(0, 1, 0), vec3(0, 0, 0), vec3(0, 0, 1), vec3(1, 1, 0));
 vec3 frameColor = vec3(0.3, 0.3, 0.3);
-vec3 groundColor = vec3(0.2, 0.2, 0.8);
+vec3 groundColor = vec3(0.3, 0.05, 0.4);
 vec3 skyColor = vec3(0.5, 0.8, 1);
 vec3 stringColor = vec3(0.4, 0.4, 0.4);
 vec3 baseColor = vec3(214., 141., 6.) / 255.;
@@ -94,7 +95,7 @@ struct Camera
 };
 
 
-Camera cam = Camera(vec3(1), vec3(0, 5, 3), 0.7, vec3(0, 1, 0), vec3(1, 0, 0), vec3(0, 0, 1));
+Camera cam = Camera(vec3(1), vec3(0, 2, 5), 0.7, vec3(0, 1, 0), vec3(1, 0, 0), vec3(0, 0, 1));
 
 vec3 light_pos;
 float reflectionDenominator = 150.;
@@ -110,8 +111,10 @@ float ambientIntensity = 0.3;
 
 struct intersection {
     int collider;
-    vec3 normal;
     float distance;
+    vec3 normal;
+    vec3 point;
+    vec3 reflectDir;
 };
 
 void GetGroundIntersection(vec3 ray_origin, vec3 ray_dir, inout intersection intx)
@@ -172,7 +175,7 @@ void WorldSphereIntersections(vec3 ray_origin, vec3 ray_dir, inout intersection 
 void GetCubeMapIntersection(vec3 ray_origin, vec3 ray_dir, Box box, inout intersection intx, int ID)
 {
 
-    float dz = (sign(ray_dir.z) * MAP_SIZE - ray_origin.z) / ray_dir.z;
+    float dz = (sign(ray_dir.z) * MAP_SIZE - ray_origin.z + 5.) / ray_dir.z;
     float dx = (sign(ray_dir.x) * MAP_SIZE - ray_origin.x) / ray_dir.x;
     //throwing error when the second normal is set correctly
     vec3 normal = dz > 0. && dz < dx ? vec3(0, 0, -sign(ray_dir.z)) : vec3(-1, 0, 0);
@@ -261,7 +264,7 @@ void WorldCylinderIntersections(vec3 ray_origin, vec3 ray_dir, inout intersectio
 
 intersection GetIntersection(vec3 ray_origin, vec3 ray_dir)
 {
-    intersection intx = intersection(NO_COL, vec3(0), 0.);
+    intersection intx = intersection(NO_COL, 0., vec3(0), vec3(0), vec3(0));
 
     GetGroundIntersection(ray_origin, ray_dir, intx);
 
@@ -270,6 +273,9 @@ intersection GetIntersection(vec3 ray_origin, vec3 ray_dir)
     WorldBoxIntersections(ray_origin, ray_dir, intx);
 
     WorldCylinderIntersections(ray_origin, ray_dir, intx);
+
+    intx.point = ray_origin + ray_dir * intx.distance;
+    intx.reflectDir = normalize(reflect(ray_dir, intx.normal));
 
     return intx;
 
@@ -288,115 +294,83 @@ float GetLocalDiffuse(vec3 point, vec3 normal, vec3 ray_dir)
     return diffuseIntensity * obstructedModifier + ambientIntensity;
 }
 
-vec3 GetReflectedColor(vec3 point, vec3 normal, vec3 ray_direction)
+
+
+vec3 GetLocalColor(vec3 ray_dir, intersection intx, inout float multiplier)
 {
-    vec3 reflectDir = normalize(reflect(ray_direction, normal));
-    vec3 light_dir = normalize(light_pos - point);
 
-    //check for reflected objects
-    intersection reflectedLight = GetIntersection(point, reflectDir);
-    vec3  reflectedColor;
-
-    if (reflectedLight.collider == NO_COL)
+    if (intx.collider == NO_COL)
     {
-        reflectedColor = skyColor;
+        return (0.3 + abs(ray_dir.z)) * skyColor;
     }
-    else if (reflectedLight.collider == GROUND)
-    {
-        reflectedColor = groundColor;
-    }
-    else if (reflectedLight.collider < BASE)
-    {
-        reflectedColor = ballColor[BALL[reflectedLight.collider]];
-    }
-    else if (reflectedLight.collider == BASE)
-    {
-        reflectedColor = baseColor;
-    }
-    else if (reflectedLight.collider == FRAME || reflectedLight.collider == PIPEJOINT)
-    {
-        reflectedColor = frameColor;
-    }
-    else if (reflectedLight.collider == STRINGS)
-    {
-        reflectedColor = stringColor;
-    }
-    else if (reflectedLight.collider == CUBEMAP)
-    {
-        reflectedColor = cubeMapColor * 1. / ((point + reflectDir * reflectedLight.distance).y);
-    }
-
-    vec3 rPoint = point + reflectDir * reflectedLight.distance;
-    vec3 rNormal = reflectedLight.normal;
-    float reflectedBrightness = GetLocalDiffuse(rPoint, rNormal, reflectDir);
-
-    return reflectedColor * reflectedBrightness;
-}
-
-
-
-vec3 GetColor(vec3 ray_origin, vec3 ray_direction)
-{
-    intersection collision = GetIntersection(ray_origin, ray_direction);
-    //apply sky for non hit
-    if (collision.collider == NO_COL)
-        return (0.3 + abs(ray_direction.z)) * skyColor;
-    //get point of collision
-    vec3 point = ray_origin + ray_direction * collision.distance;
-    vec3 normal = collision.normal;
 
     vec3 materialColor;
     float reflectivity;
     float shininess;
 
-    if (collision.collider == GROUND)
+    if (intx.collider == GROUND)
     {
-        materialColor = groundColor;
+        vec3 col = 0.2 + 0.5 * cos(iTime + intx.point.xzx / MAP_SIZE + vec3(0, 2, 4));
+        materialColor = col;
         shininess = shininess_ground;
     }
-    else if (collision.collider == FRAME || collision.collider == PIPEJOINT)
+    else if (intx.collider == FRAME || intx.collider == PIPEJOINT)
     {
         materialColor = frameColor;
         shininess = shininess_frame;
     }
-    else if (collision.collider < BASE)
+    else if (intx.collider < BASE)
     {
-        materialColor = ballColor[BALL[collision.collider]];
+        materialColor = ballColor[BALL[intx.collider]];
         shininess = shininess_frame;
     }
-    else if (collision.collider == BASE)
+    else if (intx.collider == BASE)
     {
         materialColor = baseColor;
         shininess = shininess_frame;
     }
-    else if (collision.collider == STRINGS)
+    else if (intx.collider == STRINGS)
     {
         materialColor = stringColor;;
         shininess = shininess_string;
     }
-    else if (collision.collider == CUBEMAP)
+    else if (intx.collider == CUBEMAP)
     {
-        materialColor = cubeMapColor * 1. / (point.y);
+        materialColor = cubeMapColor * ((sin(iTime) + 1.) * 0.3) / (intx.point.y * 0.05);
         shininess = shininess_cubeMap;
     }
     reflectivity = shininess / reflectionDenominator;
+    multiplier *= reflectivity;
     //diffuse
-    vec3 diffuseColor = GetLocalDiffuse(point, normal, ray_direction) * materialColor;
+    vec3 diffuseColor = GetLocalDiffuse(intx.point, intx.normal, ray_dir) * materialColor;
     //reflected
-    vec3 reflectDir = normalize(reflect(ray_direction, normal));
-    vec3 light_dir = normalize(light_pos - point);
-    intersection reflectedLight = GetIntersection(point, reflectDir);
-    vec3 point2 = point + reflectDir * reflectedLight.distance;
-    vec3 reflectDir2 = normalize(reflect(reflectDir, reflectedLight.normal));
-    intersection reflectedLight2 = GetIntersection(point2, reflectDir2);
-    vec3 thriceReflectedColor = GetReflectedColor(point2 + reflectDir2 * reflectedLight2.distance, reflectedLight2.normal, reflectDir2);
-    vec3 reflectedColor = GetReflectedColor(point, normal, ray_direction);
-    vec3 twiceReflectedColor = GetReflectedColor(point + reflectDir * reflectedLight.distance, reflectedLight.normal, reflectDir);
+    vec3 light_dir = normalize(light_pos - intx.point);
     //specular
-    vec3 spec = pow(max(dot(light_dir, reflectDir), 0.), shininess) * vec3(1);
+    vec3 specular = pow(max(dot(light_dir, intx.reflectDir), 0.), shininess) * vec3(1);
 
-    return diffuseColor + (reflectedColor + spec + twiceReflectedColor * 0.9 + thriceReflectedColor * 0.7) * reflectivity;
+    return diffuseColor + specular;
 
+}
+
+
+void TraverseLightPath(vec3 ray_dir, inout intersection intx, inout vec3 totalColor, inout float multiplier)
+{
+    totalColor += multiplier * GetLocalColor(ray_dir, intx, multiplier);
+    intx = GetIntersection(intx.point, intx.reflectDir);
+}
+
+vec3 GetColor(vec3 ray_origin, vec3 ray_dir)
+{
+    float multiplier = 1.;
+    vec3 totalColor = vec3(0);
+    intersection intx = GetIntersection(ray_origin, ray_dir);
+
+    for (int i = 0; i < BOUNCES; i++)
+    {
+        TraverseLightPath(ray_dir, intx, totalColor, multiplier);
+        ray_dir = intx.reflectDir;
+    }
+    return totalColor;
 }
 
 
@@ -466,16 +440,16 @@ vec3 SmoothColor(vec2 uv, int n)
 }
 
 
-
 void main()
 {
-    light_pos = cam.target + vec3(10. * sin(iMouse.x / 100.), 12. , 15. * cos(iMouse.x / 100.));
-    PositionBalls();
-
+    light_pos = vec3(15. * sin(iTime / 5.), 20., 5. + 15. * cos(iTime / 10.));
+   
+    BOUNCES = int(1.5 * iTime / 3.14) % 10 + 1;
     // Normalized pixel coordinates (from -1 to 1)
     vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution.xy) / iResolution.y;
 
-    cam.pos = vec3(15. * sin(iTime / 10.), 10., 5. + 15. * cos(iTime / 10.));
+    cam.pos = cam.target + vec3(10. * sin(iMouse.x / 100.), 15. * max(sin((1.57 * iMouse.y - 0.3 * iResolution.y) / iResolution.y), 0.), 10. * cos(iMouse.x / 100.));
+    PositionBalls();
     cam.depth = cam_depth;
     cam.pos.y = cam_y;
     //align with camera
