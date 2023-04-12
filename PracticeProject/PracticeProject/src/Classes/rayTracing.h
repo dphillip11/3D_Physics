@@ -35,20 +35,20 @@ public:
 	void processInput(Window window)
 	{
 		shader->setVec3("iMouse", glm::vec3(-window.input->mouseX, -window.input->mouseY, 0));
-		cam_depth = fmax(cam_depth + window.input->scrollOffset * 0.05f, 0.1);
+		cam_depth = (float)fmax(cam_depth + window.input->scrollOffset * 0.05f, 0.1);
 		shader->setFloat("cam_depth", cam_depth);
 		while (!window.input->input.empty())
 		{
 			if (window.input->input.front() == KEYS::UP)
 			{
-				cam_y += 0.1;
+				cam_y += (float)0.1;
 				cam_y = fmin(fmax(0.1, cam_y), 30);
 				window.input->input.pop();
 			}
 			else if (window.input->input.front() == KEYS::DOWN)
 			{
-				cam_y -= 0.1;
-				cam_y = fmin(fmax(0.1, cam_y), 30);
+				cam_y -= (float)0.1;
+				cam_y = (float)fmin(fmax(0.1, cam_y), 30);
 				window.input->input.pop();
 			}
 			else
