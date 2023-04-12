@@ -27,7 +27,7 @@ void Camera::zoom(float offset)
 
 void Camera::setFOV(float fov)
 {
-	projection = glm::perspective(glm::radians(fov), 4.0f /3.0f, 0.1f, 1000.0f);
+	projection = glm::perspective(glm::radians(fov), (float)4.0f /3.0f, 0.1f, 1000.0f);
 }
 
 void Camera::moveForward(float distance)

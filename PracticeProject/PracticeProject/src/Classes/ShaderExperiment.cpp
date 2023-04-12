@@ -11,7 +11,7 @@ ShaderExperiment::ShaderExperiment(): COLUMNS((int)sqrt(BLOCKS)), model(std::mak
     {
         params[i] = glm::vec3((float)i, rand() % 10, rand() % 50);
     }
-    model->setVertices(params, 3 * BLOCKS);
+    model->setVertices(params, 3 * BLOCKS, model->_VAO, model->_VBO);
     delete[](params);
     model->setAttributes(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     shader->setInt("columns", COLUMNS);

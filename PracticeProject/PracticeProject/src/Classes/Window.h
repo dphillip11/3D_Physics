@@ -6,8 +6,8 @@
 
 
 class Window {
-	GLFWwindow* window = nullptr;
 public:
+	GLFWwindow* window = nullptr;
 	static int _height;
 	static int _width;
 	static std::unique_ptr<Input> input;

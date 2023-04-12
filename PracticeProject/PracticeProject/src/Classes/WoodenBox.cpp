@@ -48,7 +48,7 @@
             -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
         };
 
-        setVertices(vertices, sizeof(vertices) / sizeof(float));
+        setVertices(vertices, sizeof(vertices) / sizeof(float), _VAO, _VBO);
         setAttributes(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
         setAttributes(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
         setAttributes(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));

@@ -72,9 +72,9 @@ void Ball::CreateVertices()
 		}
 	}
 
-	setVertices(vertices, NUM_SEGMENTS * NUM_SEGMENTS * 3);
+	setVertices(vertices, NUM_SEGMENTS * NUM_SEGMENTS * 3, _VAO, _VBO);
 	delete[](vertices);
-	setIndices(indices, NUM_SEGMENTS * NUM_SEGMENTS * 6);
+	setIndices(indices, NUM_SEGMENTS * NUM_SEGMENTS * 6, _EBO);
 	delete[](indices);
 	setAttributes(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
 
@@ -83,8 +83,8 @@ void Ball::CreateVertices()
 
 void Ball::useSimpleVertices()
 {
-	setVertices(&_vertices[0], (int)_vertices.size() * 3);
-	setIndices(&_indices[0], (int)_indices.size() * 3);
+	setVertices(&_vertices[0], (int)_vertices.size() * 3, _VAO, _VBO);
+	setIndices(&_indices[0], (int)_indices.size() * 3, _EBO);
 	setAttributes(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
 }
 

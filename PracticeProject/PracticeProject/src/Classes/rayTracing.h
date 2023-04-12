@@ -14,7 +14,7 @@ public:
 	{
 		float vertices[] = { 1,1,-1,-1,1,-1,1,1,-1,-1,-1,1 };
 		shader = std::make_unique<Shader>("src/shaders/vertex/blankScreen.hlsl", "src/shaders/fragment/rayTracing.hlsl");
-		setVertices(vertices, 12);
+		setVertices(vertices, 12, _VAO, _VBO);
 		setAttributes(0, 2, GL_FLOAT, false, 2 * sizeof(float), (void*)0);
 		marble = Texture();
 		marble.loadImage("src/Textures/marble.jpg");

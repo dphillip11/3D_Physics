@@ -16,8 +16,8 @@ WoodenPanel::WoodenPanel()
 	int indices[6] = {
 		0,3,1, 1,0,2
 	};
-	setVertices(vertices, 12);
-	setIndices(indices, 6);
+	setVertices(vertices, 12, _VAO, _VBO);
+	setIndices(indices, 6, _EBO);
 	setAttributes(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	texture.setParameters();
 	texture.loadImage("src/Textures/container.jpg");
