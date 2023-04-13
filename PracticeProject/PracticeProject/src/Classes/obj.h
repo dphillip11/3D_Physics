@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <glm/glm/vec3.hpp>
 
 struct face {
 	int vIndex;
@@ -11,12 +12,9 @@ struct face {
 class obj
 {
 public:
-	std::vector<float> vertices;
-	int totalV = 0;
-	std::vector<float> textureMap;
-	int totalT = 0;
-	std::vector<float> normalMap;
-	int totalN = 0;
+	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec3> textureMap;
+	std::vector<glm::vec3> normalMap;
 
 	std::vector<int> vertexIndices;
 	std::vector<int> normalIndices;
@@ -26,6 +24,8 @@ public:
 	void read(std::string filepath);
 
 	void convertToTriangles(std::vector<face>& face_elements);
+
+	std::vector<glm::vec3> unravelIndices(std::vector<glm::vec3>& values, std::vector<int>& indices);
 };
 
 

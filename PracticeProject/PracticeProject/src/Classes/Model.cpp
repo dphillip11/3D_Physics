@@ -46,14 +46,3 @@ void Model::draw(GLenum fillMode, GLenum drawMode) {
 
 }
 
-void Model::setNormalMap(std::vector<float>& normalMap, std::vector<int>& normalIndices) 
-{
-	glGenBuffers(1, &_VBOnormal);
-	glGenBuffers(1, &_EBOnormal);
-	// Generate and bind vertex buffer object (VBO) for vertex normals
-	setVertices(&normalMap[0], normalMap.size(), _VAO, _VBOnormal);
-	setIndices(&normalIndices[0], normalIndices.size(), _EBOnormal);
-	GLint normalAttrib = glGetAttribLocation(shader->ID, "normalMap");
-	setAttributes(normalAttrib, 3, GL_FLOAT, true, 3 * sizeof(float), (void*)0);
-}
-

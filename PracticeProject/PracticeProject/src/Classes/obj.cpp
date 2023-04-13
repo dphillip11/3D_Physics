@@ -21,28 +21,19 @@ void obj::read(std::string filepath)
 		std::string keyword;
 		iss >> keyword;
 		if (keyword == "v") {
-			float v[3];
-			iss >> v[0] >> v[1] >> v[2];
-			vertices.push_back(v[0]);
-			vertices.push_back(v[1]);
-			vertices.push_back(v[2]);
-			totalV++;
+			glm::vec3 v;
+			iss >> v.x >> v.y >> v.z;
+			vertices.push_back(v);
 		}
 		if (keyword == "vn") {
-			float vn[3];
-			iss >> vn[0] >> vn[1] >> vn[2];
-			normalMap.push_back(vn[0]);
-			normalMap.push_back(vn[1]);
-			normalMap.push_back(vn[2]);
-			totalN++;
+			glm::vec3 vn;
+			iss >> vn.x >> vn.y >> vn.z;
+			normalMap.push_back(vn);
 		}
 		if (keyword == "vt") {
-			float vt[3];
-			iss >> vt[0]  >> vt[1] >> vt[2];
-			textureMap.push_back(vt[0]);
-			textureMap.push_back(vt[1]);
-			textureMap.push_back(vt[2]);
-			totalT++;
+			glm::vec3 vt;
+			iss >> vt.x  >> vt.y >> vt.z;
+			textureMap.push_back(vt);
 		}
 		if (keyword == "f")
 			//currently assumes triangular vertices, needs to be updated for polygonal elements
@@ -56,9 +47,9 @@ void obj::read(std::string filepath)
 			while (iss >> vertexIndexString) {
 				std::istringstream vertexIndexStream(vertexIndexString);
 
-				int vertexIndex;
-				int textureIndex;
-				int normalIndex;
+				int vertexIndex = 1;
+				int textureIndex = 1;
+				int normalIndex = 1;
 
 				// Parse vertex index, texture index, and normal index from the vertex index string
 				vertexIndexStream >> vertexIndex;
@@ -121,4 +112,14 @@ void obj::convertToTriangles(std::vector<face>& face_elements)
 	}
 
 
+}
+
+std::vector<glm::vec3> obj::unravelIndices(std::vector<glm::vec3>& values, std::vector<int>& indices)
+{
+	std::vector<glm::vec3> tempValues;
+	for (int index : indices)
+	{
+		tempValues.push_back(values[index]);
+	}
+	return tempValues;
 }
