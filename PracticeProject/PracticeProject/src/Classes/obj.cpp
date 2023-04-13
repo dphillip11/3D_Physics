@@ -36,13 +36,12 @@ void obj::read(std::string filepath)
 			textureMap.push_back(vt);
 		}
 		if (keyword == "f")
-			//currently assumes triangular vertices, needs to be updated for polygonal elements
 		{
 			std::string vertexIndexString;
 			std::string textureIndexString;
 			std::string normalIndexString;
 
-		// Parse vertex index, texture index, and normal index from the line
+			// Parse vertex index, texture index, and normal index from the line
 			std::vector<face> face_elements;
 			while (iss >> vertexIndexString) {
 				std::istringstream vertexIndexStream(vertexIndexString);
@@ -55,20 +54,20 @@ void obj::read(std::string filepath)
 				vertexIndexStream >> vertexIndex;
 				if (vertexIndexStream.peek() == '/') {
 					vertexIndexStream.ignore();
-					if (vertexIndexStream.peek() != '/') {
-						std::getline(vertexIndexStream, textureIndexString, '/');
-						std::istringstream textureIndexStream(textureIndexString);
-						textureIndexStream >> textureIndex;
-					}
-					if (vertexIndexStream.peek() == '/') {
-						vertexIndexStream.ignore();
-						std::getline(vertexIndexStream, normalIndexString, '/');
-						std::istringstream normalIndexStream(normalIndexString);
-						normalIndexStream >> normalIndex;
-					}
+					std::getline(vertexIndexStream, textureIndexString, '/');
+					std::istringstream textureIndexStream(textureIndexString);
+					textureIndexStream >> textureIndex;
+					std::getline(vertexIndexStream, normalIndexString, '/');
+					std::istringstream normalIndexStream(normalIndexString);
+					normalIndexStream >> normalIndex;
 				}
-				face_elements.push_back({vertexIndex - 1,textureIndex - 1,normalIndex - 1 });
+				else {
+					// If no texture index, then no normal index as well
+					normalIndex = vertexIndex;
+				}
+				face_elements.push_back({ vertexIndex - 1, textureIndex - 1, normalIndex - 1 });
 			}
+
 			convertToTriangles(face_elements);
 		}
 	}
@@ -117,8 +116,15 @@ void obj::convertToTriangles(std::vector<face>& face_elements)
 std::vector<glm::vec3> obj::unravelIndices(std::vector<glm::vec3>& values, std::vector<int>& indices)
 {
 	std::vector<glm::vec3> tempValues;
-	for (int index : indices)
+	if (values.size() == 0)
+		return tempValues;
+	for (int i=0 ; i < indices.size(); i++)
 	{
+		int index;
+		if (indices[i] < 0)
+			index = values.size() + indices[i] + 1;
+		else
+			index = indices[i];
 		tempValues.push_back(values[index]);
 	}
 	return tempValues;

@@ -5,6 +5,7 @@
 Model::Model(): isSetEBO(false), isSetVBO(false), isSetVAO(false) {
 	glGenVertexArrays(1, &_VAO);
 	glGenBuffers(1, &_VBO);
+	glGenBuffers(1, &_VBOnormal);
 	glGenBuffers(1, &_EBO);
 }
 
@@ -24,8 +25,8 @@ void Model::setIndices(const void* indices, int size, const int &EBO) {
 
 void Model::setAttributes(int vaoPos, int count, GLenum type, bool normalized, int stride, const void* pos)
 {
-	glVertexAttribPointer(vaoPos, count, type, normalized?GL_TRUE:GL_FALSE, stride, pos);
 	glEnableVertexAttribArray(vaoPos);
+	glVertexAttribPointer(vaoPos, count, type, normalized?GL_TRUE:GL_FALSE, stride, pos);
 	isSetVAO = true;
 }
 

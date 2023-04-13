@@ -5,6 +5,7 @@ layout(triangle_strip, max_vertices = 3) out;
 
 in vec3 geometry_worldPos[];
 in vec4 geometry_gl_Position[];
+in vec3 geometry_normal[];
 out vec3 normal;
 out vec3 worldPos;
 
@@ -21,7 +22,7 @@ void main() {
 
     // Check if the normal is facing away from the object center and flip if it does
     _normal = (dot(normal, objectCenter - p0) > 0.0) ? -_normal : _normal;
-
+    //_normal = normalize(geometry_normal[0] + geometry_normal[1] + geometry_normal[2]);
     // Emit the triangle vertices
     gl_Position = geometry_gl_Position[0];
     normal = _normal;

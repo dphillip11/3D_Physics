@@ -29,7 +29,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         //setup window and make a reference
         Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
         //setup camera
-        Camera camera  = Camera(glm::vec3(0, 5, -5), glm::vec3(2));
+        Camera camera  = Camera(glm::vec3(0,0,-20), glm::vec3(5,0,0));
         //set background color
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
@@ -40,17 +40,25 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         float frame_timer = 0;
 
         obj taxi;
-        taxi.read("src/Assets/robot.obj");
+        taxi.read("src/Assets/butterfly.obj");
         taxi.vertices = taxi.unravelIndices(taxi.vertices, taxi.vertexIndices);
-        //taxi.normalMap = taxi.unravelIndices(taxi.normalMap, taxi.normalIndices);
+        taxi.normalMap = taxi.unravelIndices(taxi.normalMap, taxi.normalIndices);
  
         Model taxi_model;
-        taxi_model.shader = std::make_unique<Shader>("src/shaders/vertex/obj.hlsl", "src/shaders/fragment/obj.hlsl", "src/shaders/geometry/calculateNormals.hlsl");
+        //taxi_model.shader = std::make_unique<Shader>("src/shaders/vertex/obj.hlsl", "src/shaders/fragment/obj.hlsl", "src/shaders/geometry/calculateNormals.hlsl");
+        taxi_model.shader = std::make_unique<Shader>("src/shaders/vertex/obj.hlsl", "src/shaders/fragment/obj.hlsl"); 
+
+        //vertices
+        glBindVertexArray(taxi_model._VAO);
         taxi_model.setVertices(&taxi.vertices[0], taxi.vertices.size()*3, taxi_model._VAO, taxi_model._VBO);
         taxi_model.setAttributes(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
 
+        //normals
+        taxi_model.setVertices(&taxi.normalMap[0], taxi.normalMap.size() * 3, taxi_model._VAO, taxi_model._VBOnormal);
+        taxi_model.setAttributes(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
         
-        Light light1{ glm::vec3(5), glm::vec3(0.4), glm::vec3(3), glm::vec3(1) };
+        
+        Light light1{ glm::vec3(5), glm::vec3(0.4), glm::vec3(3), glm::vec3(0.2) };
         Material mat1{ glm::vec3(1), glm::vec3(1), glm::vec3(1), 32 };
       
 
@@ -65,12 +73,12 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
             ScopedTimer timer(&deltaTime);
             time += deltaTime;
 
-            
             taxi_model.shader->use();
             taxi_model.draw(GL_LINE);
-            taxi_model.shader->setMat4("model", glm::translate(glm::mat4(1), glm::vec3(8, 2, 0)));
+            taxi_model.shader->setMat4("model", glm::translate(glm::mat4(1), glm::vec3(5, 0, 0)));
             taxi_model.draw();
-            taxi_model.shader->setMat4("model", glm::translate(glm::mat4(1), glm::vec3(2)));
+            glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), sin(time) + 0.5f, glm::vec3(1, 0, 0));
+            taxi_model.shader->setMat4("model", glm::translate(rotationMatrix,glm::vec3(-5,3,3)));
             taxi_model.shader->setMat4("view", camera.lookAt());
             taxi_model.shader->setMat4("projection", camera.projection);
             taxi_model.shader->setVec3("viewPosition", camera._position);
