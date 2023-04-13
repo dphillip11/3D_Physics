@@ -40,13 +40,11 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         float frame_timer = 0;
 
         obj taxi;
-        taxi.read("src/Assets/butterfly.obj");
+        taxi.read("src/Assets/robot.obj");
         taxi.vertices = taxi.unravelIndices(taxi.vertices, taxi.vertexIndices);
         taxi.normalMap = taxi.unravelIndices(taxi.normalMap, taxi.normalIndices);
  
         Model taxi_model;
-        //taxi_model.shader = std::make_unique<Shader>("src/shaders/vertex/obj.hlsl", "src/shaders/fragment/obj.hlsl", "src/shaders/geometry/calculateNormals.hlsl");
-        taxi_model.shader = std::make_unique<Shader>("src/shaders/vertex/obj.hlsl", "src/shaders/fragment/obj.hlsl"); 
 
         //vertices
         glBindVertexArray(taxi_model._VAO);
@@ -54,8 +52,14 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         taxi_model.setAttributes(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
 
         //normals
-        taxi_model.setVertices(&taxi.normalMap[0], taxi.normalMap.size() * 3, taxi_model._VAO, taxi_model._VBOnormal);
-        taxi_model.setAttributes(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
+        if (taxi.normalMap.size() > 0)
+        {
+            taxi_model.shader = std::make_unique<Shader>("src/shaders/vertex/obj.hlsl", "src/shaders/fragment/obj.hlsl");
+            taxi_model.setVertices(&taxi.normalMap[0], taxi.normalMap.size() * 3, taxi_model._VAO, taxi_model._VBOnormal);
+            taxi_model.setAttributes(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
+        }
+        else
+            taxi_model.shader = std::make_unique<Shader>("src/shaders/vertex/obj.hlsl", "src/shaders/fragment/obj.hlsl", "src/shaders/geometry/calculateNormals.hlsl");
         
         
         Light light1{ glm::vec3(5), glm::vec3(0.4), glm::vec3(3), glm::vec3(0.2) };
