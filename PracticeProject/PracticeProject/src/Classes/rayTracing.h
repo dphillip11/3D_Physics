@@ -3,11 +3,11 @@
 #include "Model.h"
 #include <memory>
 #include <vector>
+#include "Window.h"
 
 class rayTracing: public Model
 {
 public:
-	Texture marble;
 	float cam_depth = 0.5;
 	float cam_y = 10;
 	rayTracing()
@@ -16,16 +16,12 @@ public:
 		shader = std::make_unique<Shader>("src/shaders/vertex/blankScreen.hlsl", "src/shaders/fragment/rayTracing.hlsl");
 		setVertices(vertices, 12, _VAO, _VBO);
 		setAttributes(0, 2, GL_FLOAT, false, 2 * sizeof(float), (void*)0);
-		marble = Texture();
-		marble.loadImage("src/Textures/marble.jpg");
-		marble.bind();
 	}
 	void shadedDraw(float time, Window window)
 	{
 		
 		shader->use();
 		processInput(window);
-		marble.bind();
 		shader->setFloat("cam_y", cam_y);
 		shader->setFloat("iTime", time);
 		shader->setVec3("iResolution", glm::vec3(window._width, window._height, 0));

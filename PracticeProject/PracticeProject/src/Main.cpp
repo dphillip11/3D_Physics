@@ -3,7 +3,8 @@
 #include <vector>
 #include "Classes/ScopedTimer.h"
 #include "Classes/Input.h"
-#include "Classes/Programs/RenderPlane.h"
+#include "Programs/RenderPlane.h"
+#include "Programs/Newtons_Cradle.h"
 
 void displayFrameRate(float& timer, float& deltaTime, int& frames);
 
@@ -21,7 +22,8 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         //setup window and make a reference
         Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
         //setup camera
-        Camera* camera  = &RenderPlane::camera;
+        RenderPlane airplanes;
+        Camera* camera  = &airplanes.camera;
         //set background color
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
@@ -31,8 +33,16 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         int frames = 0;
         float frame_timer = 0;
 
-        RenderPlane::Setup();
+        
+        std::vector<Program*> programs;
+        Newtons_Cradle N;
+        programs.push_back(&N);
+        programs.push_back(&airplanes);
 
+        for (auto program : programs)
+        {
+            program->Setup();
+        }
        
 
         // render loop
@@ -41,7 +51,12 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         {
             ScopedTimer timer(&deltaTime);
             time += deltaTime;
-            RenderPlane::Run(time);
+            if (time < 10)
+                programs[1]->Run(time, window);
+            else
+            {
+                programs[0]->Run(time, window);
+            }
             displayFrameRate(frame_timer, deltaTime, frames);
             window.input->ProcessInput(deltaTime, *camera);
             window.update();
