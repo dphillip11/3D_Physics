@@ -31,8 +31,8 @@ void obj::read(std::string filepath)
 			normalMap.push_back(vn);
 		}
 		if (keyword == "vt") {
-			glm::vec3 vt;
-			iss >> vt.x  >> vt.y >> vt.z;
+			glm::vec3 vt(0);
+			iss >> vt.x  >> vt.y;
 			textureMap.push_back(vt);
 		}
 		if (keyword == "f")
@@ -78,7 +78,7 @@ void obj::convertToTriangles(std::vector<face>& face_elements)
 {
 	int number_of_vertices = face_elements.size();
 	//if triangles cannot be formed store vertices
-	if (number_of_vertices < 3)
+	if (number_of_vertices <= 3)
 	{
 		for (face face_element : face_elements)
 		{

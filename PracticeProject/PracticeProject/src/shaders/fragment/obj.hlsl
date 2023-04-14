@@ -4,7 +4,7 @@ out vec4 FragColor;
 
 in vec3 worldPos;
 in vec3 normal;
-// in vec2 texCoord;
+in vec2 texCoords;
 
 //uniform float time;
 
@@ -27,7 +27,7 @@ struct Light {
 uniform Light light;
 uniform Material material;
 uniform vec3 viewPosition;
-
+uniform sampler2D diffuse_texture;
 
 void main()
 {
@@ -48,7 +48,9 @@ void main()
 	vec3 specularComponent = material.specular * specularValue * light.specular;
 
 	//result
-	FragColor = vec4((ambientComponent + specularComponent + diffuseComponent), 1);
+	vec3 color = texture(diffuse_texture, texCoords).rgb;
+	color = length(color) == 0 ? vec3(1) : color;
+	FragColor = vec4((ambientComponent + specularComponent + diffuseComponent) * color, 1);
 
 	
 

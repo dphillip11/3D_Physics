@@ -17,7 +17,7 @@ protected:
 
 public:
 
-	unsigned int _VBO, _VAO, _EBO, _VBOnormal, _EBOnormal;
+	unsigned int _VBO, _VAO, _EBO, _VBOnormal, _EBOnormal, _VBOtexture, _EBOtexture;
 	glm::mat4 transform = glm::mat4(1);
 	std::unique_ptr<Shader> shader;
 	Model();

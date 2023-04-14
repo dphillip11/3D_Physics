@@ -6,6 +6,7 @@ Model::Model(): isSetEBO(false), isSetVBO(false), isSetVAO(false) {
 	glGenVertexArrays(1, &_VAO);
 	glGenBuffers(1, &_VBO);
 	glGenBuffers(1, &_VBOnormal);
+	glGenBuffers(1, &_VBOtexture);
 	glGenBuffers(1, &_EBO);
 }
 
