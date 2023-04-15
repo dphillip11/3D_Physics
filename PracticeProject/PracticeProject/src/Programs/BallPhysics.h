@@ -13,7 +13,7 @@ public:
 	{
 		BM.populateColors(100);
 		camera = _camera;
-		BM.spawnObjects(5000);
+		BM.spawnObjects(2000);
 	}
 	void Run(float _time, Window window)
 	{

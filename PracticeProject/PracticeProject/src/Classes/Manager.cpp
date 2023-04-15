@@ -91,7 +91,11 @@ void Manager::drawObjects(Camera camera)
 		glm::mat4 model = glm::translate(glm::mat4(1), position[i]);
 		model = glm::scale(model, glm::vec3(halfWidth[i], halfWidth[i], halfWidth[i]));
 		object->shader->setMat4("MVP", VP * model);
+		object->shader->setMat4("model", model);
 		object->shader->setVec3("color", colors[i % colors.size()]);
+		object->shader->setInt("shininess", (i % 50) + 1);
+		object->shader->setVec3("objectPos", position[i]);
+		object->shader->setVec3("viewPos", camera._position);
 		object->draw();
 	}
 }

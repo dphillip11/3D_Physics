@@ -58,9 +58,9 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         {
             ScopedTimer timer(&deltaTime);
             time += deltaTime;
-            int index = (int)floor(time / 10);
-            //programs[index%programs.size()]->Run(time, window);
-            programs[2]->Run(time, window);
+            int index = (int)floor(time / 15);
+            programs[index%programs.size()]->Run(time, window);
+            //programs[2]->Run(time, window);
             displayFrameRate(frame_timer, deltaTime, frames);
             window.input->ProcessInput(deltaTime, camera);
             window.update();
