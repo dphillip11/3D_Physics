@@ -68,6 +68,19 @@ void Manager::spawnCoplanarObjects(int n)
 	}
 }
 
+void Manager::populateColors(int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		glm::vec3 color;
+		color.r = (randomVal(255, true))/255;
+		color.g = (randomVal(255, true))/255;
+		color.b = (randomVal(255, true))/255;
+		colors.push_back(color);
+	}
+
+}
+
 void Manager::drawObjects(Camera camera)
 {
 	//setup shader
@@ -78,6 +91,7 @@ void Manager::drawObjects(Camera camera)
 		glm::mat4 model = glm::translate(glm::mat4(1), position[i]);
 		model = glm::scale(model, glm::vec3(halfWidth[i], halfWidth[i], halfWidth[i]));
 		object->shader->setMat4("MVP", VP * model);
+		object->shader->setVec3("color", colors[i % colors.size()]);
 		object->draw();
 	}
 }

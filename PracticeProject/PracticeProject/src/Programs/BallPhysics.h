@@ -11,6 +11,7 @@ public:
 	
 	void Setup(Camera* _camera)
 	{
+		BM.populateColors(100);
 		camera = _camera;
 		BM.spawnObjects(5000);
 	}

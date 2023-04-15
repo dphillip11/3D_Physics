@@ -22,11 +22,13 @@ protected:
 
 public:
 	int count = 0;
-	const float boundarySize = 75;
-	const float maxSpeed = 50;
-	const float maxWidth = 2;
-
+	const float boundarySize = 100;
+	const float maxSpeed = 30;
+	const float maxWidth = 8;
+	std::vector<glm::vec3> colors;
 	std::unique_ptr<Model> object;
+
+	void populateColors(int n);
 
 	//coplanar objects make it easier to view bugs in collision code
 	void spawnCoplanarObjects(int n);
