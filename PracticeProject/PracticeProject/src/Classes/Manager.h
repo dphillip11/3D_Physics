@@ -22,9 +22,9 @@ protected:
 
 public:
 	int count = 0;
-	const float boundarySize = 500;
+	const float boundarySize = 75;
 	const float maxSpeed = 50;
-	const float maxWidth = 10;
+	const float maxWidth = 2;
 
 	std::unique_ptr<Model> object;
 

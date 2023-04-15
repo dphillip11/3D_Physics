@@ -15,27 +15,39 @@ void obj::read(std::string filepath)
 	}
 
 	std::string line;
+
+	buffer.clear();
+	stack.clear();
+	cursor = { 0,0,0 };
+
 	while (getline(infile, line)) 
 	{
 		std::istringstream iss(line);
 		std::string keyword;
 		iss >> keyword;
-		if (keyword == "v") {
+		if (keyword == "#") {
+			iss >> keyword;
+			if (keyword == "object")
+			{
+				pushBufferToStack();
+			}
+		}
+		else if (keyword == "v") {
 			glm::vec3 v;
 			iss >> v.x >> v.y >> v.z;
 			vertices.push_back(v);
 		}
-		if (keyword == "vn") {
+		else if (keyword == "vn") {
 			glm::vec3 vn;
 			iss >> vn.x >> vn.y >> vn.z;
 			normalMap.push_back(vn);
 		}
-		if (keyword == "vt") {
+		else if (keyword == "vt") {
 			glm::vec3 vt(0);
 			iss >> vt.x  >> vt.y;
 			textureMap.push_back(vt);
 		}
-		if (keyword == "f")
+		else if (keyword == "f")
 		{
 			std::string vertexIndexString;
 			std::string textureIndexString;
@@ -65,12 +77,47 @@ void obj::read(std::string filepath)
 					// If no texture index, then no normal index as well
 					normalIndex = vertexIndex;
 				}
-				face_elements.push_back({ vertexIndex - 1, textureIndex - 1, normalIndex - 1 });
+				face_elements.push_back({ vertexIndex, textureIndex, normalIndex});
 			}
-
+			//triangulate face and add indices to buffer
 			convertToTriangles(face_elements);
 		}
+		
 	}
+	pushBufferToStack();
+	splitStackIntoIndices();
+}
+
+void obj::splitStackIntoIndices()
+{
+	for (face index : stack)
+	{
+		vertexIndices.push_back(index.vIndex);
+		textureIndices.push_back(index.tIndex);
+		normalIndices.push_back(index.nIndex);
+	}
+	stack.clear();
+}
+
+void obj::pushBufferToStack()
+{
+	//sort buffer
+	for (face& index : buffer)
+	{
+		//swap negative values for positive, zero index positive values
+		index.vIndex = (index.vIndex < 0) ? (vertices.size() - cursor.vIndex + index.vIndex ) : index.vIndex - 1;
+		index.tIndex = (index.tIndex < 0) ? (textureMap.size() - cursor.tIndex + index.tIndex ) : index.tIndex - 1;
+		index.nIndex = (index.nIndex < 0) ? (normalMap.size() - cursor.nIndex + index.nIndex ) : index.nIndex - 1;
+		//shift to the right for existing vertices
+		index = { index.vIndex + cursor.vIndex, index.tIndex + cursor.tIndex, index.nIndex + cursor.nIndex };
+		//add index to stack of face elements
+		stack.push_back(index);
+	}
+	//move cursor
+	cursor = { (int)vertices.size(), (int)textureMap.size(), (int)normalMap.size() };
+	//clear buffer
+	buffer.clear();
+	
 
 }
 
@@ -83,9 +130,7 @@ void obj::convertToTriangles(std::vector<face>& face_elements)
 		for (face face_element : face_elements)
 		{
 			// Store vertex index, texture index, and normal index in separate vectors
-			vertexIndices.push_back(face_element.vIndex);
-			textureIndices.push_back(face_element.tIndex);
-			normalIndices.push_back(face_element.nIndex);
+			buffer.push_back(face_element);
 		}
 	}
 	else
@@ -94,19 +139,12 @@ void obj::convertToTriangles(std::vector<face>& face_elements)
 		for (int i = 0; i < number_of_vertices - 2; i++)
 		{
 			//fanning point
-			vertexIndices.push_back(face_elements[0].vIndex);
-			textureIndices.push_back(face_elements[0].tIndex);
-			normalIndices.push_back(face_elements[0].nIndex);
-
+			buffer.push_back(face_elements[0]);
 			//second vertex
-			vertexIndices.push_back(face_elements[i+1].vIndex);
-			textureIndices.push_back(face_elements[i+1].tIndex);
-			normalIndices.push_back(face_elements[i+1].nIndex);
-
+			buffer.push_back(face_elements[i+1]);
 			//third vertex
-			vertexIndices.push_back(face_elements[i+2].vIndex);
-			textureIndices.push_back(face_elements[i+2].tIndex);
-			normalIndices.push_back(face_elements[i+2].nIndex);
+			buffer.push_back(face_elements[i+2]);
+
 		}
 	}
 
@@ -120,11 +158,7 @@ std::vector<glm::vec3> obj::unravelIndices(std::vector<glm::vec3>& values, std::
 		return tempValues;
 	for (int i=0 ; i < indices.size(); i++)
 	{
-		int index;
-		if (indices[i] < 0)
-			index = values.size() + indices[i] + 1;
-		else
-			index = indices[i];
+		int index = indices[i];
 		tempValues.push_back(values[index]);
 	}
 	return tempValues;

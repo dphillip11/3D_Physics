@@ -38,7 +38,7 @@ public:
 			if (window.input->input.front() == KEYS::UP)
 			{
 				cam_y += (float)0.1;
-				cam_y = fmin(fmax(0.1, cam_y), 30);
+				cam_y = (float)fmin(fmax(0.1f, cam_y), 30);
 				window.input->input.pop();
 			}
 			else if (window.input->input.front() == KEYS::DOWN)

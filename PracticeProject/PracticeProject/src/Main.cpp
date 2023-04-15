@@ -3,8 +3,10 @@
 #include <vector>
 #include "Classes/ScopedTimer.h"
 #include "Classes/Input.h"
+#include "Classes/Program.h"
 #include "Programs/RenderPlane.h"
 #include "Programs/Newtons_Cradle.h"
+#include "Programs/BallPhysics.h"
 
 void displayFrameRate(float& timer, float& deltaTime, int& frames);
 
@@ -22,8 +24,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         //setup window and make a reference
         Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
         //setup camera
-        RenderPlane airplanes;
-        Camera* camera  = &airplanes.camera;
+        Camera camera = Camera(glm::vec3(0, 5, -10), glm::vec3(0, 10, -10));
         //set background color
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
@@ -33,16 +34,22 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         int frames = 0;
         float frame_timer = 0;
 
-        
         std::vector<Program*> programs;
+
+        RenderPlane P;
         Newtons_Cradle N;
-        programs.push_back(&N);
-        programs.push_back(&airplanes);
+        BallPhysics B;
+
+        programs.push_back((Program*) & N);
+        programs.push_back((Program*)&P);
+        programs.push_back((Program*)&B);
 
         for (auto program : programs)
         {
-            program->Setup();
+            program->Setup(&camera);
         }
+  
+
        
 
         // render loop
@@ -51,14 +58,11 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         {
             ScopedTimer timer(&deltaTime);
             time += deltaTime;
-            if (time < 10)
-                programs[1]->Run(time, window);
-            else
-            {
-                programs[0]->Run(time, window);
-            }
+            int index = (int)floor(time / 10);
+            programs[index%programs.size()]->Run(time, window);
+            //programs[1]->Run(time, window);
             displayFrameRate(frame_timer, deltaTime, frames);
-            window.input->ProcessInput(deltaTime, *camera);
+            window.input->ProcessInput(deltaTime, camera);
             window.update();
 
         }

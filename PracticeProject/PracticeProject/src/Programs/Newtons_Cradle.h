@@ -1,13 +1,12 @@
 #pragma once
 #include "../Classes/rayTracing.h"
-#include "../Classes/Program.h"
 
 class Newtons_Cradle:public Program
 {
 public:
 	rayTracing rt;
 
-	void Setup()
+	void Setup(Camera* camera)
 	{
 
 	}
