@@ -1,33 +1,34 @@
 #pragma once
 #include "../Classes/Window.h"
+#include "../Classes/BallManager.h"
+#include "../InputHandlers/BallPhysicsInput.h"
 
 class BallPhysics :public Program
 {
 public:
 
 	BallManager BM;
-	Camera* camera = nullptr;
+	Camera camera = Camera(glm::vec3(0, 0, -300), glm::vec3(0, 0, 0));
+	BallPhysicsInput inputHandler = BallPhysicsInput(&camera, &BM);
 	float time = 0;
-	float spawned = false;
 	
-	void Setup(Camera* _camera)
+	void Setup()
 	{
+		camera.setFOV(75);
 		BM.populateColors(100);
 		BM.gravity = 9.8;
-		BM.collisionEfficiency = 0.8;
-		camera = _camera;
+		BM.collisionEfficiency = 0.9;
 		BM.spawnObjects(2000);
 	}
-	void Run(float _time, Window window)
+	void Run(float deltaTime)
 	{
-		float deltaTime = _time - time;
-		time = _time;
-		if (time > 10 && !spawned)
-		{
-			BM.spawnObject(glm::vec3(0, BM.boundarySize - 20, 0), glm::vec3(0, -100, 0), 20);
-			spawned = true;
-		}
-		BM.drawObjects(*camera);
+		time += deltaTime;
+		BM.drawObjects(camera);
 		BM.update(deltaTime);
+	}
+
+	InputObserver* getInputHandler()
+	{
+		return &inputHandler;
 	}
 };

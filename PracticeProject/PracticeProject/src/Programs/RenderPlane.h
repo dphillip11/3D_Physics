@@ -7,6 +7,7 @@
 #include <glm/glm/gtc/type_ptr.hpp>
 #include <glm/glm/gtc/quaternion.hpp>
 #include "../Classes/camera.h"
+#include "../InputHandlers/BallPhysicsInput.h"
 
 
 
@@ -18,17 +19,17 @@ class RenderPlane : public Program {
 public:
     const char* model_path = "src/Assets/hare.obj";
     const char* texture_path = "src/Assets/Plane/plane_diffuse.jpg";
-    Camera* camera = nullptr;
+    Camera camera = Camera(glm::vec3(0, 100, -200), glm::vec3(0, 100, -10));
     obj taxi;
     Model taxi_model;
     Light light1{ glm::vec3(0,100,-500), glm::vec3(1), glm::vec3(1), glm::vec3(1) };
     Material mat1{ glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.4f), 32 };
-    void Setup(Camera* _camera)
+    float time = 0;
+    BallPhysicsInput inputHandler = BallPhysicsInput(&camera, (BallManager*)0);
+    void Setup()
     {
-        camera = _camera;
-        *camera = Camera(glm::vec3(0, 100, -200), glm::vec3(0, 100, -10));
-        camera->setFOV(90);
-        camera->isLockedOn = true;
+        camera.setFOV(90);
+        camera.isLockedOn = true;
         taxi.read(model_path);
         taxi.vertices = taxi.unravelIndices(taxi.vertices, taxi.vertexIndices);
         taxi.normalMap = taxi.unravelIndices(taxi.normalMap, taxi.normalIndices);
@@ -65,9 +66,10 @@ public:
         
     }
 
-    void Run(float time, Window window)
+    void Run(float deltaTime)
     {
-        glm::mat4 view = camera->lookAt();
+        time += deltaTime;
+        glm::mat4 view = camera.lookAt();
         taxi_model.shader->use();
         taxi_model.draw();
         glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), -(time)+3.14f, glm::vec3(0, 1, 0));
@@ -75,10 +77,15 @@ public:
         taxi_model.draw();
         rotationMatrix = glm::rotate(glm::mat4(1.0f), -(time), glm::vec3(0, 1, 0));
         taxi_model.shader->setMat4("model", glm::translate(rotationMatrix, glm::vec3(10, 0, 0)));
-        taxi_model.shader->setMat4("view", camera->lookAt());
-        taxi_model.shader->setMat4("projection", camera->projection);
-        taxi_model.shader->setVec3("viewPosition", camera->_position);
+        taxi_model.shader->setMat4("view", camera.lookAt());
+        taxi_model.shader->setMat4("projection", camera.projection);
+        taxi_model.shader->setVec3("viewPosition", camera._position);
         taxi_model.shader->setLight(light1);
         taxi_model.shader->setMaterial(mat1);
+    }
+
+    InputObserver* getInputHandler()
+    {
+        return &inputHandler;
     }
 };

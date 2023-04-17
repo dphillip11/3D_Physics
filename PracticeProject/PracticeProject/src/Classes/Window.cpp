@@ -4,6 +4,9 @@
 #include "Input.h"
 
 std::unique_ptr<Input> Window::input(new Input);
+int Window::_height = 1;
+int Window::_width = 1;
+Window* Window::instance = nullptr;
 
 
 Window::Window(const unsigned int width, const unsigned int height, const char* name)
@@ -41,6 +44,7 @@ Window::Window(const unsigned int width, const unsigned int height, const char* 
         {
             std::cout << ("Failed to initialize GLAD") << std::endl;
         }
+        Window::instance = this;
 }
 
 void Window::framebuffer_size_callback(GLFWwindow* window, int WIDTH, int HEIGHT)

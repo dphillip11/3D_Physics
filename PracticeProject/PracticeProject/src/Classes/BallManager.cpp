@@ -123,6 +123,9 @@ void BallManager::resolveCollisions()
 
 void BallManager::update(float deltaTime)
 {
+	time += deltaTime;
+	if (isCoolingDown && time - coolDownTime > coolDownInterval)
+		isCoolingDown = false;
 	updatePositions(deltaTime);
 	resolveCollisions();
 	//resolveCollisions_no_buckets();

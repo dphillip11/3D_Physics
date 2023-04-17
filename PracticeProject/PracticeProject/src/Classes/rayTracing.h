@@ -21,34 +21,34 @@ public:
 	{
 		
 		shader->use();
-		processInput(window);
+		processInput();
 		shader->setFloat("cam_y", cam_y);
 		shader->setFloat("iTime", time);
 		shader->setVec3("iResolution", glm::vec3(window._width, window._height, 0));
 		
 		draw();
 	}
-	void processInput(Window window)
+	void processInput()
 	{
-		shader->setVec3("iMouse", glm::vec3(-window.input->mouseX, -window.input->mouseY, 0));
-		cam_depth = (float)fmax(cam_depth + window.input->scrollOffset * 0.05f, 0.1);
+		shader->setVec3("iMouse", glm::vec3(-Window::instance->input->mouseX, -Window::instance->input->mouseY, 0));
+		cam_depth = (float)fmax(cam_depth + Window::instance->input->scrollOffset * 0.05f, 0.1);
 		shader->setFloat("cam_depth", cam_depth);
-		while (!window.input->input.empty())
+		while (!Window::instance->input->input.empty())
 		{
-			if (window.input->input.front() == KEYS::UP)
+			if (Window::instance->input->input.front() == KEYS::UP)
 			{
 				cam_y += (float)0.1;
 				cam_y = (float)fmin(fmax(0.1f, cam_y), 30);
-				window.input->input.pop();
+				Window::instance->input->input.pop();
 			}
-			else if (window.input->input.front() == KEYS::DOWN)
+			else if (Window::instance->input->input.front() == KEYS::DOWN)
 			{
 				cam_y -= (float)0.1;
 				cam_y = (float)fmin(fmax(0.1, cam_y), 30);
-				window.input->input.pop();
+				Window::instance->input->input.pop();
 			}
 			else
-				window.input->input.pop();
+				Window::instance->input->input.pop();
 		}
 	}
 	

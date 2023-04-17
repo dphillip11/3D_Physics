@@ -5,14 +5,21 @@ class Newtons_Cradle:public Program
 {
 public:
 	rayTracing rt;
+	float time = 0;
 
-	void Setup(Camera* camera)
+	void Setup()
 	{
 
 	}
-	void Run(float time, Window window)
+	void Run(float deltaTime)
 	{
-		rt.shadedDraw(time, window);
-		rt.processInput(window);
+		time += deltaTime;
+		rt.shadedDraw(time, *Window::instance);
+		rt.processInput();
+	}
+
+	InputObserver* getInputHandler()
+	{
+		return nullptr;
 	}
 };

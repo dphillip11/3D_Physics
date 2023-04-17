@@ -13,18 +13,13 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
     // settings
     const unsigned int SCR_WIDTH = 1280;
     const unsigned int SCR_HEIGHT = 720;
-
-    int Window::_height = 1;
-    int Window::_width = 1;
-    const char* windowName = "Balls";
+    const char* windowName = "Window";
 
 
     int main()
     {
         //setup window and make a reference
         Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
-        //setup camera
-        Camera camera = Camera(glm::vec3(0, 5, -10), glm::vec3(0, 10, -10));
         //set background color
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
@@ -33,6 +28,8 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         float time = 0;
         int frames = 0;
         float frame_timer = 0;
+        int programIndex = 0;
+        int numberOfPrograms = 0;
 
         std::vector<Program*> programs;
 
@@ -40,15 +37,17 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         Newtons_Cradle N;
         BallPhysics B;
 
-        programs.push_back((Program*) & N);
+        programs.push_back((Program*)&N);
         programs.push_back((Program*)&P);
         programs.push_back((Program*)&B);
 
         for (auto program : programs)
         {
-            program->Setup(&camera);
+            program->Setup();
         }
-  
+
+        numberOfPrograms = programs.size();
+        window.input->observers.push_back(P.getInputHandler());
 
        
 
@@ -58,11 +57,21 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         {
             ScopedTimer timer(&deltaTime);
             time += deltaTime;
-            int index = (int)floor(time / 15);
-            //programs[index%programs.size()]->Run(time, window);
-            programs[2]->Run(time, window);
+            programs[1]->Run(deltaTime);
+            /*if (time > 2)
+            {
+                programIndex = (programIndex + 1) % numberOfPrograms;
+                window.input->observers.clear();
+                InputObserver* inputHandler = programs[programIndex]->getInputHandler();
+                if (inputHandler != nullptr)
+                    window.input->observers.push_back(inputHandler);
+                time = 0;
+            }*/
+
+            //programs[programIndex]->Run(deltaTime);
+            
             displayFrameRate(frame_timer, deltaTime, frames);
-            window.input->ProcessInput(deltaTime, camera);
+            window.input->ProcessInput(deltaTime);
             window.update();
 
         }
