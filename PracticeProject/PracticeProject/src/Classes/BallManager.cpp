@@ -99,14 +99,15 @@ void BallManager::resolveCollisions()
 						auto normal = glm::normalize(position[bucket[j]] - position[bucket[i]]);
 						position[bucket[j]] -= (0.5f * difference * normal);
 						position[bucket[i]] += (0.5f * difference * glm::normalize(normal));
-						auto relativeVelocity = velocity[bucket[i]] - velocity[bucket[j]];
-						float collisionSpeed = glm::dot(relativeVelocity, normal);
-						if (collisionSpeed > 0)
-						{
-							glm::vec3 impulse = normal * collisionSpeed;
-							velocity[bucket[i]] -= impulse;
-							velocity[bucket[j]] += impulse;
-						}
+
+						// Calculate momentum conservation
+						float m1 = pow(halfWidth[bucket[i]], 3); // relative mass of object 1 assuming uniform density
+						float m2 = pow(halfWidth[bucket[j]], 3); // relative ass of object 2 assuming uniform density
+						glm::vec3 relativeVelocity = velocity[bucket[i]] - velocity[bucket[j]]; // Relative velocity of the objects
+						float collisionSpeed = glm::dot(relativeVelocity, normal); // Collision speed along the normal direction
+						glm::vec3 normalImpulse = collisionEfficiency * normal * (2 * m1 * m2 * dot(relativeVelocity, normal)) / (m1 + m2); // Calculate impulse using masses, relative velocity, and coefficient of restitution
+						velocity[bucket[i]] -= (normalImpulse / m1); // Update velocity of object 1
+						velocity[bucket[j]] += (normalImpulse / m2); // Update velocity of object 2
 					}
 
 

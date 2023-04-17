@@ -98,8 +98,6 @@ public:
             //X
             else if (input.front() == KEYS::W)
             {
-                //ballManager.spawnBalls(10);
-                //std::cout << ballManager.ballCount << std::endl;
                 input.pop();
             }
             else

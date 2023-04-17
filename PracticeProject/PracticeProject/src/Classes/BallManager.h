@@ -7,6 +7,8 @@ class BallManager:public Manager
 	
 
 public:
+	
+
 	void update(float deltaTime);
 
 	BallManager() { object = std::make_unique<Ball>(); }
@@ -14,7 +16,6 @@ public:
 	void resolveCollisions();
 	void resolveCollisions_no_buckets();
 
-	void spawnFlattenedBalls(int n);
 
 };
 

@@ -22,28 +22,38 @@ void Manager::updatePositions(float deltaTime)
 {
 	for (int i = 0; i < count; i++)
 	{
+		velocity[i].y -= deltaTime * gravity;
 		position[i] += (velocity[i] * deltaTime);
-	}
 
-	for (int i = 0; i < count; i++)
-	{
 		if (abs(position[i].x) > boundarySize - halfWidth[i])
 		{
-			position[i].x -= (velocity[i].x * deltaTime);
-			velocity[i].x *= -1;
+			int sign = position[i].x > 0 ? 1 : -1;
+			position[i].x = sign * (boundarySize - halfWidth[i]);
+			velocity[i].x *= -collisionEfficiency;
 		}
 		if (abs(position[i].y) > boundarySize - halfWidth[i])
 		{
-			position[i].y -= (velocity[i].y * deltaTime);
-			velocity[i].y *= -1;
+			int sign = position[i].y > 0 ? 1 : -1;
+			position[i].y = sign * (boundarySize - halfWidth[i]);
+			velocity[i].y *= -collisionEfficiency;
 		}
 		if (abs(position[i].z) > boundarySize - halfWidth[i])
 		{
-			position[i].z -= (velocity[i].z * deltaTime);
-			velocity[i].z *= -1;
+			int sign = position[i].z > 0 ? 1 : -1;
+			position[i].z = sign * (boundarySize - halfWidth[i]);
+			velocity[i].z *= -collisionEfficiency;
 		}
+
 	}
 
+}
+
+void Manager::spawnObject(glm::vec3 new_position, glm::vec3 new_velocity, float new_radius)
+{
+	position.push_back(new_position);
+	velocity.push_back(new_velocity);
+	halfWidth.push_back(new_radius);
+	count++;
 }
 
 void Manager::spawnObjects(int n)

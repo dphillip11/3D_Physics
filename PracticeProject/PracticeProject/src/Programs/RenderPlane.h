@@ -16,8 +16,8 @@ class RenderPlane : public Program {
     const unsigned int SCR_HEIGHT = 720;
     //setup camera
 public:
-    const char* model_path = "src/Assets/Hare.obj";
-    const char* texture_path = "src/Assets/HareTexture.jpg";
+    const char* model_path = "src/Assets/hare.obj";
+    const char* texture_path = "src/Assets/Plane/plane_diffuse.jpg";
     Camera* camera = nullptr;
     obj taxi;
     Model taxi_model;
