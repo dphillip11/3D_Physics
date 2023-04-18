@@ -33,12 +33,12 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
 
         std::vector<Program*> programs;
 
-        LoadOBJ P;
+        LoadOBJ L;
         Newtons_Cradle N;
         BallPhysics B;
 
         programs.push_back((Program*)&N);
-        programs.push_back((Program*)&P);
+        programs.push_back((Program*)&L);
         programs.push_back((Program*)&B);
 
         for (auto program : programs)
