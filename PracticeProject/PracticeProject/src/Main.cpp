@@ -4,7 +4,7 @@
 #include "Classes/ScopedTimer.h"
 #include "Classes/Input.h"
 #include "Classes/Program.h"
-#include "Programs/RenderPlane.h"
+#include "Programs/LoadOBJ.h"
 #include "Programs/Newtons_Cradle.h"
 #include "Programs/BallPhysics.h"
 
@@ -33,7 +33,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
 
         std::vector<Program*> programs;
 
-        RenderPlane P;
+        LoadOBJ P;
         Newtons_Cradle N;
         BallPhysics B;
 
