@@ -1,11 +1,13 @@
 #pragma once
 #include "../Classes/rayTracing.h"
+#include "../InputHandlers/NewtonsCradleInput.h"
 
 class Newtons_Cradle:public Program
 {
 public:
 	rayTracing rt;
 	float time = 0;
+	NewtonsCradleInput inputHandler{&rt};
 
 	void Setup()
 	{
@@ -15,11 +17,11 @@ public:
 	{
 		time += deltaTime;
 		rt.shadedDraw(time, *Window::instance);
-		rt.processInput();
+		inputHandler.processInput();
 	}
 
 	InputObserver* getInputHandler()
 	{
-		return nullptr;
+		return &inputHandler;
 	}
 };

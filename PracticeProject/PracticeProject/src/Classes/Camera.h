@@ -11,6 +11,11 @@ private:
 	float _pitch = 0;
 	void updateValues();
 public:
+
+	float moveSpeed = 50;
+	float panSpeed = 5;
+	float zoomSpeed = 30;
+
 	glm::vec3 _direction;
 	glm::vec3 _position;
 	bool isLockedOn = false;

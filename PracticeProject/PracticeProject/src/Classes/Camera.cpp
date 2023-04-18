@@ -17,11 +17,11 @@ glm::mat4 Camera::view()
 
 void Camera::zoom(float offset)
 {
-	_FOV += offset;
+	_FOV += offset * zoomSpeed;
 	if (_FOV < 1.0f)
 		_FOV = 1.0f;
-	if (_FOV > 80.0f)
-		_FOV = 80.0f;
+	if (_FOV > 110.0f)
+		_FOV = 110.0f;
 	setFOV(_FOV);
 }
 
@@ -32,11 +32,11 @@ void Camera::setFOV(float fov)
 
 void Camera::moveForward(float distance)
 {
-	_position = _position - (distance * glm::normalize(_direction));
+	_position = _position - (moveSpeed * distance * glm::normalize(_direction));
 }
 void Camera::moveRight(float distance)
 {
-	_position = _position + (distance * glm::normalize(_right));
+	_position = _position + (moveSpeed * distance * glm::normalize(_right));
 }
 
 void Camera::setPosition(glm::vec3 position) {
@@ -52,8 +52,8 @@ void Camera::setTarget(glm::vec3 target) {
 
 void Camera::rotate(float dx, float dy) 
 {
-	_yaw += dx;
-	_pitch += dy;
+	_yaw += dx * panSpeed;
+	_pitch += dy * panSpeed;
 	if (_pitch > 89.0f)
 		_pitch = 89.0f;
 	if (_pitch < -89.0f)

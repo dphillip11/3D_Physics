@@ -15,6 +15,8 @@ public:
 	void Setup()
 	{
 		camera.setFOV(75);
+		camera.zoomSpeed = 10;
+		camera.moveSpeed = 1;
 		BM.populateColors(100);
 		BM.gravity = 9.8;
 		BM.collisionEfficiency = 0.9;

@@ -7,7 +7,7 @@
 #include <glm/glm/gtc/type_ptr.hpp>
 #include <glm/glm/gtc/quaternion.hpp>
 #include "../Classes/camera.h"
-#include "../InputHandlers/BallPhysicsInput.h"
+#include "../InputHandlers/BasicCameraInput.h"
 
 
 
@@ -18,18 +18,21 @@ class RenderPlane : public Program {
     //setup camera
 public:
     const char* model_path = "src/Assets/hare.obj";
-    const char* texture_path = "src/Assets/Plane/plane_diffuse.jpg";
+    const char* texture_path = "src/Assets/HareTexture.jpg";
     Camera camera = Camera(glm::vec3(0, 100, -200), glm::vec3(0, 100, -10));
     obj taxi;
     Model taxi_model;
     Light light1{ glm::vec3(0,100,-500), glm::vec3(1), glm::vec3(1), glm::vec3(1) };
     Material mat1{ glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.4f), 32 };
     float time = 0;
-    BallPhysicsInput inputHandler = BallPhysicsInput(&camera, (BallManager*)0);
+    BasicCameraInput inputHandler = BasicCameraInput(&camera);
     void Setup()
     {
         camera.setFOV(90);
-        camera.isLockedOn = true;
+        camera.moveSpeed = 100;
+        camera.panSpeed = 400;
+        camera.zoomSpeed = 1000;
+        camera.isLockedOn = false;
         taxi.read(model_path);
         taxi.vertices = taxi.unravelIndices(taxi.vertices, taxi.vertexIndices);
         taxi.normalMap = taxi.unravelIndices(taxi.normalMap, taxi.normalIndices);

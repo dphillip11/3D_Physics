@@ -447,7 +447,6 @@ void main()
     BOUNCES = int(1.5 * iTime / 3.14) % 10 + 1;
     // Normalized pixel coordinates (from -1 to 1)
     vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution.xy) / iResolution.y;
-
     cam.pos = cam.target + vec3(10. * sin(iMouse.x / 100.), 15. * max(sin((1.57 * iMouse.y - 0.3 * iResolution.y) / iResolution.y), 0.), 10. * cos(iMouse.x / 100.));
     PositionBalls();
     cam.depth = cam_depth;

@@ -28,6 +28,7 @@ public:
     float mouseY = 0;
     bool firstMouse = true;
     int coolDown = 0;
+    //TODO: setup button cooldown, maybe use a map and timer
 
     ::std::queue<int> input;
     std::vector<InputObserver*> observers;

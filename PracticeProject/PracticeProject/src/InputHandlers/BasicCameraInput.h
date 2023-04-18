@@ -1,14 +1,14 @@
 #pragma once
+#include "BasicCameraInput.h"
 #include "../Classes/Camera.h"
 #include "../Classes/InputObserver.h"
-#include "../Classes/BallManager.h"
 
-class BallPhysicsInput : public InputObserver
+
+class BasicCameraInput : public InputObserver
 {
 public:
     Camera* camera;
-    BallManager* BM;
-    BallPhysicsInput(Camera* new_camera, BallManager* new_BM) : camera(new_camera), BM(new_BM) {};
+    BasicCameraInput(Camera* new_camera) : camera(new_camera) {};
     void onKeyPress(int key, float deltaTime);
     void onMouseScroll(float scroll_value, float deltaTime);
     void onMousePress(float deltaTime);

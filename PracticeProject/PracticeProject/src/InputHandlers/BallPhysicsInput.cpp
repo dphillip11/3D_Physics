@@ -4,9 +4,9 @@
 
 void BallPhysicsInput::onKeyPress(int key, float deltaTime)
 {
-	if (BM && key == KEYS::SPACE && !BM->isCoolingDown)
+	if (key == KEYS::SPACE && !BM->isCoolingDown)
 	{
-		BM->spawnObject(glm::vec3(0, BM->boundarySize - 20, 0), glm::vec3(0, -100, 0), 20);
+		BM->spawnObject(glm::vec3(0, BM->boundarySize - 20, 0), glm::vec3(0, rand()% 250 - 270, 0), 20);
 		BM->isCoolingDown = true;
 		BM->coolDownTime = BM->time;
 	}
@@ -22,7 +22,7 @@ void BallPhysicsInput::onKeyPress(int key, float deltaTime)
 
 void BallPhysicsInput::onMouseScroll(float scroll_value, float deltaTime)
 {
-	camera->zoom(scroll_value * zoomSpeed * deltaTime);
+	camera->zoom(scroll_value * deltaTime);
 }
 
 void BallPhysicsInput::onMousePress(float deltaTime)
@@ -32,5 +32,5 @@ void BallPhysicsInput::onMousePress(float deltaTime)
 
 void BallPhysicsInput::onMouseMove(float dx, float dy, float deltaTime)
 {
-	camera->rotate(panSpeed * dx * deltaTime, panSpeed * dy * deltaTime);
+	camera->rotate(dx * deltaTime, dy * deltaTime);
 }
