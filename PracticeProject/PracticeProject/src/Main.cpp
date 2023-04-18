@@ -47,7 +47,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         }
 
         numberOfPrograms = programs.size();
-        window.input->observers.push_back(N.getInputHandler());
+        window.input->observers.push_back(B.getInputHandler());
 
        
 
@@ -57,8 +57,8 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         {
             ScopedTimer timer(&deltaTime);
             time += deltaTime;
-            //programs[2]->Run(deltaTime);
-            if (time > 5)
+            programs[2]->Run(deltaTime);
+   /*         if (time > 5)
             {
                 programIndex = (programIndex + 1) % numberOfPrograms;
                 window.input->observers.clear();
@@ -68,7 +68,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
                 time = 0;
             }
 
-            programs[programIndex]->Run(deltaTime);
+            programs[programIndex]->Run(deltaTime);*/
             
             displayFrameRate(frame_timer, deltaTime, frames);
             window.input->ProcessInput(deltaTime);

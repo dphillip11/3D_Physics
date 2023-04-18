@@ -29,19 +29,19 @@ void Manager::updatePositions(float deltaTime)
 		{
 			int sign = position[i].x > 0 ? 1 : -1;
 			position[i].x = sign * (boundarySize - halfWidth[i]);
-			velocity[i].x *= -collisionEfficiency;
+			velocity[i].x *= -restitution[i];
 		}
 		if (abs(position[i].y) > boundarySize - halfWidth[i])
 		{
 			int sign = position[i].y > 0 ? 1 : -1;
 			position[i].y = sign * (boundarySize - halfWidth[i]);
-			velocity[i].y *= -collisionEfficiency;
+			velocity[i].y *= -restitution[i];
 		}
 		if (abs(position[i].z) > boundarySize - halfWidth[i])
 		{
 			int sign = position[i].z > 0 ? 1 : -1;
 			position[i].z = sign * (boundarySize - halfWidth[i]);
-			velocity[i].z *= -collisionEfficiency;
+			velocity[i].z *= -restitution[i];
 		}
 
 	}
@@ -53,6 +53,8 @@ void Manager::spawnObject(glm::vec3 new_position, glm::vec3 new_velocity, float 
 	position.push_back(new_position);
 	velocity.push_back(new_velocity);
 	halfWidth.push_back(new_radius);
+	mass.push_back(pow(new_radius, 3));
+	restitution.push_back(0.3 + randomVal(0.5, true));
 	count++;
 }
 
@@ -63,6 +65,8 @@ void Manager::spawnObjects(int n)
 		position.push_back(randomVec3(boundarySize));
 		velocity.push_back(randomVec3(maxSpeed));
 		halfWidth.push_back(randomVal(maxWidth / 2, true));
+		mass.push_back(pow(halfWidth[i],3));
+		restitution.push_back(0.3 + randomVal(0.5, true));
 		count++;
 	}
 }
@@ -74,6 +78,8 @@ void Manager::spawnCoplanarObjects(int n)
 		position.push_back(glm::vec3(randomVal(boundarySize), 0, randomVal(boundarySize)));
 		velocity.push_back(glm::vec3(randomVal(maxSpeed), 0, randomVal(maxSpeed)));
 		halfWidth.push_back(randomVal(maxWidth / 2, true));
+		mass.push_back(pow(halfWidth[i], 3));
+		restitution.push_back(0.3 + randomVal(0.5, true));
 		count++;
 	}
 }

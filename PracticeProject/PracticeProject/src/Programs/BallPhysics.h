@@ -19,7 +19,6 @@ public:
 		camera.moveSpeed = 1;
 		BM.populateColors(100);
 		BM.gravity = 9.8;
-		BM.collisionEfficiency = 0.9;
 		BM.spawnObjects(2000);
 	}
 	void Run(float deltaTime)

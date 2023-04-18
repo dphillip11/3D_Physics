@@ -16,12 +16,13 @@ class Manager
 {
 protected: 
 	std::vector<glm::vec3> position;
+	std::vector<float> mass;
+	std::vector<float> restitution;
 	std::vector<glm::vec3> velocity;
 	std::vector<float> halfWidth;
 
 public:
 	int count = 0;
-	float collisionEfficiency =1;
 	float gravity = 9.8;
 	const float boundarySize = 100;
 	const float maxSpeed = 30;
