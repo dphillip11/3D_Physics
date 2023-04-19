@@ -7,9 +7,6 @@ class BallManager:public Manager
 	
 
 public:
-	bool isCoolingDown = false;
-	float coolDownTime = 0;
-	float coolDownInterval = 1;
 
 	void update(float deltaTime);
 

@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include<iostream>
 #include "InputObserver.h"
+#include <map>
 
 enum KEYS {
     UP,
@@ -18,7 +19,6 @@ enum KEYS {
 
 class Input {
 public:
-    const float cameraSpeed = 50.0f;
     const float mouseSensitivity = 0.1f;
     const float scrollSensitivity = 10.0f;
     float scrollOffset = 0;
@@ -27,14 +27,39 @@ public:
     float previousMouseY = 0;
     float mouseY = 0;
     bool firstMouse = true;
-    int coolDown = 0;
-    //TODO: setup button cooldown, maybe use a map and timer
-
+    float time = 0;
+    float coolDownInterval = 1.0f;
+    //track time of key press;
+    std::map<int, float> keyCoolDown;
+    std::map<int, bool> coolDownKeys;
     ::std::queue<int> input;
     std::vector<InputObserver*> observers;
 
+    Input()
+    {
+        coolDownKeys[KEYS::SPACE] = true;
+    }
+
+    void LogKey(int key)
+    {
+        //check if the key is on the cooldown list
+        if (!coolDownKeys[key])
+            input.push(key);
+        else
+        {
+            float keyPressTime = keyCoolDown[key];
+            if (!keyPressTime || time - keyPressTime > coolDownInterval)
+            {
+                input.push(key);
+                keyCoolDown[key] = time;
+            }
+        }
+
+    }
+
     void ProcessInput(float deltaTime)
     {
+        time = time + deltaTime;
         if (scrollOffset != 0)
         {
             for (auto observer : observers)

@@ -72,39 +72,39 @@ void Window::captureInput()
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     {
-        input->input.push(KEYS::UP);
+        input->LogKey(KEYS::UP);
     }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        input->input.push(KEYS::DOWN);
+        input->LogKey(KEYS::DOWN);
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
-        input->input.push(KEYS::LEFT);
+        input->LogKey(KEYS::LEFT);
     }
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
-        input->input.push(KEYS::RIGHT);
+        input->LogKey(KEYS::RIGHT);
     }
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        input->input.push(KEYS::W);
+        input->LogKey(KEYS::W);
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        input->input.push(KEYS::A);
+        input->LogKey(KEYS::A);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        input->input.push(KEYS::S);
+        input->LogKey(KEYS::S);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        input->input.push(KEYS::D);
+        input->LogKey(KEYS::D);
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
     {
-        input->input.push(KEYS::SPACE);
+        input->LogKey(KEYS::SPACE);
     }
     
 }

@@ -4,11 +4,9 @@
 
 void BallPhysicsInput::onKeyPress(int key, float deltaTime)
 {
-	if (key == KEYS::SPACE && !BM->isCoolingDown)
+	if (key == KEYS::SPACE)
 	{
-		BM->spawnObject(glm::vec3(0, BM->boundarySize - 20, 0), glm::vec3(0, rand()% 250 - 270, 0), 20);
-		BM->isCoolingDown = true;
-		BM->coolDownTime = BM->time;
+		BM->spawnObject(glm::vec3(0, BM->boundarySize - BM->maxWidth, 0), glm::vec3(0, rand()% 250 - 270, 0), BM->maxWidth);
 	}
 	else if (key == KEYS::UP)
 		camera->moveForward(50 * deltaTime);
