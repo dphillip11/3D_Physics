@@ -65,8 +65,7 @@ public:
             GLuint textureSamplerLoc = glGetUniformLocation(model.shader->ID, "diffuse_texture");
             glUniform1i(textureSamplerLoc, 0); // 0 for texture unit 0, can be adjusted to match the texture unit index
         }
-
-        
+           
     }
 
     void Run(float deltaTime)

@@ -15,6 +15,9 @@ struct pair {
 class Manager
 {
 protected: 
+	unsigned int VBO_pos;
+	unsigned int VBO_radius;
+
 	std::vector<glm::vec3> position;
 	std::vector<float> mass;
 	std::vector<float> restitution;
@@ -22,17 +25,16 @@ protected:
 	std::vector<float> halfWidth;
 
 public:
+	float max_restitution = 0.9;
+	float min_restitution = 0.3;
 	int count = 0;
 	float gravity = 9.8;
 	const float boundarySize = 100;
 	const float maxSpeed = 30;
 	const float maxWidth = 10;
-	std::vector<glm::vec3> colors;
 	std::unique_ptr<Model> object;
 	float time = 0;
-
-	void populateColors(int n);
-
+	void generateBuffers();
 	//coplanar objects make it easier to view bugs in collision code
 	void spawnCoplanarObjects(int n);
 	void spawnObjects(int n);

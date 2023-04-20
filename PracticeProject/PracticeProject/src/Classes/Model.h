@@ -12,11 +12,11 @@ protected:
 	bool isSetVBO = false;
 	bool isSetEBO = false;
 	bool isSetVAO = false;
-	int indexCount = 0;
-	int vertexCount = 0;
+	
 
 public:
-
+	int indexCount = 0;
+	int vertexCount = 0;
 	unsigned int _VBO, _VAO, _EBO, _VBOnormal, _EBOnormal, _VBOtexture, _EBOtexture;
 	glm::mat4 transform = glm::mat4(1);
 	std::unique_ptr<Shader> shader;

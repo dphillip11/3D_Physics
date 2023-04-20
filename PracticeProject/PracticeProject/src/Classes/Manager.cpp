@@ -1,12 +1,13 @@
 #include "Manager.h"
 #include <glm/glm/gtc/matrix_transform.hpp>
+#include "Ball.h"
 
 
 
 float Manager::randomVal(float magnitude, bool onlyPositive)
 {
 	//create a random number of a given magnitude with 2 decimal places
-	float value = (rand() % ((int)(200 * magnitude) / 100)) - magnitude;
+	float value = (rand() % (int)(200 * magnitude) )/ 100 - magnitude;
 	if (onlyPositive)
 		return abs(value);
 	else
@@ -54,7 +55,7 @@ void Manager::spawnObject(glm::vec3 new_position, glm::vec3 new_velocity, float 
 	velocity.push_back(new_velocity);
 	halfWidth.push_back(new_radius);
 	mass.push_back(pow(new_radius, 3));
-	restitution.push_back(0.3 + randomVal(0.5, true));
+	restitution.push_back(min_restitution + randomVal(max_restitution - min_restitution, true));
 	count++;
 }
 
@@ -66,7 +67,7 @@ void Manager::spawnObjects(int n)
 		velocity.push_back(randomVec3(maxSpeed));
 		halfWidth.push_back(randomVal(maxWidth / 2, true));
 		mass.push_back(pow(halfWidth[i],3));
-		restitution.push_back(0.3 + randomVal(0.5, true));
+		restitution.push_back(min_restitution + randomVal(max_restitution - min_restitution, true));
 		count++;
 	}
 }
@@ -79,39 +80,31 @@ void Manager::spawnCoplanarObjects(int n)
 		velocity.push_back(glm::vec3(randomVal(maxSpeed), 0, randomVal(maxSpeed)));
 		halfWidth.push_back(randomVal(maxWidth / 2, true));
 		mass.push_back(pow(halfWidth[i], 3));
-		restitution.push_back(0.3 + randomVal(0.5, true));
+		restitution.push_back(min_restitution + randomVal(max_restitution - min_restitution, true));
 		count++;
 	}
 }
 
-void Manager::populateColors(int n)
+void Manager::generateBuffers()
 {
-	for (int i = 0; i < n; i++)
-	{
-		glm::vec3 color;
-		color.r = (randomVal(255, true))/255;
-		color.g = (randomVal(255, true))/255;
-		color.b = (randomVal(255, true))/255;
-		colors.push_back(color);
-	}
-
+	glGenBuffers(1, &VBO_pos);
+	object->setVertices(&position[0], position.size() * 3, object->_VAO, VBO_pos);
+	object->setAttributes(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
+	glVertexAttribDivisor(1, 1);
+	glGenBuffers(1, &VBO_radius);
+	object->setVertices(&halfWidth[0], halfWidth.size(), object->_VAO, VBO_radius);
+	object->setAttributes(2, 1, GL_FLOAT, GL_FALSE,sizeof(float), (void*)(0));
+	glVertexAttribDivisor(2, 1);
 }
 
 void Manager::drawObjects(Camera camera)
 {
-	//setup shader
 	object->shader->use();
 	glm::mat4 VP = camera.projection * camera.lookAt();
-	for (int i = 0; i < count; i++)
-	{
-		glm::mat4 model = glm::translate(glm::mat4(1), position[i]);
-		model = glm::scale(model, glm::vec3(halfWidth[i], halfWidth[i], halfWidth[i]));
-		object->shader->setMat4("MVP", VP * model);
-		object->shader->setMat4("model", model);
-		object->shader->setVec3("color", colors[i % colors.size()]);
-		object->shader->setInt("shininess", (i % 50) + 1);
-		object->shader->setVec3("objectPos", position[i]);
-		object->shader->setVec3("viewPos", camera._position);
-		object->draw();
-	}
+	object->shader->setMat4("VP", VP);
+	object->shader->setVec3("viewPos", camera._position);
+	glBindVertexArray(object->_VAO);
+	object->setVertices(&position[0], position.size() * 3, object->_VAO, VBO_pos);
+	object->setVertices(&halfWidth[0], halfWidth.size(), object->_VAO, VBO_radius);
+	glDrawElementsInstanced(GL_TRIANGLES, object->indexCount,  GL_UNSIGNED_INT,0, count);
 }

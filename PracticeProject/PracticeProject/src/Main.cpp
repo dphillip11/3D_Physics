@@ -18,12 +18,12 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
 
     int main()
     {
-        //setup window and make a reference
+        // setup window and make a reference
         Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
-        //set background color
+        // set background color
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
- 
+        
         float deltaTime = 0;
         float time = 0;
         int frames = 0;
@@ -37,19 +37,16 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         Newtons_Cradle N;
         BallPhysics B;
 
-        programs.push_back((Program*)&N);
-        programs.push_back((Program*)&L);
-        programs.push_back((Program*)&B);
+        programs.push_back(reinterpret_cast<Program*>(&N));
+        programs.push_back(reinterpret_cast<Program*>(&L));
+        programs.push_back(reinterpret_cast<Program*>(&B));
 
-        for (auto program : programs)
-        {
+        for (auto program : programs){
             program->Setup();
         }
 
         numberOfPrograms = programs.size();
         window.input->observers.push_back(B.getInputHandler());
-
-       
 
         // render loop
         // -----------
@@ -58,8 +55,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
             ScopedTimer timer(&deltaTime);
             time += deltaTime;
             programs[2]->Run(deltaTime);
-   /*         if (time > 5)
-            {
+   /*       if (time > 5){
                 programIndex = (programIndex + 1) % numberOfPrograms;
                 window.input->observers.clear();
                 InputObserver* inputHandler = programs[programIndex]->getInputHandler();
@@ -86,9 +82,8 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
     {
         frames++;
         timer += deltaTime;
-        if (timer > 1)
-        {
-            printf("%f ms/frame\n", 1000.0 / double(frames));
+        if (timer > 1){
+            printf("%f ms/frame\n", 1000.0 / static_cast<double>(frames));
             timer = 0;
             frames = 0;
         }

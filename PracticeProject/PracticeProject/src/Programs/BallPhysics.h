@@ -17,9 +17,11 @@ public:
 		camera.setFOV(75);
 		camera.zoomSpeed = 10;
 		camera.moveSpeed = 1;
-		BM.populateColors(100);
-		BM.gravity = 9.8;
+		BM.gravity = 98;
+		BM.min_restitution = 0.7;
+		BM.max_restitution = 0.8;
 		BM.spawnObjects(2000);
+		BM.generateBuffers();
 	}
 	void Run(float deltaTime)
 	{

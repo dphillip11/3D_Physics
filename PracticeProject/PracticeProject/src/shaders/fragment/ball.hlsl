@@ -5,7 +5,7 @@ in vec3 normal;
 in vec3 worldPos;
 
 uniform vec3 viewPos;
-uniform int shininess;
+int shininess = 50;
 vec3 lightPos = vec3(0, 100, -200);
 
 void main()

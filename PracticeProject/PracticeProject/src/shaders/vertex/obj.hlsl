@@ -25,6 +25,7 @@ void main()
 	geometry_normal = normal;
 
 	worldPos = (model * vec4(aPos, 1)).xyz;
+	
 	geometry_worldPos = worldPos;
 
 	gl_Position = projection * view * vec4(worldPos, 1.0);
