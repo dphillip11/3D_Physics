@@ -4,6 +4,7 @@
 #include <glm/glm/geometric.hpp>
 #include <numeric>
 
+
 void BallManager::resolveCollisions_no_buckets()
 {
 		for (int i = 0; i < count; i++)
@@ -45,58 +46,6 @@ void BallManager::resolveCollision(int ID1, int ID2)
 	}
 }
 
-void BallManager::resolveCollisions_fixed_buckets()
-{
-	//split indexes into buckets based on xz quadrant
-	std::vector<int> Bucket1;
-	std::vector<int> Bucket2;
-	std::vector<int> Bucket3;
-	std::vector<int> Bucket4;
-	//add element for assigning pointer
-	Bucket1.push_back(0);
-	Bucket2.push_back(0);
-	Bucket3.push_back(0);
-	Bucket4.push_back(0);
-
-	for (int i = 0; i < count; i++)
-	{
-		if (position[i].x < maxWidth && position[i].z < maxWidth)
-			Bucket1.push_back(i);
-		if (position[i].x < maxWidth && position[i].z > 0)
-			Bucket2.push_back(i);
-		if (position[i].x > 0 && position[i].z < maxWidth)
-			Bucket3.push_back(i);
-		if (position[i].x > 0 && position[i].z > 0)
-			Bucket4.push_back(i);
-	}
-
-	int* buckets[] = {&Bucket1[0], &Bucket2[0], &Bucket3[0] , &Bucket4[0] };
-	int bucketSize[] = {Bucket1.size(), Bucket2.size(), Bucket3.size(), Bucket4.size()};
-
-
-	::concurrency::parallel_for(size_t(0), (size_t)4, [&](size_t B)
-	{
-		int* bucket = buckets[B];
-
-		if (bucketSize[B] > 1)
-		{
-			::concurrency::parallel_for(size_t(1), (size_t)(bucketSize[B] - 1), [&](size_t i)
-			{
-				int ID1 = bucket[i];
-
-				for (int j = i + 1; j < bucketSize[B]; j++)
-				{
-					int ID2 = bucket[j];
-
-					resolveCollision(ID1, ID2);
-
-				}
-
-			});
-		}
-	});
-	
-}
 
 void BallManager::resolveCollisions_dynamic_buckets()
 {
@@ -104,14 +53,16 @@ void BallManager::resolveCollisions_dynamic_buckets()
 	std::vector<int> all_balls(count);
 	std::iota(all_balls.begin(), all_balls.end(), 0);
 	// Call the recursive function on all the balls
-	resolveCollisionsRecursive(&all_balls[0], count, glm::vec2(-boundarySize, boundarySize), glm::vec2(-boundarySize, boundarySize));
+	int bucket_count = 0;
+	resolveCollisionsRecursive(&all_balls[0], count, glm::vec2(-boundarySize, boundarySize), glm::vec2(-boundarySize, boundarySize), bucket_count);
 }
 
-void BallManager::resolveCollisionsRecursive(int* bucket, int size, const glm::vec2& x_range, const glm::vec2& z_range)
+void BallManager::resolveCollisionsRecursive(int* bucket, int size, const glm::vec2& x_range, const glm::vec2& z_range, int &bucket_count)
 {
+	bucket_count++;
 	if (size < max_bucket_size || x_range.y - x_range.x < 2 * maxWidth)
 	{
-		::concurrency::parallel_for(size_t(1), (size_t)(size - 1), [&](size_t i)
+		::concurrency::parallel_for(size_t(0), (size_t)(size - 1), [&](size_t i)
 		{
 		//for (int i = 0; i < size - 1; i++)
 		{
@@ -129,6 +80,7 @@ void BallManager::resolveCollisionsRecursive(int* bucket, int size, const glm::v
 	}
 	else
 	{
+		bucket_count--;
 		float midpoint_x = (x_range.x + x_range.y) / 2;
 		float midpoint_z = (z_range.x + z_range.y) / 2;
 
@@ -139,20 +91,27 @@ void BallManager::resolveCollisionsRecursive(int* bucket, int size, const glm::v
 
 		for (int i = 0; i < size; i++)
 		{
+			int ID = bucket[i];
 			//allow balls to enter multiple buckets to check edge cases
-			if (position[i].x < midpoint_x + maxWidth && position[i].z < midpoint_z + maxWidth)
-				Q1_bucket.push_back(i);
-			if (position[i].x < midpoint_x + maxWidth && position[i].z > midpoint_z)
-				Q2_bucket.push_back(i);
-			if (position[i].x > midpoint_x && position[i].z < midpoint_z + maxWidth)
-				Q3_bucket.push_back(i);
-			if (position[i].x > midpoint_x && position[i].z > midpoint_z)
-				Q4_bucket.push_back(i);
+			float offset = maxWidth / 2;
+			if (position[ID].x < midpoint_x + offset && position[ID].z < midpoint_z + offset)
+				Q1_bucket.push_back(ID);
+			if (position[ID].x < midpoint_x + offset && position[ID].z > midpoint_z - offset)
+				Q2_bucket.push_back(ID);
+			if (position[ID].x > midpoint_x - offset && position[ID].z < midpoint_z + offset)
+				Q3_bucket.push_back(ID);
+			if (position[ID].x > midpoint_x - offset && position[ID].z > midpoint_z - offset)
+				Q4_bucket.push_back(ID);
 		}
-		resolveCollisionsRecursive(&Q1_bucket[0], Q1_bucket.size(), glm::vec2(x_range.x, midpoint_x + maxWidth), glm::vec2(z_range.x, midpoint_z + maxWidth));
-		resolveCollisionsRecursive(&Q2_bucket[0], Q2_bucket.size(), glm::vec2(x_range.x, midpoint_x + maxWidth), glm::vec2(midpoint_z, z_range.y));
-		resolveCollisionsRecursive(&Q3_bucket[0], Q3_bucket.size(), glm::vec2(midpoint_x, x_range.y), glm::vec2(z_range.x, midpoint_z + maxWidth));
-		resolveCollisionsRecursive(&Q4_bucket[0], Q4_bucket.size(), glm::vec2(midpoint_x, x_range.y), glm::vec2(midpoint_z, z_range.y));
+
+		if (Q1_bucket.size()>0)
+			resolveCollisionsRecursive(&Q1_bucket[0], Q1_bucket.size(), glm::vec2(x_range.x, midpoint_x + maxWidth), glm::vec2(z_range.x, midpoint_z + maxWidth), bucket_count);
+		if (Q2_bucket.size() > 0)
+			resolveCollisionsRecursive(&Q2_bucket[0], Q2_bucket.size(), glm::vec2(x_range.x, midpoint_x + maxWidth), glm::vec2(midpoint_z, z_range.y), bucket_count);
+		if (Q3_bucket.size() > 0)
+			resolveCollisionsRecursive(&Q3_bucket[0], Q3_bucket.size(), glm::vec2(midpoint_x, x_range.y), glm::vec2(z_range.x, midpoint_z + maxWidth), bucket_count);
+		if (Q4_bucket.size() > 0)
+			resolveCollisionsRecursive(&Q4_bucket[0], Q4_bucket.size(), glm::vec2(midpoint_x, x_range.y), glm::vec2(midpoint_z, z_range.y), bucket_count);
 	}
 }
 
@@ -160,10 +119,12 @@ void BallManager::resolveCollisionsRecursive(int* bucket, int size, const glm::v
 void BallManager::update(float deltaTime)
 {
 	time += deltaTime;
-	updatePositions(deltaTime);
-	resolveCollisions_dynamic_buckets();
-	//resolveCollisions_fixed_buckets();
-	//resolveCollisions_no_buckets();
+	//this reduces jitter and doesn't hurt performance as much as you might imagine
+	for (int i = 0; i < collision_cycles; i++)
+	{
+		updatePositions(deltaTime / collision_cycles);
+		resolveCollisions_dynamic_buckets();
+	}
 }
 
 
