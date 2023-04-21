@@ -1,0 +1,351 @@
+﻿
+
+#define MAX_RANGE 1000.
+#define SPHERES_N 9
+
+struct cylinder
+{
+    vec3 centre;
+    vec3 axis;
+    float length;
+    float radius;
+};
+
+struct Box
+{
+    vec3 centre;
+    vec3 size;
+};
+
+cylinder string;
+
+cylinder cylinders[9] = cylinder[9](cylinder(vec3(0., 8., 8.), vec3(1, 0, 0), 10., 0.25),
+                                    cylinder(vec3(0., 8., 2.), vec3(1, 0, 0), 10., 0.25),
+                                    cylinder(vec3(-5, 8., 5.), vec3(0, 0, 1), 6., 0.25),
+                                    cylinder(vec3(5, 8., 5.), vec3(0, 0, 1), 6., 0.25),
+                                    //legs
+                                    cylinder(vec3(-5, 4., 2.), vec3(0, 1, 0), 8., 0.25),
+                                    cylinder(vec3(-5, 4., 8.), vec3(0, 1, 0), 8., 0.25),
+                                    cylinder(vec3(5, 4., 2.), vec3(0, 1, 0), 8., 0.25),
+                                    cylinder(vec3(5, 4., 8.), vec3(0, 1, 0), 8., 0.25), 
+                                    cylinder(vec3(5, 4., 8.), vec3(0, 1, 0), 8., 0.25));
+vec4 spheres[9] = vec4[9](vec4(-4., 2, 5, 1), vec4(-2, 2, 5, 1), vec4(0., 2, 5, 1), vec4(2, 2, 5, 1), vec4(4, 2, 5, 1)
+                        , vec4(-5, 8, 2, 0.25), vec4(5, 8, 2, 0.25), vec4(-5, 8, 8,0.25), vec4(5, 8, 8, 0.25));
+Box base = Box(vec3(0,0.25,5),vec3(5.5,0.5,3.5));
+vec3 baseNormal;
+vec3 colors[6] = vec3[6](vec3(1, 0, 0), vec3(0, 1, 0), vec3(0, 0, 0), vec3(0, 0, 1), vec3(1, 1, 0), vec3(0.3, 0.3, 0.3));
+vec3 groundColor = vec3(0.2, 0.2, 0.8);
+vec3 skyColor = vec3(0.5, 0.8, 1);
+vec3 light_pos;
+vec3 cam_pos;
+float cam_depth = 0.5f;//regulates perspective
+float ambientIntensity = 0.5;
+
+/*collider ID
+        - 2     none
+         -1     ground,
+         0+     sphereIndex
+ SPHERES_N+     cylinder
+ */
+
+struct contactPoint {
+    int collider;
+    float distance;
+};
+
+
+
+float GetDistanceToCylinder(cylinder cyl, vec3 ray_origin, vec3 ray_direction)
+{    
+   //substituting ray equation into cylinder equation and solving for t
+   //a=(v⋅v)−(v⋅h^)2
+   //b=2[(v⋅w)−(v⋅h^)(w⋅h^)]
+   //c=(w⋅w)−(w⋅h^)2−r2
+   
+   //left side of cylinder axis is A, ray origin is O
+   vec3 A = cyl.centre - cyl.axis * (cyl.length * 0.5);
+   vec3 OA = ray_origin - A;
+   float a = dot(ray_direction, ray_direction) -pow(dot(ray_direction, cyl.axis),2.);
+   float b = 2. * (dot(ray_direction,OA) - dot(ray_direction,cyl.axis) * dot(OA, cyl.axis));
+   float c = dot(OA,OA) - pow(dot(OA,cyl.axis),2.) - pow(cyl.radius,2.);
+   
+   float det = b*b - 4.*a*c;
+   if (det<0.)
+       return -1.;
+   float t1 = (-b+sqrt(det))/(2.*a);
+   float t2 = (-b-sqrt(det))/(2.*a);
+   float distance = min(t1,t2);
+   vec3 t = ray_origin + distance * ray_direction;
+   vec3 At = t-A;
+   float axisPos = dot(At, cyl.axis);
+   if (axisPos > cyl.length || axisPos < 0.)
+      return -1.;
+   
+   return distance;
+    
+}
+
+/*float GetDistanceToBox(Box b, vec3 ray_origin, vec3 ray_direction)
+{   
+        for(int i = 0; i < 3; i ++)
+        {
+        //ro.x + rd.x(t) = b.centre +- b.size.x
+        if(ray_direction[i] == 0.)
+             continue;
+
+        float t1 = (b.centre[i] + 0.5 * b.size[i] - ray_origin[i])/ray_direction[i];
+        bool isValidt1 = false;
+        float t2 = (b.centre[i] - 0.5 * b.size[i] - ray_origin[i])/ray_direction[i];
+        bool isValidt2 = false;
+
+        if(t1 > 0. && abs(ray_origin[(i+1) % 3]  + t1* ray_direction[(i+1) % 3] - b.centre[(i+1) % 3])< b.size[(i+1) % 3]/2. && abs(ray_origin[(i+2) % 3] + t1* ray_direction[(i+2) % 3] - b.centre[(i+2) % 3])< b.size[(i+2) % 3]/2. + 0.01)
+            isValidt1 = true;
+
+     if(t1 > 0. && abs(ray_origin[(i+1) % 3]  + t2* ray_direction[(i+1) % 3] - b.centre[(i+1) % 3])< b.size[(i+1) % 3]/2. && abs(ray_origin[(i+2) % 3] + t2* ray_direction[(i+2) % 3] - b.centre[(i+2) % 3])< b.size[(i+2) % 3]/2. + 0.01)
+            isValidt2 = true;
+
+        if(isValidt1 && isValidt2)
+            return min(t1,t2);
+        if(isValidt1 || isValidt2)
+        {
+            float t = isValidt1 ? t1: t2;
+            return t;
+        }
+        }
+        return -1.;
+
+}*/
+// https://iquilezles.org/articles/boxfunctions
+vec2 boxIntersection( in vec3 ro, in vec3 rd, in vec3 rad, out vec3 oN ) 
+{
+    vec3 m = 1.0/rd;
+    vec3 n = m*ro;
+    vec3 k = abs(m)*rad;
+    vec3 t1 = -n - k;
+    vec3 t2 = -n + k;
+
+    float tN = max( max( t1.x, t1.y ), t1.z );
+    float tF = min( min( t2.x, t2.y ), t2.z );
+	
+    if( tN>tF || tF<0.0) return vec2(-1.0); // no intersection
+    
+    oN = -sign(rd)*step(t1.yzx,t1.xyz)*step(t1.zxy,t1.xyz);
+
+    return vec2( tN, tF );
+}
+
+
+
+contactPoint getIntersection(vec3 ray_origin, vec3 ray_direction)
+{
+    //set non collision condition
+    contactPoint collision = contactPoint(-2, MAX_RANGE);
+
+    //check intersection with ground, y=0
+    if (ray_origin.y > 0. && ray_direction.y < 0.)
+    {
+        float dist_to_ground = abs(ray_origin.y / ray_direction.y);
+        collision.distance = min(collision.distance, dist_to_ground);
+        collision.collider = -1;
+    }
+
+    //check sphere intersections
+    for (int i = 0; i < SPHERES_N; i++)
+    {
+        //vector to sphere directly
+        vec3 sphere_dir = spheres[i].xyz - ray_origin;
+        //calculate projection along ray direction
+        float dotP = dot(sphere_dir, ray_direction);
+        //ignore spheres in opposite direction
+        if (dotP < 0.)
+            continue;
+        vec3 ray_proj = dotP * ray_direction;
+        float ray_length = length(ray_proj);
+        vec3 ray_point = ray_proj + ray_origin;
+        float distance_to_sphere = length(spheres[i].xyz - ray_point);
+        if (distance_to_sphere < spheres[i].w)
+        {
+            if (ray_length < collision.distance)
+            {
+                //calculate sphere intersection, pythagoras
+                float overlap = sqrt(pow(spheres[i].w, 2.) - pow(distance_to_sphere, 2.));
+                collision.collider = i;
+                collision.distance = ray_length - overlap;
+            }
+        }
+    }
+    //check cylinder intersections
+    for (int i = 0; i < 9; i++)
+    {
+        float distance = GetDistanceToCylinder(cylinders[i], ray_origin, ray_direction);
+
+        if (distance >= 0. && distance < collision.distance)
+        {
+            collision.collider = SPHERES_N + i;
+            collision.distance = distance;
+        }
+    }
+    //check base intersection
+    //float distance = GetDistanceToBox(base, ray_origin, ray_direction);
+    vec2 intx=  boxIntersection(ray_origin - base.centre, ray_direction, base.size, baseNormal );
+    float distance = intx.x;
+    if (distance > 0. && distance < collision.distance)
+    {
+        collision.collider = -3;
+        collision.distance = distance;  
+    }
+    
+    return collision;
+
+}
+
+
+vec3 GetNormal(int collider, vec3 point)
+{
+    if (collider == -1)
+        return vec3(0, 1, 0);
+    if (collider == -3)
+    {
+        return baseNormal;
+    }
+    if (collider >= SPHERES_N)
+    {
+        vec3 c2p = point - cylinders[collider - SPHERES_N].centre;
+        vec3 normal = c2p - dot(c2p, cylinders[collider - SPHERES_N].axis) * cylinders[collider - SPHERES_N].axis;
+        return normalize(normal);
+    }
+    return normalize(point - spheres[collider].xyz);
+}
+
+float GetLocalDiffuse(vec3 point, vec3 normal, vec3 ray_direction)
+{
+    vec3 light_dir = normalize(light_pos - point);
+    //check if light is obstructed
+    contactPoint incomingLight = getIntersection(point, light_dir);
+    float obstructedModifier = 1.;
+    if (incomingLight.collider != -2)
+        obstructedModifier = 0.4;
+    //calculate diffuse value
+    float diffuseIntensity = 0.6 * max(dot(light_dir, normal), 0.);
+    return diffuseIntensity * obstructedModifier + ambientIntensity;
+}
+
+
+
+vec3 GetReflectedColor(vec3 point, vec3 normal, vec3 ray_direction)
+{
+    vec3 reflectDir = normalize(reflect(ray_direction, normal));
+    vec3 light_dir = normalize(light_pos - point);
+    //check for reflected objects
+    contactPoint reflectedLight = getIntersection(point, reflectDir);
+    vec3  reflectedColor;
+    if (reflectedLight.collider == -2)
+        reflectedColor = skyColor;
+    else if (reflectedLight.collider == -1)
+    {
+        reflectedColor = texture(iChannel0, point.xz / 10.).rgb;
+    }
+    else if (reflectedLight.collider < SPHERES_N)
+    {
+        reflectedColor = colors[reflectedLight.collider];
+    }
+    else if (reflectedLight.collider == -3)
+        reflectedColor = texture(iChannel1, point.xz / 10.).rgb;
+
+    vec3 rPoint = point + reflectDir * reflectedLight.distance;
+    vec3 rNormal = GetNormal(reflectedLight.collider, rPoint);
+    float reflectedBrightness = GetLocalDiffuse(rPoint, rNormal, reflectDir);
+
+    return reflectedColor * reflectedBrightness;
+}
+
+
+
+
+
+
+vec3 GetColor(vec3 ray_origin, vec3 ray_direction)
+{
+    contactPoint collision = getIntersection(ray_origin, ray_direction);
+    //apply sky for non hit
+    if (collision.collider == -2)
+        return (0.3 + abs(ray_direction.z)) * skyColor;
+    //get point of collision
+    vec3 point = ray_origin + ray_direction * collision.distance;
+    vec3 normal = GetNormal(collision.collider, point);
+    vec3 materialColor;
+    float reflectivity;
+    float shininess;
+    if (collision.collider == -1)
+    {
+        materialColor = texture(iChannel0, point.xz / 10.).rgb;
+        reflectivity = 0.2;
+        shininess = 20.;
+    }
+    else if (collision.collider == -3)
+    {
+        materialColor = texture(iChannel1, point.xz / 10.).rgb;
+        reflectivity = 0.1;
+        shininess = 128.;
+    }
+    else
+    {
+        materialColor = colors[collision.collider];
+        reflectivity = 0.7;
+        shininess = 32.;
+    }
+
+    //diffuse
+    vec3 diffuseColor = GetLocalDiffuse(point, normal, ray_direction) * materialColor;
+    //reflected
+    vec3 reflectedColor = GetReflectedColor(point, normal, ray_direction);
+    //specular
+    vec3 reflectDir = normalize(reflect(ray_direction, normal));
+    vec3 light_dir = normalize(light_pos - point);
+    vec3 spec = pow(max(dot(light_dir, reflectDir), 0.), shininess) * vec3(1);
+    
+    return diffuseColor + (reflectedColor + spec) * reflectivity;
+
+
+}
+
+
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    float time = 3. * iTime;
+    spheres[0].x = -4. - max(0., 2. * sin(time));
+    spheres[0].y = 2. + max(0., 2. * sin(time));
+    spheres[1].x = -2. - max(0., 0.1 * sin(time));
+    spheres[1].y = 2. + max(0., 0.1 * sin(time));
+    spheres[3].x = 2. - min(0., 0.1 * sin(time));
+    spheres[3].y = 2. - min(0., 0.1 * sin(time));
+    spheres[4].x = 4. - min(0., 2. * sin(time));
+    spheres[4].y = 2. - min(0., 2. * sin(time));
+    
+    vec3 sVec = vec3(-4,8,2) - spheres[0].xyz;
+    float sL = length(sVec) - spheres[0].w;
+    vec3 sN = normalize(sVec);
+    vec3 sC = (vec3(-4,8,2) + spheres[0].w*sN + spheres[0].xyz)/2.;
+    string = cylinder(sC,sN, sL,0.025);
+    cylinders[8] = string;                                 
+    light_pos = vec3((iMouse.x - iResolution.x / 2.) / 10., 10., (iMouse.y - iResolution.y / 2.) / 5. + 10.);
+    // Normalized pixel coordinates (from -1 to 1)
+    vec2 uv = (fragCoord.xy - 0.5 * iResolution.xy) / iResolution.y;
+    cam_pos = vec3(10. * sin(iTime / 10.), 7., 5. + 10. * cos(iTime / 10.));
+    //cam_pos = vec3(0., 20.,-10.);
+    //align with camera
+    vec3 cam_forward = normalize(spheres[2].xyz - cam_pos);
+    vec3 cam_right = normalize(cross(vec3(0., 1., 0.), cam_forward));
+    vec3 cam_up = normalize(cross(cam_forward, cam_right));
+
+    vec3 rayScreenIntersection = vec3(cam_pos + uv.x * cam_right + uv.y * cam_up + cam_depth * cam_forward);
+
+
+    vec3 rayDir = normalize(rayScreenIntersection - cam_pos);
+    vec3 color = GetColor(cam_pos, rayDir);
+
+
+    // Output to screen
+    fragColor = vec4(color, 1.0);
+}
