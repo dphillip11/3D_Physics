@@ -2,6 +2,7 @@
 #include <glm/glm/gtc/matrix_transform.hpp>
 #include <ppl.h>
 #include <glm/glm/geometric.hpp>
+#include <numeric>
 
 void BallManager::resolveCollisions_no_buckets()
 {
@@ -9,37 +10,42 @@ void BallManager::resolveCollisions_no_buckets()
 		{
 			for (int j = i + 1; j < count; j++)
 			{
-				float sumOfRadii = halfWidth[i] + halfWidth[j];
-				float x_diff = position[i].x - position[j].x;
-				if (x_diff > sumOfRadii)
-					continue;
-				float y_diff = position[i].y - position[j].y;
-				if (y_diff > sumOfRadii)
-					continue;
-				float z_diff = position[i].z - position[j].z;
-				if (z_diff > sumOfRadii)
-					continue;
-				auto distance = glm::length(glm::vec3(x_diff, y_diff, z_diff));
-				auto difference = distance - sumOfRadii;
-				if (difference < 0)
-				{
-					auto normal = glm::normalize(position[j] - position[i]);
-					position[j] -= (0.5f * difference * normal);
-					position[i] += (0.5f * difference * glm::normalize(normal));
-					auto relativeVelocity = velocity[i] - velocity[j];
-					float collisionSpeed = glm::dot(relativeVelocity, normal);
-					if (collisionSpeed > 0)
-					{
-						glm::vec3 impulse = normal * collisionSpeed;
-						velocity[i] -= impulse;
-						velocity[j] += impulse;
-					}
-				}
+				resolveCollision(i, j);
 			}
 		}
 }
 
-void BallManager::resolveCollisions()
+void BallManager::resolveCollision(int ID1, int ID2)
+{
+	float sumOfRadii = halfWidth[ID1] + halfWidth[ID2];
+	float x_diff = position[ID1].x - position[ID2].x;
+	if (x_diff > sumOfRadii)
+		return;
+	float y_diff = position[ID1].y - position[ID2].y;
+	if (y_diff > sumOfRadii)
+		return;
+	float z_diff = position[ID1].z - position[ID2].z;
+	if (z_diff > sumOfRadii)
+		return;
+	auto distance = glm::length(glm::vec3(x_diff, y_diff, z_diff));
+	auto difference = distance - sumOfRadii;
+	if (difference < 0)
+	{
+		auto normal = glm::normalize(position[ID2] - position[ID1]);
+		position[ID2] -= (0.5f * difference * normal);
+		position[ID1] += (0.5f * difference * glm::normalize(normal));
+
+		// Calculate momentum conservation
+		glm::vec3 relativeVelocity = velocity[ID1] - velocity[ID2]; // Relative velocity of the objects
+		float collisionSpeed = glm::dot(relativeVelocity, normal); // Collision speed along the normal direction
+		float elasticity = (restitution[ID2] + restitution[ID2]) / 2;
+		glm::vec3 normalImpulse = -(1 + elasticity) * normal * collisionSpeed / (mass[ID1] + mass[ID2]); // Calculate impulse using masses, relative velocity, and coefficient of restitution
+		velocity[ID1] += normalImpulse * mass[ID2]; // Update velocity of object 1
+		velocity[ID2] -= normalImpulse * mass[ID1]; // Update velocity of object 2
+	}
+}
+
+void BallManager::resolveCollisions_fixed_buckets()
 {
 	//split indexes into buckets based on x position
 	std::vector<int> Bucket1;
@@ -69,64 +75,81 @@ void BallManager::resolveCollisions()
 
 
 	::concurrency::parallel_for(size_t(0), (size_t)4, [&](size_t B)
-		{
-			int* bucket = buckets[B];
+	{
+		int* bucket = buckets[B];
 
-			if (bucketSize[B] > 1)
+		if (bucketSize[B] > 1)
+		{
+			::concurrency::parallel_for(size_t(1), (size_t)(bucketSize[B] - 1), [&](size_t i)
 			{
-				::concurrency::parallel_for(size_t(1), (size_t)(bucketSize[B] - 1), [&](size_t i)
-					{
-						int ID1 = bucket[i];
+				int ID1 = bucket[i];
 
 				for (int j = i + 1; j < bucketSize[B]; j++)
 				{
 					int ID2 = bucket[j];
 
-					float sumOfRadii = halfWidth[bucket[i]] + halfWidth[bucket[j]];
-					float x_diff = position[bucket[i]].x - position[bucket[j]].x;
-					if (x_diff > sumOfRadii)
-						continue;
-					float y_diff = position[bucket[i]].y - position[bucket[j]].y;
-					if (y_diff > sumOfRadii)
-						continue;
-					float z_diff = position[bucket[i]].z - position[bucket[j]].z;
-					if (z_diff > sumOfRadii)
-						continue;
-					auto distance = glm::length(glm::vec3(x_diff, y_diff, z_diff));
-					auto difference = distance - sumOfRadii;
-					if (difference < 0)
-					{
-						auto normal = glm::normalize(position[bucket[j]] - position[bucket[i]]);
-						position[bucket[j]] -= (0.5f * difference * normal);
-						position[bucket[i]] += (0.5f * difference * glm::normalize(normal));
-
-						// Calculate momentum conservation
-						float m1 = mass[bucket[i]];
-						float m2 = mass[bucket[j]];
-						glm::vec3 relativeVelocity = velocity[bucket[i]] - velocity[bucket[j]]; // Relative velocity of the objects
-						float collisionSpeed = glm::dot(relativeVelocity, normal); // Collision speed along the normal direction
-						float elasticity = (restitution[bucket[j]] + restitution[bucket[j]]) / 2;
-						glm::vec3 normalImpulse = -(1 + elasticity) * normal * collisionSpeed / (m1 + m2); // Calculate impulse using masses, relative velocity, and coefficient of restitution
-						velocity[bucket[i]] += normalImpulse * m2; // Update velocity of object 1
-						velocity[bucket[j]] -= normalImpulse * m1; // Update velocity of object 2
-					}
-
+					resolveCollision(ID1, ID2);
 
 				}
 
-					});
-			}
-		});
-
-
+			});
+		}
+	});
 	
 }
+
+void BallManager::resolveCollisions_dynamic_buckets()
+{
+	//fill array with ID's
+	std::vector<int> all_balls(count);
+	std::iota(all_balls.begin(), all_balls.end(), 0);
+	// Call the recursive function on all the balls
+	resolveCollisionsRecursive(&all_balls[0], count, glm::vec2(-boundarySize, boundarySize));
+}
+
+void BallManager::resolveCollisionsRecursive(int* bucket, int size, const glm::vec2& x_range)
+{
+	if (size < max_bucket_size || x_range.y - x_range.x < 2 * maxWidth)
+	{
+		::concurrency::parallel_for(size_t(1), (size_t)(size - 1), [&](size_t i)
+		{
+			int ID1 = bucket[i];
+
+			for (int j = i + 1; j < size; j++)
+			{
+				int ID2 = bucket[j];
+
+				resolveCollision(ID1, ID2);
+
+			}
+		});
+	}
+	else
+	{
+		float midpoint = (x_range.x + x_range.y) / 2;
+		std::vector<int> left_bucket;
+		std::vector<int> right_bucket;
+		for (int i = 0; i < size; i++)
+		{
+			//allow balls to enter both buckets to check edge case
+			if (position[i].x < midpoint)
+				left_bucket.push_back(i);
+			//if (position[i].x > midpoint - 0.5 * maxWidth)
+			else
+				right_bucket.push_back(i);
+		}
+		resolveCollisionsRecursive(&left_bucket[0], left_bucket.size(), glm::vec2(x_range.x, midpoint));
+		resolveCollisionsRecursive(&right_bucket[0], right_bucket.size(), glm::vec2(midpoint, x_range.y));
+	}
+}
+
 
 void BallManager::update(float deltaTime)
 {
 	time += deltaTime;
 	updatePositions(deltaTime);
-	resolveCollisions();
+	//resolveCollisions_dynamic_buckets();
+	resolveCollisions_fixed_buckets();
 	//resolveCollisions_no_buckets();
 }
 

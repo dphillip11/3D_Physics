@@ -14,6 +14,7 @@ struct pair {
 //abstract base class for shape managers
 class Manager
 {
+	friend class BallPhysicsInput;
 protected: 
 	unsigned int VBO_pos;
 	unsigned int VBO_radius;

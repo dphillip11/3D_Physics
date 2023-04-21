@@ -55,7 +55,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
             ScopedTimer timer(&deltaTime);
             time += deltaTime;
             programs[2]->Run(deltaTime);
-   /*       if (time > 5){
+          /*if (time > 5){
                 programIndex = (programIndex + 1) % numberOfPrograms;
                 window.input->observers.clear();
                 InputObserver* inputHandler = programs[programIndex]->getInputHandler();

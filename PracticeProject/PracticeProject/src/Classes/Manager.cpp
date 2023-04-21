@@ -23,7 +23,7 @@ void Manager::updatePositions(float deltaTime)
 {
 	for (int i = 0; i < count; i++)
 	{
-		velocity[i].y -= deltaTime * gravity;
+		velocity[i].y -= (deltaTime * gravity);
 		position[i] += (velocity[i] * deltaTime);
 
 		if (abs(position[i].x) > boundarySize - halfWidth[i])

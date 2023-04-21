@@ -6,7 +6,8 @@ void BallPhysicsInput::onKeyPress(int key, float deltaTime)
 {
 	if (key == KEYS::SPACE)
 	{
-		BM->spawnObject(glm::vec3(0, BM->boundarySize - BM->maxWidth, 0), glm::vec3(0, rand()% 300 - 400, 0), BM->maxWidth/2);
+		BM->spawnObject(glm::vec3(0, BM->boundarySize - BM->maxWidth, 0), glm::vec3(0, rand()%500 -1000, 0), BM->maxWidth/2);
+		BM->mass[BM->count - 1] = 100.0f * BM->mass[BM->count - 1];
 	}
 	else if (key == KEYS::UP)
 		camera->moveForward(50 * deltaTime);
