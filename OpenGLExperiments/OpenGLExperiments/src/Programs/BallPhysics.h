@@ -1,5 +1,4 @@
 #pragma once
-#include "../Classes/Window.h"
 #include "../Classes/BallManager.h"
 #include "../InputHandlers/BallPhysicsInput.h"
 
