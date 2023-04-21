@@ -20,8 +20,8 @@ public:
 		BM.gravity = 70;
 		BM.min_restitution = 0.4;
 		BM.max_restitution = 0.45;
-		BM.max_bucket_size = 1001;
-		BM.spawnObjects(5000);
+		BM.max_bucket_size = 500;
+		BM.spawnObjects(4000);
 		BM.generateBuffers();
 	}
 	void Run(float deltaTime)

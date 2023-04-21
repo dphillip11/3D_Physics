@@ -17,7 +17,7 @@ public:
 	void resolveCollisions_fixed_buckets();
 	//recursively assigned buckets
 	void resolveCollisions_dynamic_buckets();
-	void resolveCollisionsRecursive(int* bucket, int size, const glm::vec2& x_range);
+	void resolveCollisionsRecursive(int* bucket, int size, const glm::vec2& x_range, const glm::vec2& z_range);
 	//single array
 	void resolveCollisions_no_buckets();
 

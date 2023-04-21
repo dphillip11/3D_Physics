@@ -47,7 +47,7 @@ void BallManager::resolveCollision(int ID1, int ID2)
 
 void BallManager::resolveCollisions_fixed_buckets()
 {
-	//split indexes into buckets based on x position
+	//split indexes into buckets based on xz quadrant
 	std::vector<int> Bucket1;
 	std::vector<int> Bucket2;
 	std::vector<int> Bucket3;
@@ -60,13 +60,13 @@ void BallManager::resolveCollisions_fixed_buckets()
 
 	for (int i = 0; i < count; i++)
 	{
-		if (position[i].x < (- boundarySize / 2) + maxWidth)
+		if (position[i].x < maxWidth && position[i].z < maxWidth)
 			Bucket1.push_back(i);
-		if (position[i].x > (-boundarySize / 2) && position[i].x < maxWidth)
+		if (position[i].x < maxWidth && position[i].z > 0)
 			Bucket2.push_back(i);
-		if (position[i].x > 0 && position[i].x < (boundarySize / 2) + maxWidth)
+		if (position[i].x > 0 && position[i].z < maxWidth)
 			Bucket3.push_back(i);
-		if (position[i].x > boundarySize/2)
+		if (position[i].x > 0 && position[i].z > 0)
 			Bucket4.push_back(i);
 	}
 
@@ -104,14 +104,16 @@ void BallManager::resolveCollisions_dynamic_buckets()
 	std::vector<int> all_balls(count);
 	std::iota(all_balls.begin(), all_balls.end(), 0);
 	// Call the recursive function on all the balls
-	resolveCollisionsRecursive(&all_balls[0], count, glm::vec2(-boundarySize, boundarySize));
+	resolveCollisionsRecursive(&all_balls[0], count, glm::vec2(-boundarySize, boundarySize), glm::vec2(-boundarySize, boundarySize));
 }
 
-void BallManager::resolveCollisionsRecursive(int* bucket, int size, const glm::vec2& x_range)
+void BallManager::resolveCollisionsRecursive(int* bucket, int size, const glm::vec2& x_range, const glm::vec2& z_range)
 {
 	if (size < max_bucket_size || x_range.y - x_range.x < 2 * maxWidth)
 	{
 		::concurrency::parallel_for(size_t(1), (size_t)(size - 1), [&](size_t i)
+		{
+		//for (int i = 0; i < size - 1; i++)
 		{
 			int ID1 = bucket[i];
 
@@ -122,24 +124,35 @@ void BallManager::resolveCollisionsRecursive(int* bucket, int size, const glm::v
 				resolveCollision(ID1, ID2);
 
 			}
+		}
 		});
 	}
 	else
 	{
-		float midpoint = (x_range.x + x_range.y) / 2;
-		std::vector<int> left_bucket;
-		std::vector<int> right_bucket;
+		float midpoint_x = (x_range.x + x_range.y) / 2;
+		float midpoint_z = (z_range.x + z_range.y) / 2;
+
+		std::vector<int> Q1_bucket;
+		std::vector<int> Q2_bucket;
+		std::vector<int> Q3_bucket;
+		std::vector<int> Q4_bucket;
+
 		for (int i = 0; i < size; i++)
 		{
-			//allow balls to enter both buckets to check edge case
-			if (position[i].x < midpoint)
-				left_bucket.push_back(i);
-			//if (position[i].x > midpoint - 0.5 * maxWidth)
-			else
-				right_bucket.push_back(i);
+			//allow balls to enter multiple buckets to check edge cases
+			if (position[i].x < midpoint_x + maxWidth && position[i].z < midpoint_z + maxWidth)
+				Q1_bucket.push_back(i);
+			if (position[i].x < midpoint_x + maxWidth && position[i].z > midpoint_z)
+				Q2_bucket.push_back(i);
+			if (position[i].x > midpoint_x && position[i].z < midpoint_z + maxWidth)
+				Q3_bucket.push_back(i);
+			if (position[i].x > midpoint_x && position[i].z > midpoint_z)
+				Q4_bucket.push_back(i);
 		}
-		resolveCollisionsRecursive(&left_bucket[0], left_bucket.size(), glm::vec2(x_range.x, midpoint));
-		resolveCollisionsRecursive(&right_bucket[0], right_bucket.size(), glm::vec2(midpoint, x_range.y));
+		resolveCollisionsRecursive(&Q1_bucket[0], Q1_bucket.size(), glm::vec2(x_range.x, midpoint_x + maxWidth), glm::vec2(z_range.x, midpoint_z + maxWidth));
+		resolveCollisionsRecursive(&Q2_bucket[0], Q2_bucket.size(), glm::vec2(x_range.x, midpoint_x + maxWidth), glm::vec2(midpoint_z, z_range.y));
+		resolveCollisionsRecursive(&Q3_bucket[0], Q3_bucket.size(), glm::vec2(midpoint_x, x_range.y), glm::vec2(z_range.x, midpoint_z + maxWidth));
+		resolveCollisionsRecursive(&Q4_bucket[0], Q4_bucket.size(), glm::vec2(midpoint_x, x_range.y), glm::vec2(midpoint_z, z_range.y));
 	}
 }
 
@@ -148,8 +161,8 @@ void BallManager::update(float deltaTime)
 {
 	time += deltaTime;
 	updatePositions(deltaTime);
-	//resolveCollisions_dynamic_buckets();
-	resolveCollisions_fixed_buckets();
+	resolveCollisions_dynamic_buckets();
+	//resolveCollisions_fixed_buckets();
 	//resolveCollisions_no_buckets();
 }
 
