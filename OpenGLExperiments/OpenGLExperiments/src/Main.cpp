@@ -37,8 +37,8 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         Newtons_Cradle N;
         BallPhysics B;
 
-        programs.push_back(reinterpret_cast<Program*>(&N));
-        programs.push_back(reinterpret_cast<Program*>(&L));
+        //programs.push_back(reinterpret_cast<Program*>(&L));
+        //programs.push_back(reinterpret_cast<Program*>(&N));
         programs.push_back(reinterpret_cast<Program*>(&B));
 
         for (auto program : programs){
@@ -55,7 +55,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
             ScopedTimer timer(&deltaTime);
             time += deltaTime;
           
-            if (time > 5){
+           if (time > 5){
                 programIndex = (programIndex + 1) % numberOfPrograms;
                 window.input->observers.clear();
                 InputObserver* inputHandler = programs[programIndex]->getInputHandler();
@@ -65,6 +65,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
             }
 
             programs[programIndex]->Run(deltaTime);
+
             
             displayFrameRate(frame_timer, deltaTime, frames);
             window.input->ProcessInput(deltaTime);

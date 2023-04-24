@@ -54,10 +54,11 @@ void BallManager::resolveCollisions_dynamic_buckets()
 	std::iota(all_balls.begin(), all_balls.end(), 0);
 	// Call the recursive function on all the balls
 	int bucket_count = 0;
-	resolveCollisionsRecursive(&all_balls[0], count, glm::vec2(-boundarySize, boundarySize), glm::vec2(-boundarySize, boundarySize), bucket_count);
+	glm::vec2 boundary = glm::vec2(-boundarySize, boundarySize);
+	resolveCollisionsRecursive(&all_balls[0], count, boundary, boundary, boundary, bucket_count);
 }
 
-void BallManager::resolveCollisionsRecursive(int* bucket, int size, const glm::vec2& x_range, const glm::vec2& z_range, int &bucket_count)
+void BallManager::resolveCollisionsRecursive(int* bucket, int size, const glm::vec2& x_range, const glm::vec2& z_range, const glm::vec2& y_range, int &bucket_count)
 {
 	bucket_count++;
 	if (size < max_bucket_size || x_range.y - x_range.x < 2 * maxWidth)
@@ -82,36 +83,66 @@ void BallManager::resolveCollisionsRecursive(int* bucket, int size, const glm::v
 	{
 		bucket_count--;
 		float midpoint_x = (x_range.x + x_range.y) / 2;
+		float midpoint_y = (y_range.x + y_range.y) / 2;
 		float midpoint_z = (z_range.x + z_range.y) / 2;
-
+		//lower y portion
 		std::vector<int> Q1_bucket;
 		std::vector<int> Q2_bucket;
 		std::vector<int> Q3_bucket;
 		std::vector<int> Q4_bucket;
+		//upper y portion
+		std::vector<int> Q5_bucket;
+		std::vector<int> Q6_bucket;
+		std::vector<int> Q7_bucket;
+		std::vector<int> Q8_bucket;
+
+		float offset = maxWidth / 2;
 
 		for (int i = 0; i < size; i++)
 		{
 			int ID = bucket[i];
 			//allow balls to enter multiple buckets to check edge cases
-			float offset = maxWidth / 2;
-			if (position[ID].x < midpoint_x + offset && position[ID].z < midpoint_z + offset)
-				Q1_bucket.push_back(ID);
-			if (position[ID].x < midpoint_x + offset && position[ID].z > midpoint_z - offset)
-				Q2_bucket.push_back(ID);
-			if (position[ID].x > midpoint_x - offset && position[ID].z < midpoint_z + offset)
-				Q3_bucket.push_back(ID);
-			if (position[ID].x > midpoint_x - offset && position[ID].z > midpoint_z - offset)
-				Q4_bucket.push_back(ID);
+		
+			if (position[ID].y < midpoint_y + offset)
+			{
+				if (position[ID].x < midpoint_x + offset && position[ID].z < midpoint_z + offset)
+					Q1_bucket.push_back(ID);
+				if (position[ID].x < midpoint_x + offset && position[ID].z > midpoint_z - offset)
+					Q2_bucket.push_back(ID);
+				if (position[ID].x > midpoint_x - offset && position[ID].z < midpoint_z + offset)
+					Q3_bucket.push_back(ID);
+				if (position[ID].x > midpoint_x - offset && position[ID].z > midpoint_z - offset)
+					Q4_bucket.push_back(ID);
+			}
+			if (position[ID].y > midpoint_y - offset)
+			{
+				if (position[ID].x < midpoint_x + offset && position[ID].z < midpoint_z + offset)
+					Q5_bucket.push_back(ID);
+				if (position[ID].x < midpoint_x + offset && position[ID].z > midpoint_z - offset)
+					Q6_bucket.push_back(ID);
+				if (position[ID].x > midpoint_x - offset && position[ID].z < midpoint_z + offset)
+					Q7_bucket.push_back(ID);
+				if (position[ID].x > midpoint_x - offset && position[ID].z > midpoint_z - offset)
+					Q8_bucket.push_back(ID);
+			}
 		}
 
 		if (Q1_bucket.size()>0)
-			resolveCollisionsRecursive(&Q1_bucket[0], Q1_bucket.size(), glm::vec2(x_range.x, midpoint_x + maxWidth), glm::vec2(z_range.x, midpoint_z + maxWidth), bucket_count);
+			resolveCollisionsRecursive(&Q1_bucket[0], Q1_bucket.size(), glm::vec2(x_range.x, midpoint_x + offset), glm::vec2(y_range.x, midpoint_y + offset), glm::vec2(z_range.x, midpoint_z + offset), bucket_count);
 		if (Q2_bucket.size() > 0)
-			resolveCollisionsRecursive(&Q2_bucket[0], Q2_bucket.size(), glm::vec2(x_range.x, midpoint_x + maxWidth), glm::vec2(midpoint_z, z_range.y), bucket_count);
+			resolveCollisionsRecursive(&Q2_bucket[0], Q2_bucket.size(), glm::vec2(x_range.x, midpoint_x + offset), glm::vec2(y_range.x, midpoint_y + offset), glm::vec2(midpoint_z - offset, z_range.y), bucket_count);
 		if (Q3_bucket.size() > 0)
-			resolveCollisionsRecursive(&Q3_bucket[0], Q3_bucket.size(), glm::vec2(midpoint_x, x_range.y), glm::vec2(z_range.x, midpoint_z + maxWidth), bucket_count);
+			resolveCollisionsRecursive(&Q3_bucket[0], Q3_bucket.size(), glm::vec2(midpoint_x - offset, x_range.y), glm::vec2(y_range.x, midpoint_y + offset), glm::vec2(z_range.x, midpoint_z + offset), bucket_count);
 		if (Q4_bucket.size() > 0)
-			resolveCollisionsRecursive(&Q4_bucket[0], Q4_bucket.size(), glm::vec2(midpoint_x, x_range.y), glm::vec2(midpoint_z, z_range.y), bucket_count);
+			resolveCollisionsRecursive(&Q4_bucket[0], Q4_bucket.size(), glm::vec2(midpoint_x - offset, x_range.y), glm::vec2(y_range.x, midpoint_y + offset), glm::vec2(midpoint_z, z_range.y), bucket_count);
+		if (Q5_bucket.size() > 0)
+			resolveCollisionsRecursive(&Q5_bucket[0], Q5_bucket.size(), glm::vec2(x_range.x, midpoint_x + offset), glm::vec2(midpoint_y - offset, y_range.y), glm::vec2(z_range.x, midpoint_z + offset), bucket_count);
+		if (Q6_bucket.size() > 0)
+			resolveCollisionsRecursive(&Q6_bucket[0], Q6_bucket.size(), glm::vec2(x_range.x, midpoint_x + offset), glm::vec2(midpoint_y - offset, y_range.y), glm::vec2(midpoint_z - offset, z_range.y), bucket_count);
+		if (Q7_bucket.size() > 0)
+			resolveCollisionsRecursive(&Q7_bucket[0], Q7_bucket.size(), glm::vec2(midpoint_x - offset, x_range.y), glm::vec2(midpoint_y - offset, y_range.y), glm::vec2(z_range.x, midpoint_z + offset), bucket_count);
+		if (Q8_bucket.size() > 0)
+			resolveCollisionsRecursive(&Q8_bucket[0], Q8_bucket.size(), glm::vec2(midpoint_x - offset, x_range.y), glm::vec2(midpoint_y - offset, y_range.y), glm::vec2(midpoint_z, z_range.y), bucket_count);
 	}
 }
 

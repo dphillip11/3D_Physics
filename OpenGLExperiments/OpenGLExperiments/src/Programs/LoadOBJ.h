@@ -8,6 +8,7 @@
 #include <glm/glm/gtc/quaternion.hpp>
 #include "../Classes/camera.h"
 #include "../InputHandlers/BasicCameraInput.h"
+#include "../Classes/Program.h"
 
 
 
@@ -26,6 +27,13 @@ public:
     Material mat1{ glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.4f), 32 };
     float time = 0;
     BasicCameraInput inputHandler = BasicCameraInput(&camera);
+    float explodedTime = 0;
+
+    void explode()
+    {
+        explodedTime = explodedTime == 0 ? time : 0;
+    }
+
     void Setup()
     {
         camera.setFOV(90);
@@ -46,12 +54,12 @@ public:
         //normals
         if (model_data.normalMap.size() > 0)
         {
-            model.shader = std::make_unique<Shader>("shaders/vertex/obj.hlsl", "shaders/fragment/obj.hlsl");
+            //model.shader = std::make_unique<Shader>("shaders/vertex/obj.hlsl", "shaders/fragment/obj.hlsl", "shaders/geometry/calculateNormals.hlsl");
             model.setVertices(&model_data.normalMap[0], (int)model_data.normalMap.size() * 3, model._VAO, model._VBOnormal);
             model.setAttributes(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
         }
-        else
-            model.shader = std::make_unique<Shader>("shaders/vertex/obj.hlsl", "shaders/fragment/obj.hlsl", "shaders/geometry/calculateNormals.hlsl");
+        
+        model.shader = std::make_unique<Shader>("shaders/vertex/obj.hlsl", "shaders/fragment/obj.hlsl", "shaders/geometry/calculateNormals.hlsl");
 
         //texturemap
         if (model_data.textureMap.size() > 0)
@@ -70,15 +78,18 @@ public:
 
     void Run(float deltaTime)
     {
+        float scale = 1;
         time += deltaTime;
         glm::mat4 view = camera.lookAt();
         model.shader->use();
         model.draw();
-        glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), -(time)+3.14f, glm::vec3(0, 1, 0));
+        glm::mat4 rotationMatrix = glm::rotate(glm::mat4(scale), -(time)+3.14f, glm::vec3(0, 1, 0));
         model.shader->setMat4("model", glm::translate(rotationMatrix, glm::vec3(10, 0, 0)));
         model.draw();
-        rotationMatrix = glm::rotate(glm::mat4(1.0f), -(time), glm::vec3(0, 1, 0));
+        rotationMatrix = glm::rotate(glm::mat4(scale), -(time), glm::vec3(0, 1, 0));
         model.shader->setMat4("model", glm::translate(rotationMatrix, glm::vec3(10, 0, 0)));
+        //added time for shattering models
+        model.shader->setFloat("time", explodedTime==0? 0: 5 * (time - explodedTime));
         model.shader->setMat4("view", camera.lookAt());
         model.shader->setMat4("projection", camera.projection);
         model.shader->setVec3("viewPosition", camera._position);
@@ -91,3 +102,5 @@ public:
         return &inputHandler;
     }
 };
+
+

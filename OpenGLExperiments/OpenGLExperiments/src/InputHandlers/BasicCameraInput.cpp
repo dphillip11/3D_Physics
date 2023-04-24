@@ -2,11 +2,17 @@
 #pragma once
 #include "../Classes/Input.h"
 
+
+
+
 void BasicCameraInput::onKeyPress(int key, float deltaTime)
 {
 	if (key == KEYS::SPACE)
 	{
 		camera->isLockedOn = !camera->isLockedOn;
+	}
+	if (key == KEYS::A)
+	{
 	}
 	else if (key == KEYS::UP)
 		camera->moveForward(deltaTime);

@@ -11,7 +11,12 @@ out vec3 normal;
 out vec3 worldPos;
 out vec2 texCoords;
 
+uniform float time;
 uniform vec3 objectCenter;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
 void main() {
     // Input points
@@ -26,22 +31,24 @@ void main() {
     _normal = (dot(normal, objectCenter - p0) > 0.0) ? -_normal : _normal;
     //_normal = normalize(geometry_normal[0] + geometry_normal[1] + geometry_normal[2]);
     // Emit the triangle vertices
-    gl_Position = geometry_gl_Position[0];
+
     texCoords = geometry_texCoords[0];
-    normal = _normal;
-    worldPos = p0;
+    normal = length(geometry_normal[0]) > 0 ? geometry_normal[0] : _normal;
+    worldPos = p0 + _normal * time;
+    gl_Position = projection * view * vec4(worldPos, 1.0);
     EmitVertex();
 
-    gl_Position = geometry_gl_Position[1];
+
     texCoords = geometry_texCoords[1];
-    normal = _normal;
-    worldPos = p1;
+    normal = length(geometry_normal[1]) > 0 ? geometry_normal[1] : _normal;
+    worldPos = p1 + _normal * time;
+    gl_Position = projection * view * vec4(worldPos, 1.0);
     EmitVertex();
 
-    gl_Position = geometry_gl_Position[2];
     texCoords = geometry_texCoords[2];
-    normal = _normal;
-    worldPos = p2;
+    normal = length(geometry_normal[2]) > 0 ? geometry_normal[2] : _normal;
+    worldPos = p2 + _normal * time;
+    gl_Position = projection * view * vec4(worldPos, 1.0);
     EmitVertex();
 
     EndPrimitive();
