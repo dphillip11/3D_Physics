@@ -6,6 +6,8 @@ This repository contains a number of learning experiments related to 3D renderin
 
 [![Watch the video](https://img.youtube.com/vi/h-1O1ScTmVw/maxresdefault.jpg)](https://youtu.be/h-1O1ScTmVw)
 
+### This video shows a stable framerate achieved using an octree:
+
 [![Watch the video](https://img.youtube.com/vi/LdWEugD0k1E/maxresdefault.jpg)](https://youtu.be/LdWEugD0k1E)
 
 
