@@ -56,6 +56,7 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
             time += deltaTime;
           
            if (time > 5){
+               //create statemachine class to handle this?
                 programIndex = (programIndex + 1) % numberOfPrograms;
                 window.input->observers.clear();
                 InputObserver* inputHandler = programs[programIndex]->getInputHandler();
