@@ -12,20 +12,7 @@ public:
 	Texture emissionMap;
 	glm::mat4 transform = glm::mat4(1);
 
-	WoodenBox()
-	{
-		CreateVertices();
-		shader = std::make_unique<Shader>("shaders/vertex/woodenBox.hlsl", "shaders/fragment/woodenBox.hlsl");
-		diffuseMap = Texture();
-		diffuseMap.setParameters();
-		diffuseMap.loadImage("Textures/container2.png", GL_RGBA);
-		specularMap = Texture();
-		specularMap.setParameters();
-		specularMap.loadImage("Textures/container2_specular.png", GL_RGBA);
-		emissionMap = Texture();
-		emissionMap.setParameters();
-		emissionMap.loadImage("Textures/matrix.jpg", GL_RGB);
-	}
+	WoodenBox();
 
 	void CreateVertices();
 	void setUniforms(Camera camera);

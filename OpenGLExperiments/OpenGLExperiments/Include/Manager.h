@@ -35,6 +35,8 @@ public:
 	const float maxWidth = 10;
 	std::unique_ptr<Model> object;
 	float time = 0;
+
+
 	void generateBuffers();
 	//coplanar objects make it easier to view bugs in collision code
 	void spawnCoplanarObjects(int n);

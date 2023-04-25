@@ -3,7 +3,6 @@
 #include <math.h>
 #include <iostream>
 #include <vector>
-#include "Vector3.h"
 #include <glm/glm/vec3.hpp>
 #include <glm/glm/matrix.hpp>
 #include <glm/glm/gtc/matrix_transform.hpp>
@@ -27,6 +26,21 @@ glm::uvec3(1, 10, 8),glm::uvec3(10, 3, 8),glm::uvec3(8, 3, 5),glm::uvec3(3, 2, 5
 glm::uvec3(3, 10, 7),glm::uvec3(10, 6, 7),glm::uvec3(6, 11, 7),glm::uvec3(6, 0, 11),glm::uvec3(6, 1, 0),
 glm::uvec3(10, 1, 6),glm::uvec3(11, 0, 9),glm::uvec3(2, 11, 9),glm::uvec3(5, 2, 9),glm::uvec3(11, 2, 7)
 };
+
+Ball::Ball() 
+{
+	if (subdivided)
+	{
+		shader = std::make_unique<Shader>("shaders/vertex/ball.hlsl", "shaders/fragment/ball.hlsl", "shaders/geometry/ball.hlsl");
+		useSimpleVertices();
+	}
+	else
+	{
+		shader = std::make_unique<Shader>("shaders/vertex/batchBall.hlsl", "shaders/fragment/ball.hlsl");
+		//shader = std::make_unique<Shader>("shaders/vertex/ballS.hlsl", "shaders/fragment/ball.hlsl");
+		CreateVertices();
+	}
+}
 
 
 void Ball::shadedDraw(GLenum fillMode, GLenum drawMode)

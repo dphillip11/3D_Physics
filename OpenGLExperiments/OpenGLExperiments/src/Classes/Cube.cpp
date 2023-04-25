@@ -1,6 +1,11 @@
 #include "Cube.h"
 #include <iostream>
 
+Cube::Cube()
+{
+	CreateVertices();
+	shader = std::make_unique<Shader>("src/shaders/vertex/ballS.hlsl", "src/shaders/fragment/ball.hlsl");
+}
 
 void Cube::CreateVertices()
 {

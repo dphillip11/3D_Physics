@@ -21,20 +21,8 @@ public:
 	static const std::vector<glm::uvec3> _indices;
 	static const std::vector<glm::vec3> _vertices;
 
-	Ball()
-	{
-		if (subdivided)
-		{
-			shader = std::make_unique<Shader>("shaders/vertex/ball.hlsl", "shaders/fragment/ball.hlsl", "shaders/geometry/ball.hlsl");
-			useSimpleVertices();
-		}
-		else
-		{
-			shader = std::make_unique<Shader>("shaders/vertex/batchBall.hlsl", "shaders/fragment/ball.hlsl");
-			//shader = std::make_unique<Shader>("shaders/vertex/ballS.hlsl", "shaders/fragment/ball.hlsl");
-			CreateVertices();
-		}
-	}
+	Ball();
+
 	void CreateVertices();
 	void useSimpleVertices();
 	void shadedDraw(GLenum fillMode = GL_FILL, GLenum drawMode = GL_TRIANGLES);
