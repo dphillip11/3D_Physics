@@ -1,6 +1,6 @@
 #pragma once
-#include "../Classes/rayTracing.h"
-#include "../InputHandlers/NewtonsCradleInput.h"
+#include "rayTracing.h"
+#include "NewtonsCradleInput.h"
 
 class Newtons_Cradle:public Program
 {

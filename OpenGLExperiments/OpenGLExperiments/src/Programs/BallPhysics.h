@@ -1,6 +1,6 @@
 #pragma once
-#include "../Classes/BallManager.h"
-#include "../InputHandlers/BallPhysicsInput.h"
+#include "BallManager.h"
+#include "BallPhysicsInput.h"
 
 class BallPhysics :public Program
 {

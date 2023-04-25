@@ -1,6 +1,6 @@
 #include "BallPhysicsInput.h"
 #pragma once
-#include "../Classes/Input.h"
+#include "Input.h"
 
 void BallPhysicsInput::onKeyPress(int key, float deltaTime)
 {

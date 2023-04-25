@@ -1,9 +1,9 @@
-#include "Classes/Window.h"
+#include "Window.h"
 #include <iostream>
 #include <vector>
-#include "Classes/ScopedTimer.h"
-#include "Classes/Input.h"
-#include "Classes/Program.h"
+#include "ScopedTimer.h"
+#include "Input.h"
+#include "Program.h"
 #include "Programs/LoadOBJ.h"
 #include "Programs/Newtons_Cradle.h"
 #include "Programs/BallPhysics.h"

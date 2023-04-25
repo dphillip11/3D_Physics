@@ -1,7 +1,7 @@
 #pragma once
 #pragma once
-#include "../Classes/InputObserver.h"
-#include "../Classes/rayTracing.h"
+#include "InputObserver.h"
+#include "rayTracing.h"
 
 
 class NewtonsCradleInput : public InputObserver

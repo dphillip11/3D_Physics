@@ -160,6 +160,8 @@ void BallManager::update(float deltaTime)
 {
 	time += deltaTime;
 	//this reduces jitter and doesn't hurt performance as much as you might imagine
+	//TODO:maybe perform a dirty flag optimisation or move ball to new buckets as their collision is resolved then perform secondary collision detection without timestep or reallocation of buckets
+	//OPTION: resolve collisions based on more than two balls
 	for (int i = 0; i < collision_cycles; i++)
 	{
 		updatePositions(deltaTime / collision_cycles);

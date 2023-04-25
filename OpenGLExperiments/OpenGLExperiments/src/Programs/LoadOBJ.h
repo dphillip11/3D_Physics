@@ -1,14 +1,14 @@
 //// LoadOBJ.h
-#include "../Classes/Model.h"
-#include "../Classes/obj.h"
-#include "../Classes/Texture.h"
+#include "Model.h"
+#include "obj.h"
+#include "Texture.h"
 #include <glm/glm/gtc/matrix_transform.hpp>
 #include <glm/glm/glm.hpp>
 #include <glm/glm/gtc/type_ptr.hpp>
 #include <glm/glm/gtc/quaternion.hpp>
-#include "../Classes/camera.h"
-#include "../InputHandlers/BasicCameraInput.h"
-#include "../Classes/Program.h"
+#include "camera.h"
+#include "BasicCameraInput.h"
+#include "Program.h"
 
 
 
