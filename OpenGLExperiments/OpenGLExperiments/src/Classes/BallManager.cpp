@@ -70,18 +70,15 @@ void BallManager::resolveCollisionsRecursive(int* bucket, int size, const glm::v
 	{
 		::concurrency::parallel_for(size_t(0), (size_t)(size - 1), [&](size_t i)
 		{
-		//for (int i = 0; i < size - 1; i++)
-		{
 			int ID1 = bucket[i];
 
-			for (int j = i + 1; j < size; j++)
+			for (int j = (int)i + 1; j < size; j++)
 			{
 				int ID2 = bucket[j];
 
 				resolveCollision(ID1, ID2);
 
 			}
-		}
 		});
 	}
 	else
@@ -144,14 +141,14 @@ void BallManager::resolveCollisionsRecursive(int* bucket, int size, const glm::v
 			[&]() {resolveCollisionsRecursive(&Q8_bucket[0], Q8_bucket.size(), glm::vec2(midpoint_x - offset, x_range.y), glm::vec2(midpoint_y - offset, y_range.y), glm::vec2(midpoint_z - offset, z_range.y), bucket_count);}
 			);*/
 
-			resolveCollisionsRecursive(&Q1_bucket[0], Q1_bucket.size(), glm::vec2(x_range.x, midpoint_x + offset), glm::vec2(y_range.x, midpoint_y + offset), glm::vec2(z_range.x, midpoint_z + offset), bucket_count);
-			resolveCollisionsRecursive(&Q2_bucket[0], Q2_bucket.size(), glm::vec2(x_range.x, midpoint_x + offset), glm::vec2(y_range.x, midpoint_y + offset), glm::vec2(midpoint_z - offset, z_range.y), bucket_count);
-			resolveCollisionsRecursive(&Q3_bucket[0], Q3_bucket.size(), glm::vec2(midpoint_x - offset, x_range.y), glm::vec2(y_range.x, midpoint_y + offset), glm::vec2(z_range.x, midpoint_z + offset), bucket_count);
-			resolveCollisionsRecursive(&Q4_bucket[0], Q4_bucket.size(), glm::vec2(midpoint_x - offset, x_range.y), glm::vec2(y_range.x, midpoint_y + offset), glm::vec2(midpoint_z - offset, z_range.y), bucket_count);
-			resolveCollisionsRecursive(&Q5_bucket[0], Q5_bucket.size(), glm::vec2(x_range.x, midpoint_x + offset), glm::vec2(midpoint_y - offset, y_range.y), glm::vec2(z_range.x, midpoint_z + offset), bucket_count);
-			resolveCollisionsRecursive(&Q6_bucket[0], Q6_bucket.size(), glm::vec2(x_range.x, midpoint_x + offset), glm::vec2(midpoint_y - offset, y_range.y), glm::vec2(midpoint_z - offset, z_range.y), bucket_count);
-			resolveCollisionsRecursive(&Q7_bucket[0], Q7_bucket.size(), glm::vec2(midpoint_x - offset, x_range.y), glm::vec2(midpoint_y - offset, y_range.y), glm::vec2(z_range.x, midpoint_z + offset), bucket_count);
-			resolveCollisionsRecursive(&Q8_bucket[0], Q8_bucket.size(), glm::vec2(midpoint_x - offset, x_range.y), glm::vec2(midpoint_y - offset, y_range.y), glm::vec2(midpoint_z - offset, z_range.y), bucket_count);
+			resolveCollisionsRecursive(&Q1_bucket[0], (int)Q1_bucket.size(), glm::vec2(x_range.x, midpoint_x + offset), glm::vec2(y_range.x, midpoint_y + offset), glm::vec2(z_range.x, midpoint_z + offset), bucket_count);
+			resolveCollisionsRecursive(&Q2_bucket[0], (int)Q2_bucket.size(), glm::vec2(x_range.x, midpoint_x + offset), glm::vec2(y_range.x, midpoint_y + offset), glm::vec2(midpoint_z - offset, z_range.y), bucket_count);
+			resolveCollisionsRecursive(&Q3_bucket[0], (int)Q3_bucket.size(), glm::vec2(midpoint_x - offset, x_range.y), glm::vec2(y_range.x, midpoint_y + offset), glm::vec2(z_range.x, midpoint_z + offset), bucket_count);
+			resolveCollisionsRecursive(&Q4_bucket[0], (int)Q4_bucket.size(), glm::vec2(midpoint_x - offset, x_range.y), glm::vec2(y_range.x, midpoint_y + offset), glm::vec2(midpoint_z - offset, z_range.y), bucket_count);
+			resolveCollisionsRecursive(&Q5_bucket[0], (int)Q5_bucket.size(), glm::vec2(x_range.x, midpoint_x + offset), glm::vec2(midpoint_y - offset, y_range.y), glm::vec2(z_range.x, midpoint_z + offset), bucket_count);
+			resolveCollisionsRecursive(&Q6_bucket[0], (int)Q6_bucket.size(), glm::vec2(x_range.x, midpoint_x + offset), glm::vec2(midpoint_y - offset, y_range.y), glm::vec2(midpoint_z - offset, z_range.y), bucket_count);
+			resolveCollisionsRecursive(&Q7_bucket[0], (int)Q7_bucket.size(), glm::vec2(midpoint_x - offset, x_range.y), glm::vec2(midpoint_y - offset, y_range.y), glm::vec2(z_range.x, midpoint_z + offset), bucket_count);
+			resolveCollisionsRecursive(&Q8_bucket[0], (int)Q8_bucket.size(), glm::vec2(midpoint_x - offset, x_range.y), glm::vec2(midpoint_y - offset, y_range.y), glm::vec2(midpoint_z - offset, z_range.y), bucket_count);
 	}
 }
 

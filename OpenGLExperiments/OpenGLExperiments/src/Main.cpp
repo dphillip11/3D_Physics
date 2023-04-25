@@ -37,15 +37,15 @@ void displayFrameRate(float& timer, float& deltaTime, int& frames);
         Newtons_Cradle N;
         BallPhysics B;
 
-        //programs.push_back(reinterpret_cast<Program*>(&L));
-        //programs.push_back(reinterpret_cast<Program*>(&N));
+        programs.push_back(reinterpret_cast<Program*>(&L));
+        programs.push_back(reinterpret_cast<Program*>(&N));
         programs.push_back(reinterpret_cast<Program*>(&B));
 
         for (auto program : programs){
             program->Setup();
         }
 
-        numberOfPrograms = programs.size();
+        numberOfPrograms = (int)programs.size();
         window.input->observers.push_back(programs[0]->getInputHandler());
 
         // render loop

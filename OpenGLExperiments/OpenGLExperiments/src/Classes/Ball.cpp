@@ -31,13 +31,12 @@ Ball::Ball()
 {
 	if (subdivided)
 	{
-		shader = std::make_unique<Shader>("shaders/vertex/ball.hlsl", "shaders/fragment/ball.hlsl", "shaders/geometry/ball.hlsl");
+		shader = std::make_unique<Shader>("Shaders/vertex/ball.hlsl", "Shaders/fragment/ball.hlsl", "Shaders/geometry/ball.hlsl");
 		useSimpleVertices();
 	}
 	else
 	{
-		shader = std::make_unique<Shader>("shaders/vertex/batchBall.hlsl", "shaders/fragment/ball.hlsl");
-		//shader = std::make_unique<Shader>("shaders/vertex/ballS.hlsl", "shaders/fragment/ball.hlsl");
+		shader = std::make_unique<Shader>("Shaders/vertex/batchBall.hlsl", "Shaders/fragment/ball.hlsl");
 		CreateVertices();
 	}
 }

@@ -1,11 +1,14 @@
 #version 330
 in vec4 color[];
 out vec4 colorGS;
+out vec3 normal;
+out vec3 worldPos;
 
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 48) out;
 
 uniform mat4 MVP;
+uniform mat4 model;
 
 vec4 colors[18];
 vec3 positions[18];
@@ -32,6 +35,8 @@ void subdivideTriangle(int A, int B, int C, int index, bool emit)
     int i;
     for (i = 0; i < 12; i++)
     {
+        worldPos = (model * vec4(positions[indices[i]], 1)).xyz;
+        normal = normalize(worldPos);
         gl_Position = MVP * vec4(positions[indices[i]],1);
         colorGS = colors[indices[i]];
 

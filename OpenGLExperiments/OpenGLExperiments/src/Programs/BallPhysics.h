@@ -17,8 +17,8 @@ public:
 		camera.zoomSpeed = 10;
 		camera.moveSpeed = 1;
 		BM.gravity = 98;
-		BM.min_restitution = 0.7;
-		BM.max_restitution = 0.75;
+		BM.min_restitution = 0.7f;
+		BM.max_restitution = 0.75f;
 		BM.max_bucket_size = 500;
 		BM.spawnObjects(8000);
 		BM.generateBuffers();

@@ -105,9 +105,9 @@ void obj::pushBufferToStack()
 	for (face& index : buffer)
 	{
 		//swap negative values for positive, zero index positive values
-		index.vIndex = (index.vIndex < 0) ? (vertices.size() - cursor.vIndex + index.vIndex ) : index.vIndex - 1;
-		index.tIndex = (index.tIndex < 0) ? (textureMap.size() - cursor.tIndex + index.tIndex ) : index.tIndex - 1;
-		index.nIndex = (index.nIndex < 0) ? (normalMap.size() - cursor.nIndex + index.nIndex ) : index.nIndex - 1;
+		index.vIndex = (index.vIndex < 0) ? ((int)vertices.size() - cursor.vIndex + index.vIndex ) : index.vIndex - 1;
+		index.tIndex = (index.tIndex < 0) ? ((int)textureMap.size() - cursor.tIndex + index.tIndex ) : index.tIndex - 1;
+		index.nIndex = (index.nIndex < 0) ? ((int)normalMap.size() - cursor.nIndex + index.nIndex ) : index.nIndex - 1;
 		//shift to the right for existing vertices
 		index = { index.vIndex + cursor.vIndex, index.tIndex + cursor.tIndex, index.nIndex + cursor.nIndex };
 		//add index to stack of face elements
@@ -123,7 +123,7 @@ void obj::pushBufferToStack()
 
 void obj::convertToTriangles(std::vector<face>& face_elements)
 {
-	int number_of_vertices = face_elements.size();
+	int number_of_vertices = (int)face_elements.size();
 	//if triangles cannot be formed store vertices
 	if (number_of_vertices <= 3)
 	{

@@ -16,8 +16,8 @@ class Manager
 {
 	friend class BallPhysicsInput;
 protected: 
-	unsigned int VBO_pos;
-	unsigned int VBO_radius;
+	unsigned int VBO_pos{ 0 };
+	unsigned int VBO_radius{ 0 };
 
 	std::vector<glm::vec3> position;
 	std::vector<float> mass;
@@ -26,15 +26,15 @@ protected:
 	std::vector<float> halfWidth;
 
 public:
-	float max_restitution = 0.9;
-	float min_restitution = 0.3;
+	float max_restitution = 0.9f;
+	float min_restitution = 0.3f;
 	int count = 0;
-	float gravity = 9.8;
-	const float boundarySize = 100;
-	const float maxSpeed = 30;
-	const float maxWidth = 10;
+	float gravity = 9.8f;
+	const float boundarySize = 100.0f;
+	const float maxSpeed = 30.0f;
+	const float maxWidth = 10.0f;
 	std::unique_ptr<Model> object;
-	float time = 0;
+	float time = 0.0f;
 
 
 	void generateBuffers();
