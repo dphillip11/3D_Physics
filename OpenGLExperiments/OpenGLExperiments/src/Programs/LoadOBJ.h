@@ -18,8 +18,8 @@ class LoadOBJ : public Program {
     const unsigned int SCR_HEIGHT = 720;
     //setup camera
 public:
-    const char* model_path = "Assets/hare.obj";
-    const char* texture_path = "Assets/HareTexture.jpg";
+    const char* model_path = "Assets/plane/plane.obj";
+    const char* texture_path = "Assets/plane/plane_diffuse.jpg";
     Camera camera = Camera(glm::vec3(0, 100, -200), glm::vec3(0, 100, -10));
     obj model_data;
     Model model;

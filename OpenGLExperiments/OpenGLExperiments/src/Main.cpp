@@ -10,89 +10,89 @@
 
 void displayFrameRate(float& timer, float& deltaTime, int& frames);
 
-    // settings
-    const unsigned int SCR_WIDTH = 1280;
-    const unsigned int SCR_HEIGHT = 720;
-    const char* windowName = "Window";
+// settings
+const unsigned int SCR_WIDTH = 1280;
+const unsigned int SCR_HEIGHT = 720;
+const char* windowName = "Window";
 
 
-    int main()
-    {
-        // setup window and make a reference
-        Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
-        // set background color
-        glEnable(GL_DEPTH_TEST);
-        glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
-        
-        float deltaTime = 0;
-        float time = 0;
-        int frames = 0;
-        float frame_timer = 0;
-        int programIndex = 0;
-        int numberOfPrograms = 0;
+int main()
+{
+	// setup window and make a reference
+	Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
+	// set background color
+	glEnable(GL_DEPTH_TEST);
+	glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
 
-        std::vector<Program*> programs;
+	float deltaTime = 0;
+	float time = 0;
+	int frames = 0;
+	float frame_timer = 0;
+	int programIndex = 0;
+	int numberOfPrograms = 0;
 
-        LoadOBJ L;
-        Newtons_Cradle N;
-        BallPhysics B;
+	std::vector<Program*> programs;
 
-        programs.push_back(reinterpret_cast<Program*>(&L));
-        programs.push_back(reinterpret_cast<Program*>(&N));
-        programs.push_back(reinterpret_cast<Program*>(&B));
+	LoadOBJ L;
+	Newtons_Cradle N;
+	BallPhysics B;
 
-        for (auto program : programs){
-            program->Setup();
-        }
+	programs.push_back(static_cast<Program*>(&L));
+	//programs.push_back(static_cast<Program*>(&N));
+	//programs.push_back(static_cast<Program*>(&B));
 
-        numberOfPrograms = (int)programs.size();
-        window.input->observers.push_back(programs[0]->getInputHandler());
+	for (auto program : programs) {
+		program->Setup();
+	}
 
-        // render loop
-        // -----------
-        while (!window.closed())
-        {
-            ScopedTimer timer(&deltaTime);
-            time += deltaTime;
-          
-           if (time > 5){
-               //create statemachine class to handle this?
-                programIndex = (programIndex + 1) % numberOfPrograms;
-                window.input->observers.clear();
-                InputObserver* inputHandler = programs[programIndex]->getInputHandler();
-                if (inputHandler != nullptr)
-                    window.input->observers.push_back(inputHandler);
-                time = 0;
-            }
+	numberOfPrograms = (int)programs.size();
+	window.input->observers.push_back(programs[0]->getInputHandler());
 
-            programs[programIndex]->Run(deltaTime);
+	// render loop
+	// -----------
+	while (!window.closed())
+	{
+		ScopedTimer timer(&deltaTime);
+		time += deltaTime;
 
-            
-            displayFrameRate(frame_timer, deltaTime, frames);
-            window.input->ProcessInput(deltaTime);
-            window.update();
+		if (time > 5) {
+			//create statemachine class to handle this?
+			programIndex = (programIndex + 1) % numberOfPrograms;
+			window.input->observers.clear();
+			InputObserver* inputHandler = programs[programIndex]->getInputHandler();
+			if (inputHandler != nullptr)
+				window.input->observers.push_back(inputHandler);
+			time = 0;
+		}
 
-        }
-        window.terminate();
-        return 0;
-    }
+		programs[programIndex]->Run(deltaTime);
 
 
+		displayFrameRate(frame_timer, deltaTime, frames);
+		window.input->ProcessInput(deltaTime);
+		window.update();
+
+	}
+	window.terminate();
+	return 0;
+}
 
 
-    void displayFrameRate(float& timer, float& deltaTime, int& frames)
-    {
-        frames++;
-        timer += deltaTime;
-        if (timer > 1){
-            printf("%f ms/frame\n", 1000.0 / static_cast<double>(frames));
-            timer = 0;
-            frames = 0;
-        }
-    }
 
 
-    
+void displayFrameRate(float& timer, float& deltaTime, int& frames)
+{
+	frames++;
+	timer += deltaTime;
+	if (timer > 1) {
+		printf("%f ms/frame\n", 1000.0 / static_cast<double>(frames));
+		timer = 0;
+		frames = 0;
+	}
+}
+
+
+
 
 
 
