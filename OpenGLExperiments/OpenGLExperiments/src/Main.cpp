@@ -15,11 +15,12 @@ const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
 const char* windowName = "Window";
 
+// setup window and make a reference
+Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
+Window& Program::_window = window;
 
 int main()
 {
-	// setup window and make a reference
-	Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
 	// set background color
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
@@ -31,42 +32,25 @@ int main()
 	int programIndex = 0;
 	int numberOfPrograms = 0;
 
-	std::vector<Program*> programs;
-
 	LoadOBJ L;
 	Newtons_Cradle N;
 	BallPhysics B;
 
-	programs.push_back(static_cast<Program*>(&L));
-	//programs.push_back(static_cast<Program*>(&N));
-	//programs.push_back(static_cast<Program*>(&B));
+	Program::SetupPrograms(window);
 
-	for (auto program : programs) {
-		program->Setup();
-	}
-
-	numberOfPrograms = (int)programs.size();
-	window.input->observers.push_back(programs[0]->getInputHandler());
 
 	// render loop
-	// -----------
 	while (!window.closed())
 	{
 		ScopedTimer timer(&deltaTime);
 		time += deltaTime;
 
 		if (time > 5) {
-			//create statemachine class to handle this?
-			programIndex = (programIndex + 1) % numberOfPrograms;
-			window.input->observers.clear();
-			InputObserver* inputHandler = programs[programIndex]->getInputHandler();
-			if (inputHandler != nullptr)
-				window.input->observers.push_back(inputHandler);
+			Program::NextProgram();
 			time = 0;
 		}
 
-		programs[programIndex]->Run(deltaTime);
-
+		Program::RunProgram(deltaTime);
 
 		displayFrameRate(frame_timer, deltaTime, frames);
 		window.input->ProcessInput(deltaTime);
