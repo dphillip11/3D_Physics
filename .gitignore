@@ -8,3 +8,7 @@ PracticeProject/.vs/
 PracticeProject/x64/
 
 PracticeProject/PracticeProject/PracticeProject.vcxproj
+
+OpenGLExperiments/OpenGLExperiments/Libraries/IMGUI/
+
+OpenGLExperiments/OpenGLExperiments/imgui.ini

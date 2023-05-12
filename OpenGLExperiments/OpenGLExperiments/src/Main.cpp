@@ -7,6 +7,9 @@
 #include "Programs/LoadOBJ.h"
 #include "Programs/Newtons_Cradle.h"
 #include "Programs/BallPhysics.h"
+#include  "imgui.h"
+#include "imgui_impl_opengl3.h"
+#include "imgui_impl_glfw.h"
 
 void displayFrameRate(float& timer, float& deltaTime, int& frames);
 
@@ -21,6 +24,15 @@ Window& Program::_window = window;
 
 int main()
 {
+	const char* glsl_version = "#version 130";
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window.window, true);
+	ImGui_ImplOpenGL3_Init(glsl_version);
+	auto imgui_window = true;
+
 	// set background color
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
@@ -29,7 +41,6 @@ int main()
 	float time = 0;
 	int frames = 0;
 	float frame_timer = 0;
-	int programIndex = 0;
 	int numberOfPrograms = 0;
 
 	LoadOBJ L;
@@ -42,21 +53,30 @@ int main()
 	// render loop
 	while (!window.closed())
 	{
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		ImGui::Begin("Another Window", &imgui_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+		ImGui::Text("This will change program!");
+		if (ImGui::Button("Next Program"))
+			Program::NextProgram();
+		ImGui::End();
 		ScopedTimer timer(&deltaTime);
 		time += deltaTime;
 
-		if (time > 5) {
-			Program::NextProgram();
-			time = 0;
-		}
 
 		Program::RunProgram(deltaTime);
 
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		displayFrameRate(frame_timer, deltaTime, frames);
 		window.input->ProcessInput(deltaTime);
 		window.update();
 
 	}
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 	window.terminate();
 	return 0;
 }

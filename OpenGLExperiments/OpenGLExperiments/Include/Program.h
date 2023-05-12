@@ -36,7 +36,7 @@ public:
 	static void NextProgram()
 	{
 		_window.input->observers.clear();
-		_currentProgram = (_currentProgram + 1) % _programs.size();
+		_currentProgram = (_currentProgram + 1) % (int)_programs.size();
 		_window.input->observers.push_back(_programs[_currentProgram]->getInputHandler());
 	}
 
