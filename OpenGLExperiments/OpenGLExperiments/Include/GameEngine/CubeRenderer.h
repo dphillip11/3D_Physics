@@ -64,8 +64,9 @@ public:
 			{ {-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f} }
 		};
 
-		m_Mesh = std::make_unique<MeshComponent>(gameObject_);
-		m_Mesh->LoadVertices(vertices, indices);
+		DM::addComponent(gameObjectID, DM::MeshComponents);
+		DM::MeshComponents[gameObjectID]->LoadVertices(vertices, indices);
+		DM::addComponent(gameObjectID, DM::ShaderComponents);
 		m_Shader = std::make_unique<ShaderComponent>(gameObject_);
 		m_Shader->Setup("Shaders/vertex/mesh_vShader.glsl", "Shaders/fragment/mesh_fShader.glsl");
 	}

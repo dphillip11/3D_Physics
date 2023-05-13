@@ -1,22 +1,23 @@
 #pragma once
+#include "DataManager.h"
 
 class GameObject;
 
 class Component {
 public:
-	Component(GameObject* gameobject) : gameObject_(gameobject) {}
+	Component(int ID) : gameObjectID(ID) {}
 	//only allow constructors with reference to a game object
 	Component() = delete;
 	virtual ~Component() {}
 
-	GameObject* GetGameObject()
+	std::unique_ptr<GameObject>& GetGameObject()
 	{
-		return gameObject_;
+		return DM::GameObjects[gameObjectID];
 	}
-	// Define any common functionality required by components
+
 	virtual void Update(float deltaTime) = 0;
 	virtual void Render() = 0;
 protected:
-	GameObject* gameObject_{ nullptr };
+	int gameObjectID{ 0 };
 };
 
