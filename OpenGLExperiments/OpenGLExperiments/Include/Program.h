@@ -8,6 +8,9 @@ private:
 	static Window& _window;
 	static int _currentProgram;
 
+protected:
+	Camera _camera{ glm::vec3(0), glm::vec3(0) };
+
 public:
 
 	Program() {
@@ -25,6 +28,7 @@ public:
 			}
 
 			_window.input->observers.push_back(_programs[_currentProgram]->getInputHandler());
+			Camera::currentCamera = &_programs[_currentProgram]->_camera;
 		}
 	}
 
@@ -38,6 +42,7 @@ public:
 		_window.input->observers.clear();
 		_currentProgram = (_currentProgram + 1) % (int)_programs.size();
 		_window.input->observers.push_back(_programs[_currentProgram]->getInputHandler());
+		Camera::currentCamera = &_programs[_currentProgram]->_camera;
 	}
 
 	virtual InputObserver* getInputHandler() = 0;

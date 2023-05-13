@@ -20,13 +20,12 @@ class LoadOBJ : public Program {
 public:
 	const char* model_path = "Assets/butterfly.obj";
 	const char* texture_path = "Assets/plane/plane_diffuse.jpg";
-	Camera camera = Camera(glm::vec3(0, 100, -200), glm::vec3(0, 100, -10));
 	obj model_data;
 	Model model;
 	Light light1{ glm::vec3(0,100,-500), glm::vec3(1), glm::vec3(1), glm::vec3(1) };
 	Material mat1{ glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.4f), 32 };
 	float time = 0;
-	BasicCameraInput inputHandler = BasicCameraInput(&camera);
+	BasicCameraInput inputHandler = BasicCameraInput(&_camera);
 	float explodedTime = 0;
 
 	void explode()
@@ -36,11 +35,13 @@ public:
 
 	void Setup()
 	{
-		camera.setFOV(90);
-		camera.moveSpeed = 100;
-		camera.panSpeed = 400;
-		camera.zoomSpeed = 1000;
-		camera.isLockedOn = false;
+		_camera.setPosition(glm::vec3(0, 100, -200));
+		_camera.setTarget(glm::vec3(0, 100, -10));
+		_camera.setFOV(90);
+		_camera.moveSpeed = 100;
+		_camera.panSpeed = 400;
+		_camera.zoomSpeed = 1000;
+		_camera.isLockedOn = false;
 		model_data.read(model_path);
 		model_data.vertices = model_data.unravelIndices(model_data.vertices, model_data.vertexIndices);
 		model_data.normalMap = model_data.unravelIndices(model_data.normalMap, model_data.normalIndices);
@@ -80,7 +81,7 @@ public:
 	{
 		float scale = 1;
 		time += deltaTime;
-		glm::mat4 view = camera.lookAt();
+		glm::mat4 view = _camera.lookAt();
 		model.shader->use();
 		model.draw();
 		glm::mat4 rotationMatrix = glm::rotate(glm::mat4(scale), -(time)+3.14f, glm::vec3(0, 1, 0));
@@ -90,9 +91,9 @@ public:
 		model.shader->setMat4("model", glm::translate(rotationMatrix, glm::vec3(10, 0, 0)));
 		//added time for shattering models
 		model.shader->setFloat("time", explodedTime == 0 ? 0 : 5 * (time - explodedTime));
-		model.shader->setMat4("view", camera.lookAt());
-		model.shader->setMat4("projection", camera.projection);
-		model.shader->setVec3("viewPosition", camera._position);
+		model.shader->setMat4("view", _camera.lookAt());
+		model.shader->setMat4("projection", _camera.projection);
+		model.shader->setVec3("viewPosition", _camera._position);
 		model.shader->setLight(light1);
 		model.shader->setMaterial(mat1);
 	}

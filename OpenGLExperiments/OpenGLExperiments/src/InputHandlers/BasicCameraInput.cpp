@@ -15,13 +15,13 @@ void BasicCameraInput::onKeyPress(int key, float deltaTime)
 	{
 	}
 	else if (key == KEYS::UP)
-		camera->moveForward(deltaTime);
+		camera->moveForward(deltaTime * panSpeed);
 	else if (key == KEYS::DOWN)
-		camera->moveForward(-deltaTime);
+		camera->moveForward(-deltaTime * panSpeed);
 	else if (key == KEYS::RIGHT)
-		camera->moveRight(deltaTime);
+		camera->moveRight(deltaTime * panSpeed);
 	else if (key == KEYS::LEFT)
-		camera->moveRight(-deltaTime);
+		camera->moveRight(-deltaTime * panSpeed);
 }
 
 void BasicCameraInput::onMouseScroll(float scroll_value, float deltaTime)
@@ -36,5 +36,5 @@ void BasicCameraInput::onMousePress(float deltaTime)
 
 void BasicCameraInput::onMouseMove(float dx, float dy, float deltaTime)
 {
-	camera->rotate(dx * deltaTime, dy * deltaTime);
+	camera->rotate(dx * deltaTime * rotateSpeed, dy * deltaTime * rotateSpeed);
 }

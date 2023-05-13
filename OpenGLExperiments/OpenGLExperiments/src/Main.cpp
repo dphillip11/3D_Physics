@@ -7,6 +7,7 @@
 #include "Programs/LoadOBJ.h"
 #include "Programs/Newtons_Cradle.h"
 #include "Programs/BallPhysics.h"
+#include "Programs/GameEngine.h"
 #include  "imgui.h"
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_glfw.h"
@@ -21,6 +22,7 @@ const char* windowName = "Window";
 // setup window and make a reference
 Window window(SCR_WIDTH, SCR_HEIGHT, windowName);
 Window& Program::_window = window;
+auto imgui_window = false;
 
 int main()
 {
@@ -31,24 +33,24 @@ int main()
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(window.window, true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
-	auto imgui_window = true;
+	imgui_window = true;
+	ImGui::GetIO().WantCaptureMouse = true;
 
 	// set background color
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
 
 	float deltaTime = 0;
-	float time = 0;
 	int frames = 0;
 	float frame_timer = 0;
 	int numberOfPrograms = 0;
 
+	GameEngine GE;
 	LoadOBJ L;
 	Newtons_Cradle N;
 	BallPhysics B;
 
 	Program::SetupPrograms(window);
-
 
 	// render loop
 	while (!window.closed())
@@ -58,15 +60,16 @@ int main()
 		ImGui::NewFrame();
 
 		ImGui::Begin("Another Window", &imgui_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("This will change program!");
+
+		ImGui::DragFloat3("camera", reinterpret_cast<float*>(&Camera::currentCamera->_position.x));
 		if (ImGui::Button("Next Program"))
 			Program::NextProgram();
-		ImGui::End();
+
 		ScopedTimer timer(&deltaTime);
-		time += deltaTime;
 
 
 		Program::RunProgram(deltaTime);
+		ImGui::End();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

@@ -2,8 +2,12 @@
 #include <glm/glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
+
+Camera* Camera::currentCamera = nullptr;
+
 Camera::Camera(glm::vec3 position, glm::vec3 target)
 {
+	currentCamera = this;
 	setFOV(_FOV);
 	_position = position;
 	_target = target;
@@ -50,7 +54,7 @@ void Camera::setTarget(glm::vec3 target) {
 	updateValues();
 }
 
-void Camera::rotate(float dx, float dy) 
+void Camera::rotate(float dx, float dy)
 {
 	_yaw += dx * panSpeed;
 	_pitch += dy * panSpeed;
@@ -96,7 +100,7 @@ glm::mat4 Camera::lookAt()
 	lookat[1] = glm::vec4((float)_right.y, _up.y, _direction.y, 0);
 	lookat[2] = glm::vec4(_right.z, _up.z, _direction.z, 0);
 	glm::mat4 antiPos = glm::mat4(1);
-	antiPos[3] = glm::vec4(-_position.x,-_position.y, -_position.z, 1);
+	antiPos[3] = glm::vec4(-_position.x, -_position.y, -_position.z, 1);
 	lookat = lookat * antiPos;
 	return lookat;
 }

@@ -11,7 +11,7 @@ private:
 	float _pitch = 0;
 	void updateValues();
 public:
-
+	static Camera* currentCamera;
 	float moveSpeed = 50;
 	float panSpeed = 5;
 	float zoomSpeed = 30;
