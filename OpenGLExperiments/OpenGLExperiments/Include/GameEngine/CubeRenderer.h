@@ -1,5 +1,7 @@
-#include "RendererComponent.h"
+# pragma once 
+#include "GameEngine/DataManager.h"
 #include "MeshComponent.h"
+#include "RendererComponent.h"
 #include "ShaderComponent.h"
 #include "TransformComponent.h"
 
@@ -64,11 +66,8 @@ public:
 			{ {-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f} }
 		};
 
-		DM::addComponent(gameObjectID, DM::MeshComponents);
-		DM::MeshComponents[gameObjectID]->LoadVertices(vertices, indices);
-		DM::addComponent(gameObjectID, DM::ShaderComponents);
-		m_Shader = std::make_unique<ShaderComponent>(gameObject_);
-		m_Shader->Setup("Shaders/vertex/mesh_vShader.glsl", "Shaders/fragment/mesh_fShader.glsl");
+		DM::AddComponent<MeshComponent>(gameObjectID)->LoadVertices(vertices, indices);
+		DM::AddComponent<ShaderComponent>(gameObjectID)->Setup("Shaders/vertex/mesh_vShader.glsl", "Shaders/fragment/mesh_fShader.glsl");
 	}
 
 	virtual void Update(float deltaTime) override
@@ -80,7 +79,7 @@ public:
 	{
 		m_Shader->Use();
 
-		auto transformComponent = gameObject_->GetComponent<TransformComponent>();
+		auto transformComponent = DataManager::GetComponent<TransformComponent>(gameObjectID);
 		if (transformComponent) {
 			m_Shader->SetModelMatrix(transformComponent->GetTransform());
 		}

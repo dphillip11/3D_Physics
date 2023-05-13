@@ -1,5 +1,7 @@
+#pragma once
+#include "pch.h"
 #include "Cube.h"
-#include <iostream>
+
 
 Cube::Cube()
 {
@@ -10,7 +12,7 @@ Cube::Cube()
 void Cube::CreateVertices()
 {
 	float vertices[] = {
-				 0.5f,  0.5f,  0.5f, 
+				 0.5f,  0.5f,  0.5f,
 				 0.5f,  -0.5f,  0.5f,
 				 0.5f,  0.5f,  -0.5f,
 				 0.5f,  -0.5f,  -0.5f,
@@ -22,10 +24,10 @@ void Cube::CreateVertices()
 	};
 
 
-	setVertices(vertices,sizeof(vertices)/sizeof(float), _VAO, _VBO);
+	setVertices(vertices, sizeof(vertices) / sizeof(float), _VAO, _VBO);
 	setAttributes(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	setIndices(indices, sizeof(indices) / sizeof(int), _EBO);
-	}
+}
 
 void Cube::shadedDraw(GLenum fillMode, GLenum drawMode)
 {

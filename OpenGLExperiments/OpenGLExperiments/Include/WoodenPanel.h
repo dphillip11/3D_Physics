@@ -1,7 +1,6 @@
 #pragma once
 #include "Model.h"
-#include <glm/glm/vec3.hpp>
-#include <glm/glm/vec2.hpp>
+
 #include "Shader.h"
 #include "Texture.h"
 
@@ -14,7 +13,7 @@ public:
 	WoodenPanel();
 	void shadedDraw(GLenum fillMode = GL_FILL, GLenum drawMode = GL_TRIANGLES);
 	~WoodenPanel() { }
-		//delete(shader); }
+	//delete(shader); }
 
 };
 

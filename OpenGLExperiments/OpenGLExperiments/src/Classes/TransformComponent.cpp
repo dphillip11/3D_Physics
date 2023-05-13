@@ -1,5 +1,5 @@
+# pragma once 
 #include "GameEngine/TransformComponent.h"
-#include <glm/glm/gtc/matrix_transform.hpp>
 
 glm::mat4 TransformComponent::GetTransform() const {
 	glm::mat4 transform = glm::mat4(1.0f);

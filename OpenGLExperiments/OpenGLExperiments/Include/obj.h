@@ -1,8 +1,4 @@
 #pragma once
-#include <vector>
-#include <string>
-#include <glm/glm/vec3.hpp>
-#include <glm/glm/vec2.hpp>
 
 struct face {
 	int vIndex;

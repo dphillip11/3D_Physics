@@ -1,7 +1,4 @@
 #pragma once
-#include <glad/glad.h>
-#include <vector>
-#include <glm/glm/glm.hpp>
 #include "Component.h"
 
 struct MeshVertex {

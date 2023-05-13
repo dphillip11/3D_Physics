@@ -1,7 +1,5 @@
 #pragma once
-#include <vector>
-#include <memory>
-#include <glm/glm/vec3.hpp>
+
 #include "Model.h"
 #include "Camera.h"
 
@@ -15,7 +13,7 @@ struct pair {
 class Manager
 {
 	friend class BallPhysicsInput;
-protected: 
+protected:
 	unsigned int VBO_pos{ 0 };
 	unsigned int VBO_radius{ 0 };
 

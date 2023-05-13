@@ -1,7 +1,7 @@
 #pragma once
 #include "GameEngine/DataManager.h"
-#include <range>
-
+#include "GameEngine/CubeRenderer.h"
+#include "GameEngine/TransformComponent.h"
 
 class GameEngine :public Program
 {
@@ -16,12 +16,12 @@ public:
 	{
 		_camera.setPosition(glm::vec3(0, -5, 0));
 		int new_id = DM::NewGameObject();
-		DM::addComponent(new_id, DM::CubeRenderers);
-		DM::addComponent(new_id, DM::TransformComponents);
+		DM::AddComponent<CubeRenderer>(new_id);
+		DM::AddComponent<TransformComponent>(new_id);
 
 		new_id = DM::NewGameObject();
-		DM::addComponent(new_id, DM::CubeRenderers);
-		DM::addComponent(new_id, DM::TransformComponents);
+		DM::AddComponent<CubeRenderer>(new_id);
+		DM::AddComponent<TransformComponent>(new_id);
 	}
 
 	void Run(float deltaTime) override

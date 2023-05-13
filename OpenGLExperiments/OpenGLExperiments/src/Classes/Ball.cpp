@@ -1,12 +1,7 @@
+#include "pch.h"
 #include "Ball.h"
 #define _USE_MATH_DEFINES
-#include <math.h>
-#include <iostream>
-#include <vector>
-#include <glm/glm/vec3.hpp>
-#include <glm/glm/matrix.hpp>
-#include <glm/glm/gtc/matrix_transform.hpp>
-#include <glm/glm/gtc/type_ptr.hpp>
+
 
 #define LOG(x) std::cout << x << std::endl;
 
@@ -27,7 +22,7 @@ glm::uvec3(3, 10, 7),glm::uvec3(10, 6, 7),glm::uvec3(6, 11, 7),glm::uvec3(6, 0, 
 glm::uvec3(10, 1, 6),glm::uvec3(11, 0, 9),glm::uvec3(2, 11, 9),glm::uvec3(5, 2, 9),glm::uvec3(11, 2, 7)
 };
 
-Ball::Ball() 
+Ball::Ball()
 {
 	if (subdivided)
 	{
@@ -55,7 +50,7 @@ void Ball::CreateVertices()
 	int* indices = new int[NUM_SEGMENTS * NUM_SEGMENTS * 6];
 
 	for (int i = 0; i < NUM_SEGMENTS; i++) {
-		float angle1 = (float)i / NUM_SEGMENTS * 2 *  PI;
+		float angle1 = (float)i / NUM_SEGMENTS * 2 * PI;
 		float y = sin(angle1);
 		float r = cos(angle1);
 

@@ -1,10 +1,10 @@
 #pragma once
-#include <memory>
+
 #include "Model.h"
 #include "Texture.h"
 #include "Camera.h"
 
-class WoodenBox: public Model
+class WoodenBox : public Model
 {
 public:
 	Texture diffuseMap;

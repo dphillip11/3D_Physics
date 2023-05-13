@@ -1,7 +1,5 @@
-#pragma once
-#include "DataManager.h"
-
-class GameObject;
+#ifndef COMPONENT_H
+#define COMPONENT_H
 
 class Component {
 public:
@@ -10,9 +8,9 @@ public:
 	Component() = delete;
 	virtual ~Component() {}
 
-	std::unique_ptr<GameObject>& GetGameObject()
+	int GetGameObjectID()
 	{
-		return DM::GameObjects[gameObjectID];
+		return gameObjectID;
 	}
 
 	virtual void Update(float deltaTime) = 0;
@@ -20,4 +18,6 @@ public:
 protected:
 	int gameObjectID{ 0 };
 };
+
+#endif // COMPONENT_H
 

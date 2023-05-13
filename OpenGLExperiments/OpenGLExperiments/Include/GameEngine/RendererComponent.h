@@ -1,4 +1,6 @@
 #include "Component.h"
+#ifndef RENDERERCOMPONENT_H
+#define RENDERERCOMPONENT_H
 
 class RendererComponent : public Component {
 public:
@@ -9,3 +11,5 @@ public:
 
 	virtual void Render() = 0;
 };
+
+#endif // RENDERERCOMPONENT_H

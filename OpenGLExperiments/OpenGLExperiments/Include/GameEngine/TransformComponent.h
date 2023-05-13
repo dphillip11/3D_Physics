@@ -1,15 +1,14 @@
 #pragma once
-#include <glm/glm/glm.hpp>
 #include "GameObject.h"
 #include "Component.h"
-#include  "imgui.h"
+
 
 
 
 class TransformComponent :public Component {
 public:
-	TransformComponent(GameObject* gameobject, const glm::vec3& position = glm::vec3(0), const glm::vec3& rotation = glm::vec3(0), const glm::vec3& scale = glm::vec3(1)) :
-		Component(gameobject), position_(position), rotation_(rotation), scale_(scale) {};
+	TransformComponent(int gameobjectID, const glm::vec3& position = glm::vec3(0), const glm::vec3& rotation = glm::vec3(0), const glm::vec3& scale = glm::vec3(1)) :
+		Component(gameobjectID), position_(position), rotation_(rotation), scale_(scale) {};
 
 	const glm::vec3& GetPosition() const { return position_; }
 	void SetPosition(const glm::vec3& position) { position_ = position; }

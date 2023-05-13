@@ -1,16 +1,13 @@
+#pragma once
+#include "pch.h"
 #include "Window.h"
-#include <iostream>
-#include <vector>
-#include "ScopedTimer.h"
 #include "Input.h"
 #include "Program.h"
 #include "Programs/LoadOBJ.h"
 #include "Programs/Newtons_Cradle.h"
 #include "Programs/BallPhysics.h"
 #include "Programs/GameEngine.h"
-#include  "imgui.h"
-#include "imgui_impl_opengl3.h"
-#include "imgui_impl_glfw.h"
+
 
 void displayFrameRate(float& timer, float& deltaTime, int& frames);
 

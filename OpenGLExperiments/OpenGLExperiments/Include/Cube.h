@@ -1,9 +1,9 @@
 #pragma once
 #include "Model.h"
 #include "Shader.h"
-#include <memory>
 
-class Cube:public Model
+
+class Cube :public Model
 {
 public:
 

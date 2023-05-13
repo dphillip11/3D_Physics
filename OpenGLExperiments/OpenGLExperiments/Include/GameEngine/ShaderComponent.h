@@ -1,19 +1,10 @@
 #pragma once
 
-#include <ostream>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <string>
-#include <unordered_map>
-#include <glm/glm/glm.hpp>
-#include <glm/glm/gtc/type_ptr.hpp>
-#include <glad/glad.h>
 #include "Component.h"
 
 class ShaderComponent : public Component {
 public:
-	ShaderComponent(GameObject* gameobject) : Component(gameobject) {};
+	ShaderComponent(int gameObjectID) : Component(gameObjectID) {};
 
 	void Setup(const std::string& vertex_shader_path, const std::string& fragment_shader_path) {
 		// Load and compile the vertex shader
@@ -90,10 +81,10 @@ public:
 	void Render() override {};
 
 private:
-	GLuint program_;
-	GLint model_uniform_;
-	GLint view_uniform_;
-	GLint projection_uniform_;
+	GLuint program_{ 0 };
+	GLint model_uniform_{ 0 };
+	GLint view_uniform_{ 0 };
+	GLint projection_uniform_{ 0 };
 
 	std::string LoadShaderFromFile(const std::string& path) const {
 		// 1. retrieve the vertex/fragment source code from filePath

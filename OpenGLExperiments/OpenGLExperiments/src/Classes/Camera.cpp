@@ -1,7 +1,6 @@
+#pragma once
+#include "pch.h"
 #include "Camera.h"
-#include <glm/glm/gtc/matrix_transform.hpp>
-#include <iostream>
-
 
 Camera* Camera::currentCamera = nullptr;
 
