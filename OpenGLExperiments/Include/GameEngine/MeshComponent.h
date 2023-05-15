@@ -1,6 +1,6 @@
 #pragma once
 #include "GameEngine/Component.h"
-
+#include "GLFW/glfw3.h"
 
 class MeshComponent : public Component {
 public:
@@ -15,7 +15,7 @@ public:
 
 	void Unbind() const;
 
-	void Draw();
+	void Draw(GLenum fillmode = GL_FILL);
 
 	void Update(float deltaTime) override {}
 

@@ -1,6 +1,8 @@
 #include "PCH/pch.h"
 #include "GameEngine/MeshComponent.h"
 #include "GameEngine/Component.h"
+#include "GameEngine/ColliderComponent.h"
+#include "GameEngine/DataManager.h"
 
 
 void MeshComponent::LoadVertices(const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices)
@@ -18,7 +20,7 @@ void MeshComponent::LoadVertices(const std::vector<MeshVertex>& vertices, const 
 
 	// Bind and set up the VBO
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices_.size() * sizeof(MeshVertex), &vertices_[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices_.size() * sizeof(MeshVertex), &vertices[0], GL_STATIC_DRAW);
 
 	// Bind and set up the EBO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
@@ -36,6 +38,7 @@ void MeshComponent::LoadVertices(const std::vector<MeshVertex>& vertices, const 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 }
 
 void MeshComponent::Bind() const {
@@ -50,7 +53,7 @@ void MeshComponent::Unbind() const {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void MeshComponent::Draw() {
-	//glPolygonMode(GL_FRONT_AND_BACK, fillMode);
+void MeshComponent::Draw(GLenum fillMode) {
+	glPolygonMode(GL_FRONT_AND_BACK, fillMode);
 	glDrawElements(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT, 0);
 }

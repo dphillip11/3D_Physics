@@ -19,5 +19,7 @@ protected:
 	int gameObjectID{ 0 };
 };
 
+#define ComponentIDString(x) (x + std::to_string(gameObjectID)).c_str()
+
 #endif // COMPONENT_H
 

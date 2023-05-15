@@ -81,7 +81,7 @@ void CubeRenderer::Render()
 {
 	_impl->m_Shader->Use();
 
-	auto transformComponent = std::move(DM.GetComponent<TransformComponent>(gameObjectID));
+	auto transformComponent = DM.GetComponent<TransformComponent>(gameObjectID);
 	if (transformComponent) {
 		_impl->m_Shader->SetModelMatrix(transformComponent->GetTransform());
 	}
@@ -93,7 +93,6 @@ void CubeRenderer::Render()
 	_impl->m_Shader->SetViewMatrix(Camera::currentCamera->view());
 
 	_impl->m_Mesh->Bind();
-	_impl->m_Mesh->Draw();
 	_impl->m_Mesh->Draw();
 
 	_impl->m_Mesh->Unbind();

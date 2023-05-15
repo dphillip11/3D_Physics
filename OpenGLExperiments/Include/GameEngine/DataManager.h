@@ -38,13 +38,13 @@ public:
 		Components.erase(id);
 	}
 
-	template<typename T>
-	T* AddComponent(int object_id) {
+	template<typename T, typename... Args>
+	T* AddComponent(int object_id, Args&&... args) {
 		auto& component_map = Components[object_id];
 		auto type_id = GetTypeID<T>();
 		auto it = component_map.find(type_id);
 		if (it == component_map.end()) {
-			component_map.emplace(type_id, std::make_unique<T>(object_id));
+			component_map.emplace(type_id, std::make_unique<T>(object_id, std::forward<Args>(args)...));
 			GameObjects.at(object_id)->AddComponentID(type_id);
 		}
 		return GetComponent<T>(object_id);
@@ -71,6 +71,21 @@ public:
 			return nullptr;
 		}
 		return static_cast<T*>(it->second.get());
+	}
+
+	//return GameObjects with attached component type
+	template<typename T>
+	std::vector<int> FilterObjectsByComponent() {
+		std::vector<int> filteredObjects;
+		auto typeID = GetTypeID<T>();
+		for (const auto& entry : GameObjects) {
+			int objectID = entry.first;
+			const auto& component_map = Components[objectID];
+			if (component_map.find(typeID) != component_map.end()) {
+				filteredObjects.push_back(objectID);
+			}
+		}
+		return filteredObjects;
 	}
 
 private:

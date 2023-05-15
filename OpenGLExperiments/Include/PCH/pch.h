@@ -19,6 +19,7 @@
 #include <numeric>
 #include <ppl.h>
 #include <ranges>
+#include <functional>
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>

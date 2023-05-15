@@ -42,9 +42,9 @@ int main()
 	int numberOfPrograms = 0;
 
 	GameEngine GE;
-	LoadOBJ L;
-	Newtons_Cradle N;
-	BallPhysics B;
+	//LoadOBJ L;
+	//Newtons_Cradle N;
+	//BallPhysics B;
 
 	Program::SetupPrograms(window);
 

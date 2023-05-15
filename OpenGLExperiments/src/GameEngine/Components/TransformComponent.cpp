@@ -5,10 +5,9 @@
 
 void TransformComponent::Render()
 {
-	ImGui::Text("Transform Component");
-	ImGui::DragFloat3("Position: ", &position_.x);
-	ImGui::DragFloat3("Scale: ", &scale_.x);
-	ImGui::DragFloat3("Rotation: ", &rotation_.x);
+	ImGui::DragFloat3(&("Position: " + std::to_string(gameObjectID))[0], &position_.x);
+	ImGui::DragFloat3(&("Scale: " + std::to_string(gameObjectID))[0], &scale_.x);
+	ImGui::DragFloat3(&("Rotation: " + std::to_string(gameObjectID))[0], &rotation_.x);
 }
 
 glm::mat4 TransformComponent::GetTransform() const {
@@ -19,5 +18,14 @@ glm::mat4 TransformComponent::GetTransform() const {
 	transform = glm::rotate(transform, glm::radians(rotation_.z), glm::vec3(0.0f, 0.0f, 1.0f));
 	transform = glm::scale(transform, scale_);
 	return transform;
+}
+
+glm::mat4 TransformComponent::GetRotationMatrix() const {
+	glm::quat rotationQuat = glm::quat(rotation_);
+
+	// Convert the quaternion to a rotation matrix
+	glm::mat4 rotationMatrix = glm::mat4_cast(rotationQuat);
+
+	return rotationMatrix;
 }
 
