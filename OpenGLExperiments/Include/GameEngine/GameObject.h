@@ -18,12 +18,10 @@ public:
 	void Render();
 
 	//adds IDs for type attached, does not create component, use DM::AddComponent()
-	template<typename T>
-	void AddComponentID(std::size_t type_id);
+	void AddComponentID(int type_id);
 
 	//removes IDs for type removed, does not delete component, use DM::RemoveComponent()
-	template<typename T>
-	void RemoveComponentID(std::size_t type_id);
+	void RemoveComponentID(int type_id);
 
 private:
 

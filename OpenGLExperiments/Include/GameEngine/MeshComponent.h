@@ -1,9 +1,5 @@
 #pragma once
-#include "Component.h"
-#include <vector>
-
-struct MeshVertex {
-};
+#include "GameEngine/Component.h"
 
 
 class MeshComponent : public Component {
@@ -21,15 +17,9 @@ public:
 
 	void Draw();
 
-	void Update(float deltaTime) override
-	{
+	void Update(float deltaTime) override {}
 
-	}
-
-	void Render() override
-	{
-
-	}
+	void Render() override {}
 
 private:
 	unsigned int m_VAO{ 0 };

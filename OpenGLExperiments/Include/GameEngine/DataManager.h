@@ -1,61 +1,74 @@
 #include "GameObject.h"
+#include "GameEngine/TypeCounter.h"
 
-class TypeIDCounter {
+class DataManager {
 public:
-	template<typename T>
-	static std::size_t GetID() {
-		static std::size_t id = counter_++;
-		return id;
-	}
-private:
-	static std::size_t counter_;
-};
-
-std::size_t TypeIDCounter::counter_ = 0;
-
-template<typename T>
-class TypeID {
-public:
-	static std::size_t Get() {
-		return TypeIDCounter::GetID<T>();
-	}
-};
-
-namespace DataManager {
-
-	int next_id_ = 0;
+	//static DataManager& getInstance();
 
 	// quick lookup gameobjects
-	std::unordered_map<int, std::unique_ptr<GameObject>> GameObjects;
+	static std::unordered_map<int, std::unique_ptr<GameObject>> GameObjects;
 
 	// quick lookup, gameobject ID, then component type ID
-	std::unordered_map<int, std::unordered_map<std::size_t, std::unique_ptr<Component>>> Components;
+	static std::unordered_map<int, std::unordered_map<std::size_t, std::unique_ptr<Component>>> Components;
 
-	//creates an object and returns its ID
-	int NewGameObject()
-	{
-		int id = next_id_;
-		GameObjects.emplace(id, std::make_unique<GameObject>(id));
-		next_id_++;
-		return id;
+	////creates an object and returns its ID
+	//int NewGameObject();
+
+	////delete game object and components
+	//void RemoveGameObject(int id);
+
+	//// adds a component if none exists, returns reference to component
+	//template<typename T>
+	//T* AddComponent(int object_id);
+
+	//template<typename T>
+	//void RemoveComponent(int object_id);
+
+	//template<typename T>
+	//T* GetComponent(int object_id);
+
+	//template<typename T>
+	//int GetTypeID();
+
+	//template<typename T>
+	//int GetTypeID(T param);
+	template<typename T>
+	int GetTypeID() {
+		return TypeID<T>::Get();
 	}
 
-	//delete game object and components
-	void RemoveGameObject(int id)
-	{
+	template<typename T>
+	int GetTypeID(T param) {
+		return TypeID<T>::Get();
+	}
+
+	static DataManager& getInstance() {
+		static DataManager instance;
+		return instance;
+	}
+
+	int NewGameObject() {
+		{
+			int id = next_id_;
+			GameObjects.emplace(id, std::make_unique<GameObject>(id));
+			next_id_++;
+			return id;
+		}
+	}
+
+	void  RemoveGameObject(int id) {
 		GameObjects.erase(id);
 		Components.erase(id);
 	}
 
-	// adds a component if none exists, returns reference to component
 	template<typename T>
 	T* AddComponent(int object_id) {
 		auto& component_map = Components[object_id];
-		auto it = component_map.find(TypeID<T>::Get());
+		auto type_id = GetTypeID<T>();
+		auto it = component_map.find(type_id);
 		if (it == component_map.end()) {
-			component_map.emplace(TypeID<T>::Get(), std::make_unique<T>(object_id));
-			std::size_t typeId = TypeID<T>::Get();
-			//GameObjects[object_id]->AddComponentID(typeId);
+			component_map.emplace(type_id, std::make_unique<T>(object_id));
+			GameObjects.at(object_id)->AddComponentID(type_id);
 		}
 		return GetComponent<T>(object_id);
 	}
@@ -64,23 +77,31 @@ namespace DataManager {
 	template<typename T>
 	void RemoveComponent(int object_id) {
 		auto& component_map = Components[object_id];
-		auto it = component_map.find(TypeID<T>::Get());
+		auto type_id = GetTypeID<T>();
+		auto it = component_map.find(type_id);
 		if (it != component_map.end()) {
 			component_map.erase(it);
-			GameObjects[object_id]->RemoveComponentID(TypeID<T>::Get());
+			GameObjects.at(object_id)->RemoveComponentID(type_id);
 		}
 	}
 
 	template<typename T>
 	T* GetComponent(int object_id) {
 		auto& component_map = Components[object_id];
-		auto it = component_map.find(TypeID<T>::Get());
+		auto type_id = GetTypeID<T>();
+		auto it = component_map.find(type_id);
 		if (it == component_map.end()) {
 			return nullptr;
 		}
 		return static_cast<T*>(it->second.get());
 	}
 
-}
+private:
+	int next_id_ = 0;
 
-namespace DM = DataManager;
+	DataManager() = default;
+	DataManager(const DataManager&) = delete;
+	DataManager& operator=(const DataManager&) = delete;
+};
+
+#define DM DataManager::getInstance()

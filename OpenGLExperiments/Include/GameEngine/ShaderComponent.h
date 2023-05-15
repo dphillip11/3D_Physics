@@ -1,20 +1,14 @@
 #pragma once
 #include "Component.h"
 #include <string>
-
-namespace glm {
-	class mat4;
-	class vec3;
-}
-using GLenum = int;
-using GLuint = GLuint;
+//#include <glm/vec3.hpp>
+//#include <glm/matrix.hpp>
 
 class ShaderComponent : public Component {
 public:
 	ShaderComponent(int gameObjectID) : Component(gameObjectID) {};
 
 	void Setup(const std::string& vertex_shader_path, const std::string& fragment_shader_path);
-
 
 	~ShaderComponent();
 

@@ -12,5 +12,5 @@ public:
 	virtual void Render() override;
 
 private:
-	Impl* _impl;
+	std::unique_ptr<Impl> _impl;
 };

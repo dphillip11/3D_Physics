@@ -1,6 +1,6 @@
-#include "pch.h"
-#include "TransformComponent.h"
-#include "Component.h"
+#include "PCH/pch.h"
+#include "GameEngine/TransformComponent.h"
+#include "GameEngine/Component.h"
 
 
 void TransformComponent::Render()

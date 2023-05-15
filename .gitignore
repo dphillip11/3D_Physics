@@ -12,3 +12,5 @@ PracticeProject/PracticeProject/PracticeProject.vcxproj
 OpenGLExperiments/OpenGLExperiments/Libraries/IMGUI/
 
 OpenGLExperiments/OpenGLExperiments/imgui.ini
+
+.vs/

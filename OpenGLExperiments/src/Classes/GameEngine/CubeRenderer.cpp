@@ -1,22 +1,15 @@
-#include "pch.h"
+#include "PCH/pch.h"
 #include "Camera.h"
-#include "CubeRenderer.h"
+#include "GameEngine/CubeRenderer.h"
 #include "GameEngine/DataManager.h"
-#include "MeshComponent.h"
-#include "ShaderComponent.h"
-#include "TransformComponent.h"
-#include "DataManager.h"
+#include "GameEngine/MeshComponent.h"
+#include "GameEngine/ShaderComponent.h"
+#include "GameEngine/TransformComponent.h"
 
 struct CubeRenderer::Impl {
 public:
-	std::unique_ptr<MeshComponent>& m_Mesh;
-	std::unique_ptr<ShaderComponent>& m_Shader;
-};
-
-struct MeshVertex {
-	glm::vec3 position;
-	glm::vec3 normal;
-	glm::vec2 texcoord;
+	MeshComponent* m_Mesh;
+	ShaderComponent* m_Shader;
 };
 
 CubeRenderer::CubeRenderer(int gameobjectID) : RendererComponent(gameobjectID)
@@ -43,7 +36,7 @@ CubeRenderer::CubeRenderer(int gameobjectID) : RendererComponent(gameobjectID)
 		20, 22, 23
 	};
 
-	std::vector<MeshVertex> vertices{
+	const std::vector<MeshVertex> vertices{
 		// Front face
 		{ {-0.5f, -0.5f, 0.5f}, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f }},
 		{ { 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f} },
@@ -76,9 +69,10 @@ CubeRenderer::CubeRenderer(int gameobjectID) : RendererComponent(gameobjectID)
 		{ {-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f} }
 	};
 
-	_impl->m_Mesh = std::move(DM::AddComponent<MeshComponent>(gameObjectID));
+	_impl = std::make_unique<Impl>();
+	_impl->m_Mesh = DM.AddComponent<MeshComponent>(gameObjectID);
 	_impl->m_Mesh->LoadVertices(vertices, indices);
-	_impl->m_Shader = std::move(DM::AddComponent<ShaderComponent>(gameObjectID));
+	_impl->m_Shader = DM.AddComponent<ShaderComponent>(gameObjectID);
 	_impl->m_Shader->Setup("Shaders/vertex/mesh_vShader.glsl", "Shaders/fragment/mesh_fShader.glsl");
 }
 
@@ -87,7 +81,7 @@ void CubeRenderer::Render()
 {
 	_impl->m_Shader->Use();
 
-	auto transformComponent = std::move(DataManager::GetComponent<TransformComponent>(gameObjectID));
+	auto transformComponent = std::move(DM.GetComponent<TransformComponent>(gameObjectID));
 	if (transformComponent) {
 		_impl->m_Shader->SetModelMatrix(transformComponent->GetTransform());
 	}

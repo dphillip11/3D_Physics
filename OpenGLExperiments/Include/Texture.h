@@ -1,9 +1,9 @@
 #pragma once
-#include "pch.h"
+#include "PCH/pch.h"
 
 class Texture
 {
-	int width, height, nrChannels;
+	int width{ 1 }, height{ 1 }, nrChannels{ 1 };
 public:
 	unsigned int texture;
 

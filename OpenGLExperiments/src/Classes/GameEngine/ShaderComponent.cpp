@@ -1,9 +1,6 @@
-#include "pch.h"
-#include "ShaderComponent.h"
-#include "Component.h"
-
-
-ShaderComponent::ShaderComponent(int gameObjectID) : Component(gameObjectID) {};
+#include "PCH/pch.h"
+#include "GameEngine/ShaderComponent.h"
+#include "GameEngine/Component.h"
 
 void ShaderComponent::Setup(const std::string& vertex_shader_path, const std::string& fragment_shader_path) {
 	// Load and compile the vertex shader
@@ -38,15 +35,15 @@ void ShaderComponent::Unuse() const {
 GLuint ShaderComponent::GetProgram() const { return program_; }
 
 void ShaderComponent::SetModelMatrix(const glm::mat4& model_matrix) const {
-	glUniformMatrix4fv(model_uniform_, 1, GL_FALSE, glm::value_ptr(model_matrix));
+	glUniformMatrix4fv(model_uniform_, 1, GL_FALSE, &model_matrix[0][0]);
 }
 
 void ShaderComponent::SetViewMatrix(const glm::mat4& view_matrix) const {
-	glUniformMatrix4fv(view_uniform_, 1, GL_FALSE, glm::value_ptr(view_matrix));
+	glUniformMatrix4fv(view_uniform_, 1, GL_FALSE, &view_matrix[0][0]);
 }
 
 void ShaderComponent::SetProjectionMatrix(const glm::mat4& projection_matrix) const {
-	glUniformMatrix4fv(projection_uniform_, 1, GL_FALSE, glm::value_ptr(projection_matrix));
+	glUniformMatrix4fv(projection_uniform_, 1, GL_FALSE, &projection_matrix[0][0]);
 }
 
 void ShaderComponent::SetBool(const std::string& name, bool value) const
@@ -166,4 +163,3 @@ GLuint ShaderComponent::LinkShaders(GLuint vertex_shader, GLuint fragment_shader
 	return program;
 }
 
-};

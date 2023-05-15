@@ -1,12 +1,7 @@
-#include "pch.h"
-#include "MeshComponent.h"
-#include "Component.h"
+#include "PCH/pch.h"
+#include "GameEngine/MeshComponent.h"
+#include "GameEngine/Component.h"
 
-struct MeshVertex {
-	glm::vec3 position;
-	glm::vec3 normal;
-	glm::vec2 texcoord;
-};
 
 void MeshComponent::LoadVertices(const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices)
 {
@@ -42,9 +37,6 @@ void MeshComponent::LoadVertices(const std::vector<MeshVertex>& vertices, const 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
-
-const std::vector<MeshVertex>& MeshComponent::GetVertices() const { return vertices_; }
-const std::vector<unsigned int>& MeshComponent::GetIndices() const { return indices_; }
 
 void MeshComponent::Bind() const {
 	glBindVertexArray(m_VAO);

@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "PCH/pch.h"
 #include "Model.h"
 
 Model::Model() : isSetEBO(false), isSetVBO(false), isSetVAO(false) {
