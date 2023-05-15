@@ -1,9 +1,8 @@
-#pragma once
 #include "PCH/pch.h"
 #include "Window.h"
 #include "Input.h"
 #include "Program.h"
-//#include "Programs/LoadOBJ.h"
+#include "Programs/LoadOBJ.h"
 #include "Programs/Newtons_Cradle.h"
 #include "Programs/BallPhysics.h"
 #include "Programs/GameEngine.h"
@@ -43,7 +42,7 @@ int main()
 	int numberOfPrograms = 0;
 
 	GameEngine GE;
-	//LoadOBJ L;
+	LoadOBJ L;
 	Newtons_Cradle N;
 	BallPhysics B;
 

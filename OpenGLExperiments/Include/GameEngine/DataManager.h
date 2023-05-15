@@ -3,35 +3,12 @@
 
 class DataManager {
 public:
-	//static DataManager& getInstance();
-
 	// quick lookup gameobjects
-	static std::unordered_map<int, std::unique_ptr<GameObject>> GameObjects;
+	std::unordered_map<int, std::unique_ptr<GameObject>> GameObjects;
 
 	// quick lookup, gameobject ID, then component type ID
-	static std::unordered_map<int, std::unordered_map<std::size_t, std::unique_ptr<Component>>> Components;
+	std::unordered_map<int, std::unordered_map<std::size_t, std::unique_ptr<Component>>> Components;
 
-	////creates an object and returns its ID
-	//int NewGameObject();
-
-	////delete game object and components
-	//void RemoveGameObject(int id);
-
-	//// adds a component if none exists, returns reference to component
-	//template<typename T>
-	//T* AddComponent(int object_id);
-
-	//template<typename T>
-	//void RemoveComponent(int object_id);
-
-	//template<typename T>
-	//T* GetComponent(int object_id);
-
-	//template<typename T>
-	//int GetTypeID();
-
-	//template<typename T>
-	//int GetTypeID(T param);
 	template<typename T>
 	int GetTypeID() {
 		return TypeID<T>::Get();

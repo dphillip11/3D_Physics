@@ -1,4 +1,3 @@
-#pragma once
 #include "PCH/pch.h"
 
 class Texture

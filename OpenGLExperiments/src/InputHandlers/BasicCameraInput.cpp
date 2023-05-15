@@ -1,4 +1,3 @@
-#pragma once
 #include "PCH/pch.h"
 #include "BasicCameraInput.h"
 #include "Input.h"
