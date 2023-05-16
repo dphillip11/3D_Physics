@@ -5,6 +5,7 @@
 #include "GameEngine/TransformComponent.h"
 #include "GameEngine/ShaderComponent.h"
 #include "GameEngine/ShaderManager.h"
+#include "GameEngine/CollisionManager.h"
 #include "GameEngine/MeshComponent.h"
 #include "Camera.h"
 
@@ -15,7 +16,11 @@ ColliderComponent::ColliderComponent(int objectID)
 	colliderType_(ColliderType::Box),
 	OBB_shader(ShaderManager::GetInstance().LoadShader("Shaders/Combined/Basic.hlsl")),
 	OBB_Mesh(MeshManager::GetInstance().LoadMesh("Assets/cube.obj"))
-{}
+{
+	CollisionManager CM;
+	transform = CM.AddCollider(objectID);
+	transform->SetParent(DM.GetComponent<TransformComponent>(objectID));
+}
 
 std::vector<glm::vec3> ColliderComponent::CalculateOBBCorners() const {
 	std::vector<glm::vec3> corners(8, glm::vec3(0.0f));
@@ -27,7 +32,7 @@ std::vector<glm::vec3> ColliderComponent::CalculateOBBCorners() const {
 		return corners;
 	}
 
-	glm::mat4 modelMatrix = transformComponent->GetTransform();
+	glm::mat4 modelMatrix = transformComponent->GetWorldTransform();
 
 	// Calculate the corners of the collider
 
@@ -68,12 +73,14 @@ Bounds ColliderComponent::CalculateAABB() const {
 }
 
 void ColliderComponent::Render() {
+	ImGui::Text("Box Collider");
 	UpdateOBB();
 	ImGui::DragFloat3(ComponentIDString("offset"), &offset_[0]);
+	ImGui::DragFloat3(ComponentIDString("size"), &size_[0]);
 }
 
 void ColliderComponent::UpdateOBB() {
-	auto model = DM.GetComponent<TransformComponent>(gameObjectID)->GetTransform();
+	auto model = DM.GetComponent<TransformComponent>(gameObjectID)->GetWorldTransform();
 	model = model * glm::translate(glm::scale(glm::mat4(1), size_), offset_);
 	OBB_shader.Use();
 	OBB_shader.setMat4("u_model", model);

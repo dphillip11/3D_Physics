@@ -1,6 +1,7 @@
 #pragma once
 #include "InputObserver.h"
 #include "Camera.h"
+#include "Window.h"
 
 class Program {
 private:
@@ -50,6 +51,3 @@ public:
 	virtual void Run(float deltaTime) = 0;
 
 };
-
-int Program::_currentProgram = 0;
-std::vector<Program*> Program::_programs;

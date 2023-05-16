@@ -22,6 +22,8 @@ void GameObject::Render() {
 	for (auto& componentID : components_) {
 		DM.Components[id_][componentID]->Render();
 	}
+	if (ImGui::Button("Delete"))
+		deleted = true;
 }
 
 //adds IDs for type attached, does not create component, use DM::AddComponent()

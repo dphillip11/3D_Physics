@@ -50,7 +50,7 @@ public:
 	}
 
 	void SetViewPosAuto();
-
-private:
 	Shader m_shader;
+private:
+	//Shader m_shader;
 };

@@ -24,7 +24,8 @@ public:
 	void RemoveComponentID(int type_id);
 
 private:
-
+	friend class GameEngine;
+	bool deleted = false;
 	int id_;
 	std::vector<std::size_t> components_;
 };

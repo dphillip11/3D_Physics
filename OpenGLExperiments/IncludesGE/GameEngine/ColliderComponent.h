@@ -1,5 +1,6 @@
 #pragma once
 #include "GameEngine/Component.h"
+#include "GameEngine/TransformComponent.h"
 #include "Shader.h"
 #include "GameENgine/Mesh.h"
 
@@ -17,28 +18,10 @@ struct Bounds {
 
 class ColliderComponent : public Component {
 public:
+
 	ColliderComponent(int objectID);
 
-
-	// Set the size of the collider
-	void SetSize(const glm::vec3& size) {
-		size_ = size;
-	}
-
-	// Get the size of the collider
-	glm::vec3 GetSize() const {
-		return size_;
-	}
-
-	// Set the offset of the collider
-	void SetOffset(const glm::vec3& offset) {
-		offset_ = offset;
-	}
-
-	// Get the offset of the collider
-	glm::vec3 GetOffset() const {
-		return offset_;
-	}
+	TransformComponent* transform = nullptr;
 
 	// Set the collider type
 	void SetColliderType(ColliderType colliderType) {

@@ -69,7 +69,6 @@ Shader::Shader(const std::string& shaderPath)
 		glShaderSource(geometry, 1, &geometrySource, nullptr);
 		glCompileShader(geometry);
 		checkCompileErrors(geometry, "GEOMETRY");
-
 	}
 
 	// Store the rest as fragment code

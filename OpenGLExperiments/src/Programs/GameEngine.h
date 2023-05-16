@@ -1,13 +1,6 @@
 #pragma once
 #include "GameEngine/GameObject.h"
 #include "GameEngine/DataManager.h"
-#include "GameEngine/CubeRenderer.h"
-#include "GameEngine/TransformComponent.h"
-#include "GameEngine/PhysicsComponent.h"
-#include "GameEngine/ShaderComponent.h"
-#include "GameEngine/MeshComponent.h"
-#include "GameEngine/ColliderComponent.h"
-#include "GameEngine/Component.h"
 #include "BasicCameraInput.h"
 #include "Program.h"
 
@@ -16,6 +9,18 @@ class GameEngine :public Program
 private:
 
 public:
+	enum class Prefabs {
+
+		HARE,
+		HAND,
+		TAXI,
+		CUBE,
+		BUTTERFLY,
+		ROBOT,
+		TREE,
+
+	};
+
 	BasicCameraInput inputHandler = BasicCameraInput(&_camera);
 
 	float time = 0;
@@ -27,30 +32,51 @@ public:
 
 	}
 
+	void Spawn(Prefabs P);
+
 	void Run(float deltaTime) override
 	{
+		static Prefabs selectedPrefab = Prefabs::HARE; // default selection
 
-		if (ImGui::Button("New Cube"))
+		const char* prefabLabels[] = { "HARE", "HAND", "TAXI", "CUBE", "BUTTERFLY", "ROBOT", "TREE" };
+
+
+		if (ImGui::BeginCombo("Select Prefab", prefabLabels[(static_cast<int>(selectedPrefab))]))
 		{
-			int new_id = DM.NewGameObject();
-			DM.AddComponent<CubeRenderer>(new_id);
-			DM.AddComponent<TransformComponent>(new_id, glm::vec3(0), glm::vec3(2, 1, 0.5));
-			DM.AddComponent<PhysicsComponent>(new_id)->ApplyForce(glm::vec3(0, 10, 0));
-			DM.AddComponent<ColliderComponent>(new_id);
+			for (int i = 0; i < static_cast<int>(Prefabs::TREE) + 1; i++)
+			{
+				Prefabs prefab = static_cast<Prefabs>(i);
+				bool isSelected = (selectedPrefab == prefab);
+				if (ImGui::Selectable(prefabLabels[i], isSelected))
+				{
+					selectedPrefab = prefab;
+				}
+				if (isSelected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
 		}
 
-		if (ImGui::Button("New Buterfly"))
+		if (ImGui::Button("Spawn"))
 		{
-			int new_id = DM.NewGameObject();
-			DM.AddComponent<TransformComponent>(new_id);
-			DM.AddComponent<ColliderComponent>(new_id);
-			DM.AddComponent<ShaderComponent>(new_id, "Shaders/Combined/Obj.hlsl");
-			DM.AddComponent<MeshComponent>(new_id, "Assets/butterfly.obj");
+			Spawn(selectedPrefab);
 		}
 
-		for (auto& [id, gameObject] : DM.GameObjects) {
+		std::vector<int> deleteIDs;
+
+		for (auto& [id, gameObject] : DM.GameObjects)
+		{
+			if (gameObject->deleted)
+				deleteIDs.push_back(gameObject->id_);
 			gameObject->Update(deltaTime);
 			gameObject->Render();
+		}
+
+		for (auto id : deleteIDs)
+		{
+			DM.RemoveGameObject(id);
 		}
 	}
 

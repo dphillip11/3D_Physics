@@ -18,7 +18,7 @@ class LoadOBJ : public Program {
 	const unsigned int SCR_HEIGHT = 720;
 	//setup camera
 public:
-	const char* model_path = "Assets/butterfly.obj";
+	const char* model_path = "Assets/hare.obj";
 	const char* texture_path = "Assets/plane/plane_diffuse.jpg";
 	obj model_data;
 	Model model;
@@ -60,7 +60,8 @@ public:
 			model.setAttributes(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
 		}
 
-		model.shader = std::make_unique<Shader>("shaders/combined/Obj.hlsl");
+		//model.shader = std::make_unique<Shader>("shaders/combined/Obj.hlsl");
+		model.shader = std::make_unique<Shader>("shaders/Combined/obj.hlsl");
 
 		//texturemap
 		if (model_data.textureMap.size() > 0)
@@ -68,11 +69,11 @@ public:
 			model.setVertices(&model_data.textureMap[0], (int)model_data.textureMap.size() * 3, model._VAO, model._VBOtexture);
 			model.setAttributes(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
 			//bind texture
-			Texture diffuse_texture;
-			diffuse_texture.loadImage(texture_path, GL_RGB, true);
-			diffuse_texture.bind();
-			GLuint textureSamplerLoc = glGetUniformLocation(model.shader->ID, "diffuse_texture");
-			glUniform1i(textureSamplerLoc, 0); // 0 for texture unit 0, can be adjusted to match the texture unit index
+			//Texture diffuse_texture;
+			//diffuse_texture.loadImage(texture_path, GL_RGB, true);
+			//diffuse_texture.bind();
+			//GLuint textureSamplerLoc = glGetUniformLocation(model.shader->ID, "diffuse_texture");
+			//glUniform1i(textureSamplerLoc, 0); // 0 for texture unit 0, can be adjusted to match the texture unit index
 		}
 
 	}
@@ -82,17 +83,17 @@ public:
 		float scale = 1;
 		time += deltaTime;
 		glm::mat4 view = _camera.lookAt();
-		model.shader->use();
+		model.shader->Use();
 		model.draw();
 		glm::mat4 rotationMatrix = glm::rotate(glm::mat4(scale), -(time)+3.14f, glm::vec3(0, 1, 0));
-		model.shader->setMat4("model", glm::translate(rotationMatrix, glm::vec3(10, 0, 0)));
+		model.shader->setMat4("u_model", glm::translate(rotationMatrix, glm::vec3(10, 0, 0)));
 		model.draw();
 		rotationMatrix = glm::rotate(glm::mat4(scale), -(time), glm::vec3(0, 1, 0));
-		model.shader->setMat4("model", glm::translate(rotationMatrix, glm::vec3(10, 0, 0)));
+		model.shader->setMat4("u_model", glm::translate(rotationMatrix, glm::vec3(10, 0, 0)));
 		//added time for shattering models
 		model.shader->setFloat("time", explodedTime == 0 ? 0 : 5 * (time - explodedTime));
-		model.shader->setMat4("view", _camera.lookAt());
-		model.shader->setMat4("projection", _camera.projection);
+		model.shader->setMat4("u_view", _camera.lookAt());
+		model.shader->setMat4("u_projection", _camera.projection);
 		model.shader->setVec3("viewPosition", _camera._position);
 		model.shader->setLight(light1);
 		model.shader->setMaterial(mat1);
