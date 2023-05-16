@@ -1,11 +1,21 @@
 #include "PCH/pch.h"
 #include "GameEngine/ColliderComponent.h"
 #include "GameEngine/DataManager.h"
+#include "GameEngine/MeshManager.h"
 #include "GameEngine/TransformComponent.h"
 #include "GameEngine/ShaderComponent.h"
+#include "GameEngine/ShaderManager.h"
 #include "GameEngine/MeshComponent.h"
 #include "Camera.h"
 
+ColliderComponent::ColliderComponent(int objectID)
+	: Component(objectID),
+	size_(glm::vec3(1.0f)),
+	offset_(glm::vec3(0.0f)),
+	colliderType_(ColliderType::Box),
+	OBB_shader(ShaderManager::GetInstance().LoadShader("Shaders/Combined/Basic.hlsl")),
+	OBB_Mesh(MeshManager::GetInstance().LoadMesh("Assets/cube.obj"))
+{}
 
 std::vector<glm::vec3> ColliderComponent::CalculateOBBCorners() const {
 	std::vector<glm::vec3> corners(8, glm::vec3(0.0f));
@@ -21,21 +31,21 @@ std::vector<glm::vec3> ColliderComponent::CalculateOBBCorners() const {
 
 	// Calculate the corners of the collider
 
-	corners[0] = glm::vec3(modelMatrix * glm::vec4(0.5f * size_ * glm::vec3(-1, 1, 1) + offset_, 1));
-	corners[1] = glm::vec3(modelMatrix * glm::vec4(0.5f * size_ * glm::vec3(1, -1, 1) + offset_, 1));
-	corners[2] = glm::vec3(modelMatrix * glm::vec4(0.5f * size_ * glm::vec3(1, 1, -1) + offset_, 1));
-	corners[3] = glm::vec3(modelMatrix * glm::vec4(0.5f * size_ * glm::vec3(1, 1, 1) + offset_, 1));
-	corners[4] = glm::vec3(modelMatrix * glm::vec4(0.5f * size_ * glm::vec3(-1, -1, 1) + offset_, 1));
-	corners[5] = glm::vec3(modelMatrix * glm::vec4(0.5f * size_ * glm::vec3(-1, 1, -1) + offset_, 1));
-	corners[6] = glm::vec3(modelMatrix * glm::vec4(0.5f * size_ * glm::vec3(1, -1, -1) + offset_, 1));
-	corners[7] = glm::vec3(modelMatrix * glm::vec4(0.5f * size_ * glm::vec3(-1, -1, -1) + offset_, 1));
+	corners[0] = glm::vec3(modelMatrix * glm::vec4(size_ * glm::vec3(-1, 1, 1) + offset_, 1));
+	corners[1] = glm::vec3(modelMatrix * glm::vec4(size_ * glm::vec3(1, -1, 1) + offset_, 1));
+	corners[2] = glm::vec3(modelMatrix * glm::vec4(size_ * glm::vec3(1, 1, -1) + offset_, 1));
+	corners[3] = glm::vec3(modelMatrix * glm::vec4(size_ * glm::vec3(1, 1, 1) + offset_, 1));
+	corners[4] = glm::vec3(modelMatrix * glm::vec4(size_ * glm::vec3(-1, -1, 1) + offset_, 1));
+	corners[5] = glm::vec3(modelMatrix * glm::vec4(size_ * glm::vec3(-1, 1, -1) + offset_, 1));
+	corners[6] = glm::vec3(modelMatrix * glm::vec4(size_ * glm::vec3(1, -1, -1) + offset_, 1));
+	corners[7] = glm::vec3(modelMatrix * glm::vec4(size_ * glm::vec3(-1, -1, -1) + offset_, 1));
 
 	return corners;
 }
 
 
 
-Bounds ColliderComponent::CalculateOrientedBoxBounds() const {
+Bounds ColliderComponent::CalculateAABB() const {
 	// Get the corners of the cube collider
 	std::vector<glm::vec3> corners = CalculateOBBCorners();
 
@@ -63,21 +73,19 @@ void ColliderComponent::Render() {
 }
 
 void ColliderComponent::UpdateOBB() {
-	OBB_vertices = CalculateOBBCorners();
-	glBindVertexArray(m_OBB_VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_OBB_VBO);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, OBB_vertices.size() * sizeof(glm::vec3), &OBB_vertices[0]);
-	glPointSize(10.0f);
-	glBindVertexArray(m_OBB_VAO);
-	OBB_shader.use();
+	auto model = DM.GetComponent<TransformComponent>(gameObjectID)->GetTransform();
+	model = model * glm::translate(glm::scale(glm::mat4(1), size_), offset_);
+	OBB_shader.Use();
+	OBB_shader.setMat4("u_model", model);
 	OBB_shader.setMat4("u_view", Camera::currentCamera->view());
 	OBB_shader.setMat4("u_projection", Camera::currentCamera->projection);
+	OBB_shader.setBool("wireframe", true);
+	OBB_Mesh.Bind();
+	OBB_Mesh.draw(GL_LINE);
+	OBB_shader.setBool("wireframe", false);
+	OBB_Mesh.Unbind();
+	OBB_shader.Unuse();
 
-	glDrawArrays(GL_POINTS, 0, 8);
-
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void ColliderComponent::CreateOBBbuffer()

@@ -68,6 +68,7 @@ public:
 		auto type_id = GetTypeID<T>();
 		auto it = component_map.find(type_id);
 		if (it == component_map.end()) {
+			//allow lazy instantiation via recursion?
 			return nullptr;
 		}
 		return static_cast<T*>(it->second.get());

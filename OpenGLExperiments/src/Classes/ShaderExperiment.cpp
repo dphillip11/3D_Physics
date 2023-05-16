@@ -20,7 +20,7 @@ ShaderExperiment::ShaderExperiment() : COLUMNS((int)sqrt(BLOCKS)), model(std::ma
 
 void ShaderExperiment::draw(Camera camera, float time)
 {
-	shader->use();
+	shader->Use();
 	shader->setFloat("time", time);
 	shader->setInt("columns", COLUMNS);
 	shader->setMat4("MVP", camera.projection * camera.lookAt());

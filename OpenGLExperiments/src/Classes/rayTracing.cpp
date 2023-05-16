@@ -12,7 +12,7 @@ rayTracing::rayTracing()
 void rayTracing::shadedDraw(float time, Window window)
 {
 
-	shader->use();
+	shader->Use();
 	shader->setFloat("iTime", time);
 	shader->setVec3("iResolution", glm::vec3(window._width, window._height, 0));
 

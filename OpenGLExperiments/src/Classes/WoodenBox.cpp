@@ -93,6 +93,6 @@ void WoodenBox::shadedDraw(GLenum fillMode, GLenum drawMode)
 	specularMap.bind();
 	glActiveTexture(GL_TEXTURE2);
 	emissionMap.bind();
-	shader->use();
+	shader->Use();
 	draw(fillMode, drawMode);
 }

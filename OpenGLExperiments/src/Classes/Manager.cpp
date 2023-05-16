@@ -99,7 +99,7 @@ void Manager::generateBuffers()
 
 void Manager::drawObjects(Camera camera)
 {
-	object->shader->use();
+	object->shader->Use();
 	glm::mat4 VP = camera.projection * camera.lookAt();
 	object->shader->setMat4("VP", VP);
 	object->shader->setVec3("viewPos", camera._position);

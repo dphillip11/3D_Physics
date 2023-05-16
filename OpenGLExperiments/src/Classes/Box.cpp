@@ -27,7 +27,7 @@ Box::Box() {
 void Box::draw(glm::mat4& view, glm::mat4& projection)
 {
 	//setup shader
-	panel.shader->use();
+	panel.shader->Use();
 	glActiveTexture(GL_TEXTURE0);
 	panel.texture.bind();
 	panel.shader->setMat4("view", view);
@@ -65,7 +65,7 @@ void Box::createBoxTransforms(int n)
 void Box::drawBoxes(glm::mat4& view, glm::mat4& projection)
 {
 	//setup shader
-	panel.shader->use();
+	panel.shader->Use();
 	glActiveTexture(GL_TEXTURE0);
 	panel.texture.bind();
 	panel.shader->setMat4("view", view);

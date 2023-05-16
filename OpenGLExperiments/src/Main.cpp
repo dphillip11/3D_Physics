@@ -2,9 +2,9 @@
 #include "Window.h"
 #include "Input.h"
 #include "Program.h"
-#include "Programs/LoadOBJ.h"
-#include "Programs/Newtons_Cradle.h"
-#include "Programs/BallPhysics.h"
+//#include "Programs/LoadOBJ.h"
+//#include "Programs/Newtons_Cradle.h"
+//#include "Programs/BallPhysics.h"
 #include "Programs/GameEngine.h"
 
 

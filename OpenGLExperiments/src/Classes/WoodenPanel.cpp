@@ -25,7 +25,7 @@ WoodenPanel::WoodenPanel()
 
 void WoodenPanel::shadedDraw(GLenum fillMode, GLenum drawMode)
 {
-	shader->use();
+	shader->Use();
 	glActiveTexture(GL_TEXTURE0);
 	texture.bind();
 	draw(fillMode, drawMode);

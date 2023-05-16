@@ -39,7 +39,7 @@ Ball::Ball()
 
 void Ball::shadedDraw(GLenum fillMode, GLenum drawMode)
 {
-	shader->use();
+	shader->Use();
 	draw(fillMode, drawMode);
 }
 

@@ -6,13 +6,13 @@ class Shader
 {
 public:
 	// the program ID
-	unsigned int ID;
-
+	unsigned int ID{ 0 };
+	Shader() {};
 	// constructor reads and builds the shader
-	Shader(const char* vertexPath, const char* fragmentPath);
-	Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath);
+	Shader(const std::string& shaderPath);
 	// use/activate the shader
-	void use();
+	void Use();
+	void Unuse();
 	// utility uniform functions
 	void setBool(const std::string& name, bool value) const;
 	void setInt(const std::string& name, int value) const;
@@ -22,5 +22,8 @@ public:
 	void setMaterial(Material material) const;
 	void setLight(Light light) const;
 	void checkCompileErrors(unsigned int shader, std::string type);
+
+	Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath);
+	Shader(const char* vertexPath, const char* fragmentPath);
 
 };

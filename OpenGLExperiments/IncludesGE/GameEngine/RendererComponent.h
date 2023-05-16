@@ -7,9 +7,9 @@ public:
 	RendererComponent(int gameobjectID) : Component(gameobjectID) {};
 	virtual ~RendererComponent() {}
 
-	virtual void Update(float deltaTime) = 0;
+	virtual void Update(float deltaTime) {};
 
-	virtual void Render() = 0;
+	virtual void Render() override;
 };
 
 #endif // RENDERERCOMPONENT_H

@@ -1,6 +1,7 @@
 #pragma once
 #include "GameEngine/Component.h"
 #include "Shader.h"
+#include "GameENgine/Mesh.h"
 
 enum class ColliderType {
 	Box,
@@ -16,10 +17,8 @@ struct Bounds {
 
 class ColliderComponent : public Component {
 public:
-	ColliderComponent(int objectID) : Component(objectID), size_(glm::vec3(1.0f)), offset_(glm::vec3(0.0f)), colliderType_(ColliderType::Box),
-		OBB_shader(Shader("shaders/vertex/point_shader.glsl", "shaders/fragment/point_shader.glsl")) {
-		CreateOBBbuffer();
-	}
+	ColliderComponent(int objectID);
+
 
 	// Set the size of the collider
 	void SetSize(const glm::vec3& size) {
@@ -53,8 +52,8 @@ public:
 
 	std::vector<glm::vec3> CalculateOBBCorners() const;
 
-
-	Bounds CalculateOrientedBoxBounds() const;
+	// returns {min:{x,y,z},max:{x,y,z}}, store as necessary
+	Bounds CalculateAABB() const;
 
 	void Render() override;
 
@@ -65,7 +64,8 @@ public:
 	void CreateOBBbuffer();
 
 private:
-	Shader OBB_shader;
+	Shader& OBB_shader;
+	Mesh& OBB_Mesh;
 	std::vector< glm::vec3> OBB_vertices;
 	unsigned int m_OBB_VBO{ 0 };
 	unsigned int m_OBB_VAO{ 0 };

@@ -60,7 +60,7 @@ public:
 			model.setAttributes(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
 		}
 
-		model.shader = std::make_unique<Shader>("shaders/vertex/obj.hlsl", "shaders/fragment/obj.hlsl", "shaders/geometry/calculateNormals.hlsl");
+		model.shader = std::make_unique<Shader>("shaders/combined/Obj.hlsl");
 
 		//texturemap
 		if (model_data.textureMap.size() > 0)
