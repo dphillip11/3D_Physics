@@ -18,8 +18,9 @@ class LoadOBJ : public Program {
 	const unsigned int SCR_HEIGHT = 720;
 	//setup camera
 public:
-	const char* model_path = "Assets/hare.obj";
+	const char* model_path = "Assets/Models/hare.obj";
 	const char* texture_path = "Assets/plane/plane_diffuse.jpg";
+	const char* shader_path = "shaders/Combined/obj.hlsl";
 	obj model_data;
 	Model model;
 	Light light1{ glm::vec3(0,100,-500), glm::vec3(1), glm::vec3(1), glm::vec3(1) };
@@ -61,7 +62,7 @@ public:
 		}
 
 		//model.shader = std::make_unique<Shader>("shaders/combined/Obj.hlsl");
-		model.shader = std::make_unique<Shader>("shaders/Combined/obj.hlsl");
+		model.shader = std::make_unique<Shader>(shader_path);
 
 		//texturemap
 		if (model_data.textureMap.size() > 0)

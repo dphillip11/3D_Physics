@@ -21,7 +21,7 @@ public:
 
 	ColliderComponent(int objectID);
 
-	TransformComponent* transform = nullptr;
+	TransformComponent& transform;
 
 	// Set the collider type
 	void SetColliderType(ColliderType colliderType) {

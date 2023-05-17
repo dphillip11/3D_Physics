@@ -29,7 +29,6 @@ public:
 	{
 		_camera.setPosition(glm::vec3(0, 0, -20));
 		_camera.setFOV(70);
-
 	}
 
 	void Spawn(Prefabs P);

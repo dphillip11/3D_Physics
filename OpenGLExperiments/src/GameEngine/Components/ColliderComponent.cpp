@@ -8,18 +8,18 @@
 #include "GameEngine/CollisionManager.h"
 #include "GameEngine/MeshComponent.h"
 #include "Camera.h"
+#include "GameEngine/FileManager.h"
 
 ColliderComponent::ColliderComponent(int objectID)
 	: Component(objectID),
 	size_(glm::vec3(1.0f)),
 	offset_(glm::vec3(0.0f)),
 	colliderType_(ColliderType::Box),
-	OBB_shader(ShaderManager::GetInstance().LoadShader("Shaders/Combined/Basic.hlsl")),
-	OBB_Mesh(MeshManager::GetInstance().LoadMesh("Assets/cube.obj"))
+	OBB_shader(ShaderManager::GetInstance().LoadShader(GetFilePath(Shaders::Basic))),
+	OBB_Mesh(MeshManager::GetInstance().LoadMesh(GetFilePath(Models::Cube))),
+	transform(CollisionManager::AddCollider(objectID))
 {
-	CollisionManager CM;
-	transform = CM.AddCollider(objectID);
-	transform->SetParent(DM.GetComponent<TransformComponent>(objectID));
+	transform.SetParent(DM.GetComponent<TransformComponent>(objectID));
 }
 
 std::vector<glm::vec3> ColliderComponent::CalculateOBBCorners() const {

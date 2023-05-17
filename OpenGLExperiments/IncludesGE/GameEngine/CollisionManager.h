@@ -2,15 +2,11 @@
 #include "GameEngine/TransformComponent.h"
 #include "GameEngine/ColliderComponent.h"
 
-class CollisionManager {
-public:
-	std::unordered_map<int, TransformComponent> ColliderTransforms;
+namespace CollisionManager {
 
-	TransformComponent* AddCollider(int GameObjectID) {
-		auto& transformComponent = ColliderTransforms[GameObjectID];
-		// Initialize or modify the transformComponent object as needed
-		return &transformComponent;
-	}
+	extern std::unordered_map<int, TransformComponent> ColliderTransforms;
+
+	TransformComponent& AddCollider(int GameObjectID);
 };
 
 //	using CollisionEventHandler = std::function<void(int, int)>;
