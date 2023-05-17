@@ -44,6 +44,13 @@ Window::Window(const unsigned int width, const unsigned int height, const char* 
 		std::cout << ("Failed to initialize GLAD") << std::endl;
 	}
 	Window::instance = this;
+
+	// Set the projection matrix with adjusted clipping planes
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glFrustum(-1000, 1000, -1000, 1000, -1000, 1000);  // Adjust the parameters as needed
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 void Window::framebuffer_size_callback(GLFWwindow* window, int WIDTH, int HEIGHT)
@@ -115,6 +122,7 @@ bool Window::closed() {
 void Window::update()
 {
 	glfwSwapBuffers(window);
+	glClearColor(clearColor.x, clearColor.y, clearColor.z, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glfwPollEvents();
 	captureInput();

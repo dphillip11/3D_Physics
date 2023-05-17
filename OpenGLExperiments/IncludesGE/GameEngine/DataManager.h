@@ -24,10 +24,10 @@ public:
 		return instance;
 	}
 
-	int NewGameObject() {
+	int NewGameObject(std::string name = "") {
 		{
 			int id = next_id_;
-			GameObjects.emplace(id, std::make_unique<GameObject>(id));
+			GameObjects.emplace(id, std::make_unique<GameObject>(id, name));
 			next_id_++;
 			return id;
 		}

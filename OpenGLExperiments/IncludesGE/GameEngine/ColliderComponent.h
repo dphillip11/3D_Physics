@@ -21,7 +21,7 @@ public:
 
 	ColliderComponent(int objectID);
 
-	TransformComponent& transform;
+	TransformComponent& m_collider_transform;
 
 	// Set the collider type
 	void SetColliderType(ColliderType colliderType) {
@@ -40,7 +40,9 @@ public:
 
 	void Render() override;
 
-	void Update(float deltaTime) override {}
+	void Update(float deltaTime) override {
+		m_collider_transform.Update(deltaTime);
+	}
 
 	void UpdateOBB();
 
@@ -52,8 +54,6 @@ private:
 	std::vector< glm::vec3> OBB_vertices;
 	unsigned int m_OBB_VBO{ 0 };
 	unsigned int m_OBB_VAO{ 0 };
-	glm::vec3 size_;
-	glm::vec3 offset_;
 	ColliderType colliderType_;
 
 };

@@ -18,12 +18,18 @@ void GameObject::Update(float delta_time) {
 
 // Renders all components attached to the game object
 void GameObject::Render() {
-	ImGui::Text("GameObject: ");
+	ImGui::Separator();
+	ImGui::PushID(id_);
+	auto namestring = m_name.empty() ? "GameObject " + std::to_string(id_) : "GameObject: " + m_name + " " + std::to_string(id_);
+	ImGui::Text(namestring.c_str());
+	ImGui::SameLine(200);
+	if (ImGui::Button("Delete"))
+		deleted = true;
 	for (auto& componentID : components_) {
 		DM.Components[id_][componentID]->Render();
 	}
-	if (ImGui::Button("Delete"))
-		deleted = true;
+	ImGui::Separator();
+	ImGui::PopID();
 }
 
 //adds IDs for type attached, does not create component, use DM::AddComponent()

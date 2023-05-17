@@ -5,6 +5,7 @@
 
 class Window {
 public:
+	glm::vec3 clearColor{ glm::vec3(0) };
 	static Window* instance;
 	GLFWwindow* window;
 	static int _height;

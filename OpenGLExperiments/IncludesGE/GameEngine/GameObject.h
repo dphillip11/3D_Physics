@@ -3,7 +3,7 @@
 #include "Component.h"
 class GameObject {
 public:
-	GameObject(int id) : id_(id) {}
+	GameObject(int id, std::string name = "") : id_(id), m_name(name) {}
 
 	int GetID() const { return id_; }
 
@@ -24,6 +24,7 @@ public:
 	void RemoveComponentID(int type_id);
 
 private:
+	std::string m_name;
 	friend class GameEngine;
 	bool deleted = false;
 	int id_;

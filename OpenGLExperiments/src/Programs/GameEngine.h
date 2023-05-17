@@ -11,10 +11,10 @@ private:
 public:
 	enum class Prefabs {
 
+		CUBE,
 		HARE,
 		HAND,
 		TAXI,
-		CUBE,
 		BUTTERFLY,
 		ROBOT,
 		TREE,
@@ -28,6 +28,7 @@ public:
 	void Setup() override
 	{
 		_camera.setPosition(glm::vec3(0, 0, -20));
+		_camera.isLockedOn = true;
 		_camera.setFOV(70);
 	}
 
@@ -35,9 +36,9 @@ public:
 
 	void Run(float deltaTime) override
 	{
-		static Prefabs selectedPrefab = Prefabs::HARE; // default selection
+		static Prefabs selectedPrefab = Prefabs::CUBE; // default selection
 
-		const char* prefabLabels[] = { "HARE", "HAND", "TAXI", "CUBE", "BUTTERFLY", "ROBOT", "TREE" };
+		const char* prefabLabels[] = { "CUBE", "HARE", "HAND", "TAXI", "BUTTERFLY", "ROBOT", "TREE" };
 
 
 		if (ImGui::BeginCombo("Select Prefab", prefabLabels[(static_cast<int>(selectedPrefab))]))
@@ -69,6 +70,7 @@ public:
 		{
 			if (gameObject->deleted)
 				deleteIDs.push_back(gameObject->id_);
+
 			gameObject->Update(deltaTime);
 			gameObject->Render();
 		}

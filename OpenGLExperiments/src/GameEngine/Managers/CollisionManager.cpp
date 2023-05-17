@@ -6,8 +6,8 @@ namespace CollisionManager {
 	std::unordered_map<int, TransformComponent> ColliderTransforms;
 
 	TransformComponent& AddCollider(int GameObjectID) {
+		ColliderTransforms.emplace(GameObjectID, TransformComponent(GameObjectID));
 		auto& transformComponent = ColliderTransforms[GameObjectID];
-		// Initialize or modify the transformComponent object as needed
 		return transformComponent;
 	}
 }
