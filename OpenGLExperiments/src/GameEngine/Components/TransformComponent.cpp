@@ -6,11 +6,13 @@
 
 void TransformComponent::Render()
 {
+	ImGui::PushID(gameObjectID);
 	if (ImGui::Button("Parent"))
 		SetParent(DM.GetComponent<TransformComponent>(1));
-	ImGui::DragFloat3(&("Position: " + std::to_string(gameObjectID))[0], &position_.x);
-	ImGui::DragFloat3(&("Scale: " + std::to_string(gameObjectID))[0], &scale_.x);
-	ImGui::DragFloat3(&("Rotation: " + std::to_string(gameObjectID))[0], &rotation_.x);
+	ImGui::DragFloat3("Position: ", &position_.x);
+	ImGui::DragFloat3("Scale: ", &scale_.x);
+	ImGui::DragFloat3("Rotation: ", &rotation_.x);
+	ImGui::PopID();
 }
 
 glm::mat4 TransformComponent::GetLocalTransform() const {
@@ -30,5 +32,30 @@ glm::mat4 TransformComponent::GetRotationMatrix() const {
 	glm::mat4 rotationMatrix = glm::mat4_cast(rotationQuat);
 
 	return rotationMatrix;
+}
+
+void TransformComponent::SetParent(TransformComponent* new_parent)
+{
+	if (new_parent != parent && new_parent != this)
+	{
+		// Store the child's current local transform
+		glm::mat4 previousLocalTransform = GetLocalTransform();
+
+		// Set the new parent
+		parent = new_parent;
+
+		// Calculate the new local transform based on the parent's world transform and the stored local transform
+		if (parent)
+		{
+			glm::mat4 parentWorldTransform = parent->GetWorldTransform();
+			glm::mat4 parentWorldTransformInverse = glm::inverse(parentWorldTransform);
+			localTransform_ = parentWorldTransformInverse * previousLocalTransform;
+		}
+		else
+		{
+			// If no parent is set, the local transform becomes the world transform
+			localTransform_ = previousLocalTransform;
+		}
+	}
 }
 

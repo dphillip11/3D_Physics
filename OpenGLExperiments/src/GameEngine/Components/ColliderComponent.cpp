@@ -74,14 +74,13 @@ Bounds ColliderComponent::CalculateAABB() const {
 
 void ColliderComponent::Render() {
 	ImGui::Text("Box Collider");
+	//transform.Render();
 	UpdateOBB();
-	ImGui::DragFloat3(ComponentIDString("offset"), &offset_[0]);
-	ImGui::DragFloat3(ComponentIDString("size"), &size_[0]);
+
 }
 
 void ColliderComponent::UpdateOBB() {
-	auto model = DM.GetComponent<TransformComponent>(gameObjectID)->GetWorldTransform();
-	model = model * glm::translate(glm::scale(glm::mat4(1), size_), offset_);
+	auto model = transform.GetWorldTransform();
 	OBB_shader.Use();
 	OBB_shader.setMat4("u_model", model);
 	OBB_shader.setMat4("u_view", Camera::currentCamera->view());

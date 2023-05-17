@@ -11,7 +11,7 @@
 void GameEngine::Spawn(Prefabs p)
 {
 	int new_id = DM.NewGameObject();
-	DM.AddComponent<TransformComponent>(new_id, glm::vec3(0), glm::vec3(2, 1, 0.5));
+	DM.AddComponent<TransformComponent>(new_id);
 	DM.AddComponent<PhysicsComponent>(new_id)->ApplyForce(glm::vec3(0, 10, 0));
 	DM.AddComponent<ColliderComponent>(new_id);
 	DM.AddComponent<RendererComponent>(new_id);
