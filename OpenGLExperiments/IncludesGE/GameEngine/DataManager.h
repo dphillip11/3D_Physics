@@ -33,6 +33,13 @@ public:
 		}
 	}
 
+	GameObject* GetGameObject(int id) {
+		auto it = GameObjects.find(id);
+		if (it == GameObjects.end())
+			return nullptr;
+		return static_cast<GameObject*>(it->second.get());
+	}
+
 	void  RemoveGameObject(int id) {
 		GameObjects.erase(id);
 		Components.erase(id);

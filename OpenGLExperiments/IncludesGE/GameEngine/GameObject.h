@@ -23,10 +23,12 @@ public:
 	//removes IDs for type removed, does not delete component, use DM::RemoveComponent()
 	void RemoveComponentID(int type_id);
 
-private:
-	std::string m_name;
-	friend class GameEngine;
+	const std::string m_name;
+
 	bool deleted = false;
+
+private:
+	friend class GameEngine;
 	int id_;
 	std::vector<std::size_t> components_;
 };

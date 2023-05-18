@@ -53,26 +53,10 @@ public:
 
 
 	void Update(float deltaTime) override {
-		if (UI_translation != glm::vec3(0))
-		{
-			Translate(UI_translation);
-			UI_translation = glm::vec3(0);
-		}
-		if (UI_rotation != glm::vec3(0))
-		{
-			Rotate(UI_rotation);
-			UI_rotation = glm::vec3(0);
-		}
-		if (UI_scale != glm::vec3(0))
-		{
-			Scale(0.1f * UI_scale + glm::vec3(1));
-			UI_scale = glm::vec3(0);
-		}
+
 	}
 
 	void Render() override;
-
-	void RenderColliderTransform();
 
 	void SetParent(TransformComponent* parent);
 
@@ -87,13 +71,14 @@ public:
 	TransformComponent* GetParent() const {
 		return m_parent;
 	}
+
+
 private:
 
 	TransformComponent* m_parent{ nullptr };
 	glm::mat4 m_transformMatrix{ glm::mat4(1) };
 
-	glm::vec3 UI_translation{ glm::vec3(0) };
-	glm::vec3 UI_rotation{ glm::vec3(0) };
-	glm::vec3 UI_scale{ glm::vec3(0) };
+
+
 
 };

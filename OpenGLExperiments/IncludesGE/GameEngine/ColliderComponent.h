@@ -48,7 +48,13 @@ public:
 
 	void CreateOBBbuffer();
 
+	void ToggleCollider()
+	{
+		showBoxCollider = !showBoxCollider;
+	}
+
 private:
+	bool showBoxCollider = true;
 	Shader& OBB_shader;
 	Mesh& OBB_Mesh;
 	std::vector< glm::vec3> OBB_vertices;

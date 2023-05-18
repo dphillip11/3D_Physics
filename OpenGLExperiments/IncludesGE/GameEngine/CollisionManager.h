@@ -7,6 +7,8 @@ namespace CollisionManager {
 	extern std::unordered_map<int, TransformComponent> ColliderTransforms;
 
 	TransformComponent& AddCollider(int GameObjectID);
+
+	TransformComponent* GetCollider(int GameObjectID);
 };
 
 //	using CollisionEventHandler = std::function<void(int, int)>;

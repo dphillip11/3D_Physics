@@ -27,15 +27,5 @@ void PhysicsComponent::Update(float deltaTime) {
 }
 
 void PhysicsComponent::Render() {
-	if (ImGui::CollapsingHeader("RigidBody"))
-	{
-		ImGui::Text("Force");
-		ImGui::DragFloat3("##", &m_totalForce.x);
-		if (ImGui::Button("Rest"))
-		{
-			SetAcceleration(glm::vec3(0));
-			SetVelocity(glm::vec3(0));
-			m_totalForce = -m_gravity;
-		}
-	}
+
 }

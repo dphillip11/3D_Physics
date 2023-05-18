@@ -10,4 +10,11 @@ namespace CollisionManager {
 		auto& transformComponent = ColliderTransforms[GameObjectID];
 		return transformComponent;
 	}
+
+	TransformComponent* GetCollider(int GameObjectID) {
+		auto it = ColliderTransforms.find(GameObjectID);
+		if (it == ColliderTransforms.end())
+			return nullptr;
+		return &(it->second);
+	}
 }

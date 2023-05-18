@@ -63,9 +63,8 @@ Bounds ColliderComponent::CalculateAABB() const {
 }
 
 void ColliderComponent::Render() {
-	m_collider_transform.RenderColliderTransform();
-	UpdateOBB();
-
+	if (showBoxCollider)
+		UpdateOBB();
 }
 
 void ColliderComponent::UpdateOBB() {
@@ -80,7 +79,6 @@ void ColliderComponent::UpdateOBB() {
 	OBB_shader.setBool("wireframe", false);
 	OBB_Mesh.Unbind();
 	OBB_shader.Unuse();
-
 }
 
 void ColliderComponent::CreateOBBbuffer()

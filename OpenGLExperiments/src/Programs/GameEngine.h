@@ -9,17 +9,6 @@ class GameEngine :public Program
 private:
 
 public:
-	enum class Prefabs {
-
-		CUBE,
-		HARE,
-		HAND,
-		TAXI,
-		BUTTERFLY,
-		ROBOT,
-		TREE,
-
-	};
 
 	BasicCameraInput inputHandler = BasicCameraInput(&_camera);
 
@@ -32,37 +21,9 @@ public:
 		_camera.setFOV(70);
 	}
 
-	void Spawn(Prefabs P);
 
 	void Run(float deltaTime) override
 	{
-		static Prefabs selectedPrefab = Prefabs::CUBE; // default selection
-
-		const char* prefabLabels[] = { "CUBE", "HARE", "HAND", "TAXI", "BUTTERFLY", "ROBOT", "TREE" };
-
-
-		if (ImGui::BeginCombo("Select Prefab", prefabLabels[(static_cast<int>(selectedPrefab))]))
-		{
-			for (int i = 0; i < static_cast<int>(Prefabs::TREE) + 1; i++)
-			{
-				Prefabs prefab = static_cast<Prefabs>(i);
-				bool isSelected = (selectedPrefab == prefab);
-				if (ImGui::Selectable(prefabLabels[i], isSelected))
-				{
-					selectedPrefab = prefab;
-				}
-				if (isSelected)
-				{
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-			ImGui::EndCombo();
-		}
-
-		if (ImGui::Button("Spawn"))
-		{
-			Spawn(selectedPrefab);
-		}
 
 		std::vector<int> deleteIDs;
 
