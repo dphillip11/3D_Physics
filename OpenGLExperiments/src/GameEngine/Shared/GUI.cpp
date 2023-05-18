@@ -5,6 +5,7 @@
 #include "GameEngine/CollisionManager.h"
 #include "GameEngine/PrefabManager.h"
 #include "GameEngine/TransformComponent.h"
+#include "GameEngine/PhysicsComponent.h"
 
 void GUI::Init(GLFWwindow* window)
 {
@@ -174,16 +175,34 @@ void GUI::DisplayBoxCollider(int id)
 
 void GUI::DisplayRigidBody(int id)
 {
+	auto rb = DM.GetComponent<PhysicsComponent>(id);
+
+	if (rb == nullptr)
+		return;
+
 	if (ImGui::CollapsingHeader("RigidBody"))
 	{
-		//ImGui::Text("Force");
-		//ImGui::DragFloat3("##", &m_totalForce.x);
-		//if (ImGui::Button("Rest"))
-		//{
-		//	SetAcceleration(glm::vec3(0));
-		//	SetVelocity(glm::vec3(0));
-		//	m_totalForce = -m_gravity;
-		//}
+
+		ImGui::Text("Velocity");
+		auto velocity = rb->GetVelocity();
+		ImGui::DragFloat3("##v", &velocity[0]);
+		rb->SetVelocity(velocity);
+
+		if (ImGui::Button("Rest"))
+		{
+			rb->SetAcceleration(glm::vec3(0));
+			rb->SetVelocity(glm::vec3(0));
+		}
+
+		ImGui::Text("Gravity");
+		auto gravity = rb->GetGravity();
+		ImGui::DragFloat3("##g", &gravity[0]);
+		rb->SetGravity(gravity);
+
+		if (ImGui::Button("Static"))
+		{
+			rb->ToggleStatic();
+		}
 	}
 }
 

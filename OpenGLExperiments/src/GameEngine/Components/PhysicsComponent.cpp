@@ -7,6 +7,9 @@ PhysicsComponent::PhysicsComponent(int GameObjectID, float mass, const glm::vec3
 	m_transform(DM.GetComponent<TransformComponent>(GameObjectID)) {}
 
 void PhysicsComponent::Update(float deltaTime) {
+	if (isStatic)
+		return;
+
 	// Apply gravity to the acceleration
 	m_acceleration += m_gravity;
 
@@ -22,7 +25,7 @@ void PhysicsComponent::Update(float deltaTime) {
 
 	// Reset acceleration and total force for the next frame
 	m_acceleration = glm::vec3(0.0f);
-	//m_totalForce = glm::vec3(0.0f);
+	m_totalForce = glm::vec3(0.0f);
 
 }
 
