@@ -1,8 +1,10 @@
 #pragma once
 #include "GameEngine/GameObject.h"
 #include "GameEngine/DataManager.h"
+#include "GameEngine/CollisionManager.h"
 #include "BasicCameraInput.h"
 #include "Program.h"
+#include <vector>
 
 class GameEngine :public Program
 {
@@ -40,6 +42,9 @@ public:
 		{
 			DM.RemoveGameObject(id);
 		}
+
+		CollisionManager::CheckCollisions();
+
 	}
 
 	InputObserver* getInputHandler()

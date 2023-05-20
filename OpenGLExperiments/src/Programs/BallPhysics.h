@@ -17,9 +17,9 @@ public:
 		_camera.setFOV(75);
 		_camera.zoomSpeed = 10;
 		_camera.moveSpeed = 1;
-		BM.gravity = 98;
-		BM.min_restitution = 0.7f;
-		BM.max_restitution = 0.75f;
+		BM.gravity = 0;
+		BM.min_restitution = 0.8f;
+		BM.max_restitution = 0.95f;
 		BM.max_bucket_size = 500;
 		BM.spawnObjects(8000);
 		BM.generateBuffers();

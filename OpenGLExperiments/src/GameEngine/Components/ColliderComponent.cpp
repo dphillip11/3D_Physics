@@ -15,7 +15,7 @@ ColliderComponent::ColliderComponent(int objectID)
 	colliderType_(ColliderType::Box),
 	OBB_shader(ShaderManager::GetInstance().LoadShader(GetFilePath(Shaders::Basic))),
 	OBB_Mesh(MeshManager::GetInstance().LoadMesh(GetFilePath(Models::Cube))),
-	m_collider_transform(CollisionManager::AddCollider(objectID))
+	m_collider_transform(CollisionManager::AddColliderTransform(objectID))
 {
 	m_collider_transform.SetParent(DM.GetComponent<TransformComponent>(objectID));
 }
@@ -27,14 +27,14 @@ std::vector<glm::vec3> ColliderComponent::CalculateOBBCorners() const {
 
 	// Calculate the corners of the collider
 
-	corners[0] = glm::vec3(modelMatrix * glm::vec4(-1, 1, 1, 1));
-	corners[1] = glm::vec3(modelMatrix * glm::vec4(1, -1, 1, 1));
-	corners[2] = glm::vec3(modelMatrix * glm::vec4(1, 1, -1, 1));
-	corners[3] = glm::vec3(modelMatrix * glm::vec4(1, 1, 1, 1));
-	corners[4] = glm::vec3(modelMatrix * glm::vec4(-1, -1, 1, 1));
-	corners[5] = glm::vec3(modelMatrix * glm::vec4(-1, 1, -1, 1));
-	corners[6] = glm::vec3(modelMatrix * glm::vec4(1, -1, -1, 1));
-	corners[7] = glm::vec3(modelMatrix * glm::vec4(-1, -1, -1, 1));
+	corners[0] = glm::vec3(modelMatrix * 0.5f * glm::vec4(-1, 1, 1, 2));
+	corners[1] = glm::vec3(modelMatrix * 0.5f * glm::vec4(1, -1, 1, 2));
+	corners[2] = glm::vec3(modelMatrix * 0.5f * glm::vec4(1, 1, -1, 2));
+	corners[3] = glm::vec3(modelMatrix * 0.5f * glm::vec4(1, 1, 1, 2));
+	corners[4] = glm::vec3(modelMatrix * 0.5f * glm::vec4(-1, -1, 1, 2));
+	corners[5] = glm::vec3(modelMatrix * 0.5f * glm::vec4(-1, 1, -1, 2));
+	corners[6] = glm::vec3(modelMatrix * 0.5f * glm::vec4(1, -1, -1, 2));
+	corners[7] = glm::vec3(modelMatrix * 0.5f * glm::vec4(-1, -1, -1, 2));
 
 	return corners;
 }

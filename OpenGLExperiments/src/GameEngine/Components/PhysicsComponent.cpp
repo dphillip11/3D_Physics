@@ -21,7 +21,7 @@ void PhysicsComponent::Update(float deltaTime) {
 
 	// Update position based on velocity and time
 	glm::vec3 displacement = m_velocity * deltaTime;
-	m_transform->Translate(displacement);
+	m_transform->Translate_World(displacement);
 
 	// Reset acceleration and total force for the next frame
 	m_acceleration = glm::vec3(0.0f);

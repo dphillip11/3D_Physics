@@ -125,20 +125,19 @@ void GUI::DisplaySystemWindow()
 
 void GUI::DisplayTransformInfo(TransformComponent*& transform)
 {
+
 	auto translation = glm::vec3(0);
 	ImGui::SliderFloat3("Translate: ", &translation[0], -0.01, 0.01);
-	transform->Translate(translation);
-	translation = glm::vec3(0);
+	transform->Translate_World(translation);
 
 	auto scale = glm::vec3(1);
 	ImGui::SliderFloat3("Scale: ", &scale[0], 0.999, 1.001);
-	transform->Scale(scale);
-	scale = glm::vec3(1);
+	transform->Scale_Local(scale);
 
 	auto rotation = glm::vec3(0);
 	ImGui::SliderFloat3("Rotate: ", &rotation[0], -0.1, 0.1);
-	transform->Rotate(rotation);
-	rotation = glm::vec3(0);
+	transform->Rotate_Local(rotation);
+
 }
 
 void GUI::DisplayTransform(int id)
@@ -156,7 +155,7 @@ void GUI::DisplayTransform(int id)
 
 void GUI::DisplayBoxCollider(int id)
 {
-	auto transform = CollisionManager::GetCollider(id);
+	auto transform = CollisionManager::GetColliderTransform(id);
 
 	if (transform == nullptr)
 		return;

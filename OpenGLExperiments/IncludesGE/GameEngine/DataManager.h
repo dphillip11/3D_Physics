@@ -1,5 +1,6 @@
 #include "GameObject.h"
 #include "GameEngine/TypeCounter.h"
+#include "GameEngine/CollisionManager.h"
 
 class DataManager {
 public:
@@ -41,6 +42,9 @@ public:
 	}
 
 	void  RemoveGameObject(int id) {
+		auto collider = CollisionManager::GetColliderTransform(id);
+		if (collider)
+			CollisionManager::ColliderTransforms.erase(id);
 		GameObjects.erase(id);
 		Components.erase(id);
 	}

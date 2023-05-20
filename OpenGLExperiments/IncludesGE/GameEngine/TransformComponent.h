@@ -13,44 +13,31 @@ public:
 
 	glm::mat4 GetLocalTransform() const;
 
-	void SetPosition(const glm::vec3& position) {
-		m_transformMatrix[3] = glm::vec4(position, 1.0f);
-	}
+	void SetLocalPosition(const glm::vec3& position);
 
-	void SetRotation(const glm::vec3& rotation) {
-		m_transformMatrix = glm::rotate(m_transformMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-		m_transformMatrix = glm::rotate(m_transformMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-		m_transformMatrix = glm::rotate(m_transformMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-	}
+	void SetLocalRotation(const glm::vec3& rotation);
 
-	void SetScale(const glm::vec3& scale) {
-		m_transformMatrix = glm::scale(m_transformMatrix, scale);
-	}
+	void SetLocalScale(const glm::vec3& scale);
 
-	void Translate(const glm::vec3& translation) {
-		m_transformMatrix = glm::translate(m_transformMatrix, translation);
-	}
+	// translate in model space
+	void Translate_Local(const glm::vec3& translation);
+	// rotate in model space
+	void Rotate_Local(const glm::vec3& eulerAngles);
+	// scale in model space
+	void Scale_Local(const glm::vec3& scale);
+	// combined transformation in local space
+	void Transform_Local(const glm::vec3& translation, const glm::vec3& rotation, const glm::vec3& scale);
+	// get transformation matrix from model to world space
+	glm::mat4 GetWorldTransform() const;
+	// get position in world space
+	glm::vec3 GetWorldPosition() const;
+	// get rotation in world space
+	glm::vec3 GetWorldRotation() const;
+	// get scale in world space
+	glm::vec3 GetWorldScale() const;
 
-	void Rotate(const glm::vec3& eulerAngles) {
-		m_transformMatrix = glm::rotate(m_transformMatrix, glm::radians(eulerAngles.x), glm::vec3(1.0f, 0.0f, 0.0f));
-		m_transformMatrix = glm::rotate(m_transformMatrix, glm::radians(eulerAngles.y), glm::vec3(0.0f, 1.0f, 0.0f));
-		m_transformMatrix = glm::rotate(m_transformMatrix, glm::radians(eulerAngles.z), glm::vec3(0.0f, 0.0f, 1.0f));
-	}
-
-	void Scale(const glm::vec3& scale) {
-		m_transformMatrix = glm::scale(m_transformMatrix, scale);
-	}
-
-	void Transform(const glm::vec3& translation, const glm::vec3& rotation, const glm::vec3& scale) {
-		glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), translation);
-		glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-		rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-		rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-		glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), scale);
-
-		m_transformMatrix = translationMatrix * rotationMatrix * scaleMatrix;
-	}
-
+	// translate in world space
+	void Translate_World(glm::vec3 translation);
 
 	void Update(float deltaTime) override {
 
@@ -59,14 +46,6 @@ public:
 	void Render() override;
 
 	void SetParent(TransformComponent* parent);
-
-	glm::mat4 GetWorldTransform() const {
-		glm::mat4 worldModelMatrix = GetLocalTransform();
-		if (m_parent) {
-			worldModelMatrix = m_parent->GetWorldTransform() * worldModelMatrix;
-		}
-		return worldModelMatrix;
-	}
 
 	TransformComponent* GetParent() const {
 		return m_parent;
@@ -77,8 +56,5 @@ private:
 
 	TransformComponent* m_parent{ nullptr };
 	glm::mat4 m_transformMatrix{ glm::mat4(1) };
-
-
-
 
 };

@@ -6,9 +6,13 @@ namespace CollisionManager {
 
 	extern std::unordered_map<int, TransformComponent> ColliderTransforms;
 
-	TransformComponent& AddCollider(int GameObjectID);
+	TransformComponent& AddColliderTransform(int GameObjectID);
 
-	TransformComponent* GetCollider(int GameObjectID);
+	TransformComponent* GetColliderTransform(int GameObjectID);
+
+	void CheckCollisions();
+
+	float CheckSeperatingAxis(const glm::vec3 axis, const glm::vec3 cornersA[8], const glm::vec3 cornersB[8]);
 };
 
 //	using CollisionEventHandler = std::function<void(int, int)>;
