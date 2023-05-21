@@ -24,6 +24,16 @@ public:
 	// rotate in model space
 	void Rotate_Local(const glm::vec3& eulerAngles);
 	// scale in model space
+	void Rotate(const glm::quat rotation) {
+		glm::quat localRotation = glm::quat_cast(m_transformMatrix);
+		glm::quat newLocalRotation = rotation * localRotation;
+		m_transformMatrix = glm::mat4_cast(newLocalRotation);
+	}
+	glm::quat ExtractQuaternionRotation() {
+		glm::mat3 rotationMatrix = glm::mat3(m_transformMatrix);
+		return glm::quat_cast(rotationMatrix);
+	}
+
 	void Scale_Local(const glm::vec3& scale);
 	// combined transformation in local space
 	void Transform_Local(const glm::vec3& translation, const glm::vec3& rotation, const glm::vec3& scale);
@@ -35,7 +45,6 @@ public:
 	glm::vec3 GetWorldRotation() const;
 	// get scale in world space
 	glm::vec3 GetWorldScale() const;
-
 	// translate in world space
 	void Translate_World(glm::vec3 translation);
 

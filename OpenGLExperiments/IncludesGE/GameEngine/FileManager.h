@@ -19,6 +19,7 @@ public:
 		Butterfly,
 		Taxi,
 		Tree,
+		Airplane,
 		// Add more model types as needed
 		VOID
 	};

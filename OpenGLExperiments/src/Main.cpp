@@ -31,7 +31,7 @@ int main()
 	float deltaTime = 0;
 
 	GameEngine GE;
-	LoadOBJ L;
+	//LoadOBJ L;
 	Newtons_Cradle N;
 	BallPhysics B;
 

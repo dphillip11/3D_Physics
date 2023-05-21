@@ -10,7 +10,6 @@ void obj::read(std::string filepath)
 	}
 
 	std::string line;
-
 	buffer.clear();
 	stack.clear();
 	cursor = { 0,0,0 };
@@ -30,6 +29,12 @@ void obj::read(std::string filepath)
 		else if (keyword == "v") {
 			glm::vec3 v;
 			iss >> v.x >> v.y >> v.z;
+			lower_bounds.x = v.x < lower_bounds.x ? v.x : lower_bounds.x;
+			lower_bounds.y = v.y < lower_bounds.y ? v.y : lower_bounds.y;
+			lower_bounds.z = v.z < lower_bounds.z ? v.z : lower_bounds.z;
+			upper_bounds.x = v.x > upper_bounds.x ? v.x : upper_bounds.x;
+			upper_bounds.y = v.y > upper_bounds.y ? v.y : upper_bounds.y;
+			upper_bounds.z = v.z > upper_bounds.z ? v.z : upper_bounds.z;
 			vertices.push_back(v);
 		}
 		else if (keyword == "vn") {

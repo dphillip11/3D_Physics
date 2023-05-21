@@ -16,6 +16,6 @@ public:
 	void Render() override {
 	}
 
-private:
+	/*private*/
 	Mesh& m_mesh;
 };

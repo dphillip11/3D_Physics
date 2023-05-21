@@ -57,7 +57,10 @@ void TransformComponent::Rotate_Local(const glm::vec3& eulerAngles) {
 }
 
 void TransformComponent::Scale_Local(const glm::vec3& scale) {
+	glm::vec3 local_position = glm::vec3(m_transformMatrix * glm::vec4(0, 0, 0, 1));
+	Translate_Local(-local_position);
 	m_transformMatrix = glm::scale(m_transformMatrix, scale);
+	Translate_Local(local_position);
 }
 
 void TransformComponent::Transform_Local(const glm::vec3& translation, const glm::vec3& rotation, const glm::vec3& scale) {

@@ -8,6 +8,8 @@ void MeshManager::ParseFile(const char* filepath, Mesh& mesh) {
 	mesh_data.vertices = mesh_data.unravelIndices(mesh_data.vertices, mesh_data.vertexIndices);
 	mesh_data.normalMap = mesh_data.unravelIndices(mesh_data.normalMap, mesh_data.normalIndices);
 	mesh_data.textureMap = mesh_data.unravelIndices(mesh_data.textureMap, mesh_data.textureIndices);
+	mesh.upper_bounds = mesh_data.upper_bounds;
+	mesh.lower_bounds = mesh_data.lower_bounds;
 
 	//vertices
 	glBindVertexArray(mesh._VAO);

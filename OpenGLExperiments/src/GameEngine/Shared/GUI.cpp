@@ -81,7 +81,7 @@ void GUI::DisplaySpawnButton()
 	ImGui::SetNextItemWidth(150);
 	if (ImGui::BeginCombo("Prefab", PrefabManager::prefabLabels[(static_cast<int>(PrefabManager::selectedPrefab))]))
 	{
-		for (int i = 0; i < static_cast<int>(PrefabManager::Prefabs::TREE) + 1; i++)
+		for (int i = 0; i < static_cast<int>(PrefabManager::Prefabs::VOID); i++)
 		{
 			PrefabManager::Prefabs prefab = static_cast<PrefabManager::Prefabs>(i);
 			bool isSelected = (PrefabManager::selectedPrefab == prefab);
@@ -192,7 +192,10 @@ void GUI::DisplayRigidBody(int id)
 			rb->SetAcceleration(glm::vec3(0));
 			rb->SetVelocity(glm::vec3(0));
 		}
-
+		auto rotation = rb->GetAngularVelocity();
+		ImGui::Text("Angular Velocity");
+		ImGui::DragFloat4("##r", &rotation[0]);
+		rb->SetAngularVelocity(rotation);
 		ImGui::Text("Gravity");
 		auto gravity = rb->GetGravity();
 		ImGui::DragFloat3("##g", &gravity[0]);

@@ -10,6 +10,7 @@ const std::array<std::string, static_cast<std::size_t>(FileManager::Models::VOID
 		"Assets/Models/butterfly.obj",  //Butterfly,
 		"Assets/Models/taxi.obj",       //Taxi,
 		"Assets/Models/tree.obj",       //Tree,
+		"Assets/Airplane/plane.obj",       //Airplane,
 		// Add more model file paths as needed, ensure enum is updated
 };
 

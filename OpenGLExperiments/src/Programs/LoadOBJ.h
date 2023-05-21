@@ -19,7 +19,7 @@ class LoadOBJ : public Program {
 	//setup camera
 public:
 	const char* model_path = "Assets/Models/hare.obj";
-	const char* texture_path = "Assets/plane/plane_diffuse.jpg";
+	const char* texture_path = "Assets/Airplane/plane_diffuse.jpg";
 	const char* shader_path = "shaders/Combined/obj.hlsl";
 	obj model_data;
 	Model model;
@@ -70,11 +70,11 @@ public:
 			model.setVertices(&model_data.textureMap[0], (int)model_data.textureMap.size() * 3, model._VAO, model._VBOtexture);
 			model.setAttributes(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
 			//bind texture
-			//Texture diffuse_texture;
-			//diffuse_texture.loadImage(texture_path, GL_RGB, true);
-			//diffuse_texture.bind();
-			//GLuint textureSamplerLoc = glGetUniformLocation(model.shader->ID, "diffuse_texture");
-			//glUniform1i(textureSamplerLoc, 0); // 0 for texture unit 0, can be adjusted to match the texture unit index
+			Texture diffuse_texture;
+			diffuse_texture.loadImage(texture_path, GL_RGB, true);
+			diffuse_texture.bind();
+			GLuint textureSamplerLoc = glGetUniformLocation(model.shader->ID, "diffuse_texture");
+			glUniform1i(textureSamplerLoc, 0); // 0 for texture unit 0, can be adjusted to match the texture unit index
 		}
 
 	}

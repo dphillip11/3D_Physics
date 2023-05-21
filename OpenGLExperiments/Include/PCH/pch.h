@@ -2,18 +2,19 @@
 
 #include <unordered_map>
 #include <map>
+#include <vector>
+#include <queue>
+#include <string>
+
 #include <typeindex>
 #include <algorithm>
 #include <memory>
-#include <vector>
-#include <vector>
+
 #include <ostream>
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <string>
-#include <memory>
-#include <queue>
+
 #include <chrono>
 #include <math.h>
 #include <numeric>
@@ -47,4 +48,13 @@ struct MeshVertex {
 	glm::vec3 position;
 	glm::vec3 normal;
 	glm::vec2 texcoord;
+};
+
+struct collision {
+	glm::vec3 contact_point = glm::vec3(0);
+	glm::vec3 normal = glm::vec3(0);
+	float depth = 0.0f;
+	bool valid = false;
+	int ID1 = 0;
+	int ID2 = 0;
 };

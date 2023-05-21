@@ -18,4 +18,7 @@ public:
 	void draw(GLenum fillMode = GL_FILL, GLenum drawMode = GL_TRIANGLES);
 	void Bind() const;
 	void Unbind() const;
+
+	glm::vec3 upper_bounds = glm::vec3(std::numeric_limits<float>::max());
+	glm::vec3 lower_bounds = glm::vec3(-std::numeric_limits<float>::max());
 };

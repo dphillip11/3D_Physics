@@ -17,6 +17,9 @@ public:
 	std::vector<int> normalIndices;
 	std::vector<int> textureIndices;
 
+	glm::vec3 upper_bounds = glm::vec3(-std::numeric_limits<float>::max());
+	glm::vec3 lower_bounds = glm::vec3(std::numeric_limits<float>::max());
+
 	face cursor = { 0,0,0 };
 	std::vector<face> buffer;
 	std::vector<face> stack;

@@ -44,6 +44,7 @@ public:
 		}
 
 		CollisionManager::CheckCollisions();
+		CollisionManager::Notify();
 
 	}
 
