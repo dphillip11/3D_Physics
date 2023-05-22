@@ -1,6 +1,7 @@
 #include "PCH/pch.h"
 #include "GameEngine/PhysicsComponent.h"
 #include "GameEngine/DataManager.h"
+#include "GameEngine/Quaternion.h"
 
 PhysicsComponent::PhysicsComponent(int GameObjectID, float mass, const glm::vec3& gravity)
 	: m_mass(mass), m_gravity(gravity), m_velocity(0.0f), m_acceleration(0.0f), Component(GameObjectID),
@@ -23,20 +24,19 @@ void PhysicsComponent::Update(float deltaTime) {
 
 		// Update position based on velocity and time
 		glm::vec3 displacement = m_velocity * deltaTime;
-		m_transform->Translate_World(displacement);
+		m_transform->Translate(displacement);
 
 		// Update angular velocity based on torque and time
-		glm::quat angularAcceleration = (m_torque * glm::inverse(m_transform->ExtractQuaternionRotation())) / m_mass;
-		m_angularVelocity += 0.5f * angularAcceleration * deltaTime;
+		m_angularAcceleration = Quaternion::ScaleQuaternion(m_torque, 1 / m_mass) * m_angularAcceleration;
+		m_angularVelocity += 0.5f * m_angularAcceleration * deltaTime;
 		glm::quat deltaRotation = m_angularVelocity * deltaTime;
-		//should probably be global rotation
-		m_transform->Rotate_Local(glm::eulerAngles(deltaRotation));
-		//m_transform->Rotate(deltaRotation);
+		m_transform->Rotate(deltaRotation);
 
 		// Reset acceleration, total force, and torque for the next frame
 		m_acceleration = glm::vec3(0.0f);
 		m_totalForce = glm::vec3(0.0f);
-		m_torque = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+		m_torque = glm::identity<glm::quat>();
+		m_angularAcceleration = glm::identity<glm::quat>();
 	}
 
 	ResolveCollisions();
@@ -88,11 +88,11 @@ void PhysicsComponent::ResolveCollisions() {
 		glm::vec3 positionCorrection = (penetration / totalMass) * positionCorrectionFactor * col.normal;
 
 		if (!isStatic) {
-			A_transform->Translate_World(positionCorrection);
+			A_transform->Translate(positionCorrection);
 		}
 
 		if (!B_physics->isStatic) {
-			B_transform->Translate_World(-positionCorrection);
+			B_transform->Translate(-positionCorrection);
 		}
 	}
 }

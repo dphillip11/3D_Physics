@@ -22,6 +22,9 @@
 #include <ranges>
 #include <functional>
 
+#include <mutex>
+#include <future>
+
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
@@ -37,6 +40,8 @@
 #include <glm/vec2.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/matrix.hpp>
+#include<glm/gtc/quaternion.hpp>
+#include<glm/common.hpp>
 
 #include  "IMGUI/imgui.h"
 #include "IMGUI/imgui_impl_opengl3.h"

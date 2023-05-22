@@ -24,14 +24,14 @@ ColliderComponent::ColliderComponent(int objectID)
 		auto pos = mesh->m_mesh.upper_bounds + mesh->m_mesh.lower_bounds;
 		auto scale = mesh->m_mesh.upper_bounds - mesh->m_mesh.lower_bounds;
 		//scale collider to fit object
-		m_collider_transform.Scale_Local(scale);
-		m_collider_transform.Translate_World(0.5f * (pos));
+		m_collider_transform.Scale(scale);
+		m_collider_transform.Translate(0.5f * (pos));
 		auto transform = DM.GetComponent<TransformComponent>(objectID);
 		if (transform)
 		{
 			//scale object and move to centre of scene
-			transform->Scale_Local(glm::vec3(5.0f / scale.y));
-			transform->Translate_World(-0.5f * (5 / scale.y) * (mesh->m_mesh.upper_bounds + mesh->m_mesh.lower_bounds));
+			transform->Scale(glm::vec3(5.0f / scale.y));
+			transform->Translate(-0.5f * (5 / scale.y) * (mesh->m_mesh.upper_bounds + mesh->m_mesh.lower_bounds));
 		}
 	}
 }

@@ -18,8 +18,27 @@ public:
 		return m_angularVelocity;
 	}
 
+	//set angular velocity euler angles in radians
+	void SetAngularVelocity(const glm::vec3& angularVelocity) {
+		m_angularVelocity = glm::quat(angularVelocity);
+	}
+
+	//set angular velocity euler angles in radians
 	void SetAngularVelocity(const glm::quat& angularVelocity) {
 		m_angularVelocity = angularVelocity;
+	}
+
+	glm::quat GetAngularAcceleration() const {
+		return m_angularAcceleration;
+	}
+
+	//set using euler angles in radians
+	void SetAngularAcceleration(const glm::vec3& angularA) {
+		m_angularAcceleration = glm::quat(angularA);
+	}
+
+	void SetAngularAcceleration(const glm::quat& angularA) {
+		m_angularAcceleration = angularA;
 	}
 
 	float GetMass() const {
@@ -47,7 +66,15 @@ public:
 	}
 
 	void ApplyForce(const glm::vec3& force) {
-		m_totalForce += force;
+		m_totalForce = force + m_totalForce;
+	}
+
+	void ApplyTorque(const glm::quat& torque) {
+		m_torque = torque * m_torque;
+	}
+
+	void ApplyTorque(const glm::vec3& torque) {
+		m_torque = glm::quat(torque) * m_torque;
 	}
 
 	void SetAcceleration(const glm::vec3& acceleration) {
@@ -79,14 +106,19 @@ public:
 	void ResolveCollisions();
 
 private:
-	float m_mass;
+	float m_mass = 1;
 	bool isStatic = true;
 	glm::vec3 m_gravity;
+
 	glm::vec3 m_velocity{ glm::vec3(0.0f) };
 	glm::vec3 m_acceleration{ glm::vec3(0.0f) };
-	glm::quat m_torque{ glm::quat(1.0f, 0.0f, 0.0f, 0.0f) };
-	glm::quat m_angularVelocity{ glm::quat(1.0f, 0.0f, 0.0f, 0.0f) };
+
+	glm::quat m_angularVelocity = glm::identity<glm::quat>();
+	glm::quat m_angularAcceleration = glm::identity<glm::quat>();
+
+	glm::quat m_torque = glm::identity<glm::quat>();
 	glm::vec3 m_totalForce{ glm::vec3(0.0f) };
+
 	TransformComponent* m_transform;
 	std::queue<collision> m_collisionLog;
 };

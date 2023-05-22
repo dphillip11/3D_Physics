@@ -6,6 +6,7 @@
 #include "GameEngine/PrefabManager.h"
 #include "GameEngine/TransformComponent.h"
 #include "GameEngine/PhysicsComponent.h"
+#include "GameEngine/Quaternion.h"
 
 void GUI::Init(GLFWwindow* window)
 {
@@ -126,17 +127,17 @@ void GUI::DisplaySystemWindow()
 void GUI::DisplayTransformInfo(TransformComponent*& transform)
 {
 
-	auto translation = glm::vec3(0);
-	ImGui::SliderFloat3("Translate: ", &translation[0], -0.01, 0.01);
-	transform->Translate_World(translation);
+	auto translation = transform->GetLocalPosition();
+	ImGui::DragFloat3("Position: ", &translation[0]);
+	transform->SetLocalPosition(translation);
 
-	auto scale = glm::vec3(1);
-	ImGui::SliderFloat3("Scale: ", &scale[0], 0.999, 1.001);
-	transform->Scale_Local(scale);
+	auto scale = transform->GetScale();
+	ImGui::DragFloat3("Scale: ", &scale[0]);
+	transform->SetLocalScale(scale);
 
 	auto rotation = glm::vec3(0);
-	ImGui::SliderFloat3("Rotate: ", &rotation[0], -0.1, 0.1);
-	transform->Rotate_Local(rotation);
+	ImGui::DragFloat3("Rotate: ", &rotation[0]);
+	transform->Rotate(glm::radians(rotation));
 
 }
 
@@ -191,11 +192,17 @@ void GUI::DisplayRigidBody(int id)
 		{
 			rb->SetAcceleration(glm::vec3(0));
 			rb->SetVelocity(glm::vec3(0));
+			rb->SetAngularVelocity(glm::vec3(0));
+			rb->SetAngularAcceleration(glm::vec3(0));
 		}
-		auto rotation = rb->GetAngularVelocity();
-		ImGui::Text("Angular Velocity");
-		ImGui::DragFloat4("##r", &rotation[0]);
-		rb->SetAngularVelocity(rotation);
+
+		glm::vec3 torque = glm::vec3(0);
+		ImGui::Text("Add Torque");
+		ImGui::DragFloat3("##torque", &torque[0]);
+		rb->ApplyTorque(glm::quat(torque));
+
+
+
 		ImGui::Text("Gravity");
 		auto gravity = rb->GetGravity();
 		ImGui::DragFloat3("##g", &gravity[0]);
