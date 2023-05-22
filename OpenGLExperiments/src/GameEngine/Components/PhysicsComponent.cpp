@@ -49,7 +49,9 @@ void PhysicsComponent::ResolveCollisions() {
 		m_collisionLog.pop();
 		auto B_physics = DM.GetComponent<PhysicsComponent>(col.ID2);
 		auto A_transform = DM.GetComponent<TransformComponent>(col.ID1);
+		auto A_colliderPos = CollisionManager::GetColliderTransform(col.ID1)->GetWorldPosition();
 		auto B_transform = DM.GetComponent<TransformComponent>(col.ID2);
+		auto B_colliderPos = CollisionManager::GetColliderTransform(col.ID2)->GetWorldPosition();
 		// Calculate the relative velocity of the two colliding objects
 		glm::vec3 relativeVelocity = m_velocity - B_physics->GetVelocity();
 
@@ -74,10 +76,12 @@ void PhysicsComponent::ResolveCollisions() {
 		// Apply the impulse to the objects' velocities based on their masses
 		if (!isStatic) {
 			m_velocity += (impulse / m_mass) * (B_physics->GetMass() / totalMass);
+			ApplyTorque(glm::cross((col.contact_point) - A_colliderPos, impulse));
 		}
 
 		if (!B_physics->isStatic) {
 			B_physics->SetVelocity(B_physics->GetVelocity() - (impulse / B_physics->GetMass()) * (m_mass / totalMass));
+			B_physics->ApplyTorque(glm::cross((col.contact_point) - B_colliderPos, impulse));
 		}
 
 		// Adjust the position based on the collision depth
