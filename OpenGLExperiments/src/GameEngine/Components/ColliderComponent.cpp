@@ -38,29 +38,27 @@ ColliderComponent::ColliderComponent(int objectID)
 	}
 }
 
-std::vector<glm::vec3> ColliderComponent::CalculateOBBCorners() const {
-	std::vector<glm::vec3> corners(8, glm::vec3(0.0f));
-
+void ColliderComponent::CalculateOBBCorners(std::vector<glm::vec3>& corners) const {
 	glm::mat4 modelMatrix = m_collider_transform.GetWorldTransform();
 
 	// Calculate the corners of the collider
 
-	corners[0] = glm::vec3(modelMatrix * 0.5f * glm::vec4(-1, 1, 1, 2));
-	corners[1] = glm::vec3(modelMatrix * 0.5f * glm::vec4(1, -1, 1, 2));
-	corners[2] = glm::vec3(modelMatrix * 0.5f * glm::vec4(1, 1, -1, 2));
-	corners[3] = glm::vec3(modelMatrix * 0.5f * glm::vec4(1, 1, 1, 2));
-	corners[4] = glm::vec3(modelMatrix * 0.5f * glm::vec4(-1, -1, 1, 2));
-	corners[5] = glm::vec3(modelMatrix * 0.5f * glm::vec4(-1, 1, -1, 2));
-	corners[6] = glm::vec3(modelMatrix * 0.5f * glm::vec4(1, -1, -1, 2));
-	corners[7] = glm::vec3(modelMatrix * 0.5f * glm::vec4(-1, -1, -1, 2));
+	corners.push_back(glm::vec3(modelMatrix * 0.5f * glm::vec4(-1, 1, 1, 2)));
+	corners.push_back(glm::vec3(modelMatrix * 0.5f * glm::vec4(1, -1, 1, 2)));
+	corners.push_back(glm::vec3(modelMatrix * 0.5f * glm::vec4(1, 1, -1, 2)));
+	corners.push_back(glm::vec3(modelMatrix * 0.5f * glm::vec4(1, 1, 1, 2)));
+	corners.push_back(glm::vec3(modelMatrix * 0.5f * glm::vec4(-1, -1, 1, 2)));
+	corners.push_back(glm::vec3(modelMatrix * 0.5f * glm::vec4(-1, 1, -1, 2)));
+	corners.push_back(glm::vec3(modelMatrix * 0.5f * glm::vec4(1, -1, -1, 2)));
+	corners.push_back(glm::vec3(modelMatrix * 0.5f * glm::vec4(-1, -1, -1, 2)));
 
-	return corners;
 }
 
 
 Bounds ColliderComponent::CalculateAABB() const {
 	// Get the corners of the cube collider
-	std::vector<glm::vec3> corners = CalculateOBBCorners();
+	std::vector<glm::vec3> corners;
+	CalculateOBBCorners(corners);
 
 	// Initialize the minimum and maximum bounds with the first corner
 	glm::vec3 minBounds = corners[0];

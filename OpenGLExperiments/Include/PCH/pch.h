@@ -58,7 +58,7 @@ struct MeshVertex {
 struct collision {
 	glm::vec3 contact_point = glm::vec3(0);
 	glm::vec3 normal = glm::vec3(0);
-	float depth = 0.0f;
+	float depth = -1;
 	bool valid = false;
 	int ID1 = 0;
 	int ID2 = 0;

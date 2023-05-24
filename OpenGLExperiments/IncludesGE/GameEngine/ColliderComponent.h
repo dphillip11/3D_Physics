@@ -33,7 +33,7 @@ public:
 		return colliderType_;
 	}
 
-	std::vector<glm::vec3> CalculateOBBCorners() const;
+	void CalculateOBBCorners(std::vector<glm::vec3>&) const;
 
 	// returns {min:{x,y,z},max:{x,y,z}}, store as necessary
 	Bounds CalculateAABB() const;

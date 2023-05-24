@@ -5,34 +5,13 @@
 #include "GameEngine/PrimitiveRenderer.h"
 #include "GameEngine/Geometry.h"
 
+//draw collisions
 #define DEBUG 1
+//use SAT or surface test
+#define SAT 1
+
 
 std::queue<collision> CollisionManager::collisionLog;
-
-//normalized axes
-constexpr glm::vec3 CubeAxes[7] = {
-	//parallel to centre to centre of faces
-	glm::vec3(1.0f, 0.0f, 0.0f),
-	glm::vec3(0.0f, 1.0f, 0.0f),
-	glm::vec3(0.0f, 0.0f, 1.0f),
-	//from centre to corners on one side
-	glm::vec3(1.0f, 1.0f, 1.0f),
-	glm::vec3(-1.0f, 1.0f, 1.0f),
-	glm::vec3(1.0f, -1.0f, 1.0f),
-	glm::vec3(-1.0f, -1.0f, 1.0f)
-};
-
-constexpr glm::vec3 CubeCorners[8] = {
-	glm::vec3(0.5f, 0.5f, 0.5f),
-	glm::vec3(0.5f, -0.5f, 0.5f),
-	glm::vec3(-0.5f, -0.5f, 0.5f),
-	glm::vec3(-0.5f, 0.5f, 0.5f),
-	glm::vec3(0.5f, 0.5f, -0.5f),
-	glm::vec3(0.5f, -0.5f, -0.5f),
-	glm::vec3(-0.5f, -0.5f, -0.5f),
-	glm::vec3(-0.5f, 0.5f, -0.5f)
-};
-
 std::unordered_map<int, TransformComponent> CollisionManager::ColliderTransforms;
 
 TransformComponent& CollisionManager::AddColliderTransform(int GameObjectID) {
@@ -48,92 +27,95 @@ TransformComponent* CollisionManager::GetColliderTransform(int GameObjectID) {
 	return &(it->second);
 }
 
-collision CollisionManager::GetCollision(int ID1, int ID2)
+collision CollisionManager::GetCollision_surface_test(int ID1, int ID2)
 {
 	collision col;
 
 	col.ID1 = ID1;
 	col.ID2 = ID2;
-	col.depth = std::numeric_limits<float>::max();
 
-	auto cornersA = DM.GetComponent<ColliderComponent>(ID1)->CalculateOBBCorners();
-	auto cornersB = DM.GetComponent<ColliderComponent>(ID2)->CalculateOBBCorners();
+	auto IDs = { ID1,ID2 };
 
-#if DEBUG
-	PrimitiveRenderer::DrawPoints(cornersA, 5);
-	PrimitiveRenderer::DrawPoints(cornersB, 4);
-#endif
-
-
-	auto transformA = GetColliderTransform(ID1);
-	auto world_transformA = transformA->GetWorldTransform();
-	auto centre1 = GetColliderTransform(col.ID1)->GetWorldPosition();
-	auto transformB = GetColliderTransform(ID2);
-	auto world_transformB = transformB->GetWorldTransform();
-
-	//check along axes of first cube
-	for (auto axis : CubeAxes)
+	for (auto ID : IDs)
 	{
-		auto transformed_AxisA = glm::vec3(world_transformA * glm::vec4(0.5f * axis, 1));
-		auto normalized_transformed_AxisA = glm::normalize(transformed_AxisA);
-		auto transformed_AxisB = glm::vec3(world_transformB * glm::vec4(axis, 1));
-		auto normalized_transformed_AxisB = glm::normalize(transformed_AxisB);
-		bool isALower1 = true;
-		bool isAlower2 = true;
-		glm::vec3 contact_point;
-		float depthA = CheckSeperatingAxis(normalized_transformed_AxisA, &cornersA[0], &cornersB[0], isALower1, contact_point);
-		float depthB = CheckSeperatingAxis(normalized_transformed_AxisB, &cornersA[0], &cornersB[0], isAlower2, contact_point);
+		auto other_ID = ID == ID1 ? ID2 : ID1;
 
-		if (depthA < 0 || depthB < 0)
+		auto transform = GetColliderTransform(ID);
+		auto world_transform = transform->GetWorldTransform();
+		auto pos = transform->GetWorldPosition();
+
+		//prepare points for testing
+		std::vector<glm::vec3> points;
+		//add face points
+		Geometry::generate_face_points(GetColliderTransform(other_ID)->GetWorldTransform(), points);
+		//add corners
+		DM.GetComponent<ColliderComponent>(other_ID)->CalculateOBBCorners(points);
+		//6 faces, 8 vertices
+		assert(points.size() == 14);
+
+		col.valid = Geometry::test_points_inside_cube(world_transform, points, col.contact_point);
+
+		if (col.valid)
+		{
+			col.normal = glm::normalize(col.contact_point - pos);
+#if DEBUG
+			PrimitiveRenderer::DrawLines(std::vector<glm::vec3>({ pos, col.contact_point }), 1);
+			PrimitiveRenderer::DrawPoints(std::vector<glm::vec3>({ col.contact_point }), 3);
+#endif
 			return col;
-		if (depthA < col.depth)
-		{
-			col.depth = depthA;
-			col.normal = isALower1 ? normalized_transformed_AxisA : -normalized_transformed_AxisA;
-			col.contact_point = contact_point;
-		}
-		if (depthB < col.depth)
-		{
-			col.depth = depthB;
-			col.normal = isAlower2 ? normalized_transformed_AxisB : -normalized_transformed_AxisB;
-			col.contact_point = contact_point;
 		}
 	}
-	col.valid = true;
-
-#if DEBUG
-	PrimitiveRenderer::DrawPoints(std::vector<glm::vec3>{col.contact_point}, 0);
-	PrimitiveRenderer::DrawLines(std::vector<glm::vec3>{centre1, col.contact_point}, 3);
-#endif
-
 	return col;
 }
 
-float CollisionManager::CheckSeperatingAxis(const glm::vec3 axis, const glm::vec3 cornersA[8], const glm::vec3 cornersB[8], bool& isALower, glm::vec3& contact_point)
+collision CollisionManager::GetCollision_SAT_test(int ID1, int ID2)
 {
-	Geometry::axis_projection limitsA = Geometry::project_on_axis(axis, std::vector<glm::vec3>(cornersA, cornersA + 8));
-	Geometry::axis_projection limitsB = Geometry::project_on_axis(axis, std::vector<glm::vec3>(cornersB, cornersB + 8));
+	collision col;
 
-	// Check for overlap
-	float overlap = std::min(limitsA.max_projection, limitsB.max_projection) - std::max(limitsA.min_projection, limitsB.min_projection);
-	isALower = limitsA.max_projection < limitsB.max_projection;
+	col.ID1 = ID1;
+	col.ID2 = ID2;
 
-	// Update the contact point based on the corners contributing to the minimum and maximum projections
-	if (overlap > 0)
+	std::vector<glm::vec3> cornersA;
+	DM.GetComponent<ColliderComponent>(ID1)->CalculateOBBCorners(cornersA);
+	std::vector<glm::vec3> cornersB;
+	DM.GetComponent<ColliderComponent>(ID2)->CalculateOBBCorners(cornersB);
+
+	auto transformA = GetColliderTransform(ID1);
+	auto world_transformA = transformA->GetWorldTransform();
+
+	auto transformB = GetColliderTransform(ID2);
+	auto world_transformB = transformB->GetWorldTransform();
+
+	std::vector<glm::vec3> axes;
+	Geometry::generate_SAT_axes_for_cube(world_transformA, axes);
+	Geometry::generate_SAT_axes_for_cube(world_transformB, axes);
+	assert(axes.size() == 14);
+
+	float minimim_overlap = std::numeric_limits<float>().max();
+
+	for (auto axis : axes)
 	{
-		if (isALower)
-			contact_point = limitsA.maximum_point;
-		else
-			contact_point = limitsA.minimum_point;
+		glm::vec3 contact_point;
+		bool isAlower;
+		auto overlap = Geometry::test_seperating_axis(axis, cornersA, cornersB, contact_point, isAlower);
+		if (overlap < 0)
+			return col;
+		if (overlap < minimim_overlap)
+		{
+			minimim_overlap = overlap;
+			col.contact_point = contact_point;
+			col.normal = isAlower ? axis : -axis;
+		}
 	}
-	else
-	{
-		// No overlap, set the contact point to a default value or handle the case as needed
-		contact_point = glm::vec3(0.0f); // Default value
-	}
+	col.valid = true;
+	col.depth = minimim_overlap;
+#if DEBUG
+	auto centre = transformA->GetWorldPosition();
+	PrimitiveRenderer::DrawLines(std::vector<glm::vec3>({ centre, centre + col.depth * col.normal }), 1);
+	PrimitiveRenderer::DrawPoints(std::vector<glm::vec3>({ centre }), 3);
+#endif
+	return col;
 
-	// Return the penetration depth
-	return overlap;
 }
 
 
@@ -153,8 +135,11 @@ void CollisionManager::CheckCollisions()
 		for (; it2 != std::end(ColliderTransforms); ++it2)
 		{
 			auto [id2, transform2] = *it2;
-
-			collision col = GetCollision(id1, id2);
+#if SAT
+			collision col = GetCollision_SAT_test(id1, id2);
+#else
+			collision col = GetCollision_surface_test(id1, id2);
+#endif
 			if (col.valid)
 				collisionLog.push(col);
 		}
@@ -168,7 +153,7 @@ void CollisionManager::Notify()
 		auto col = collisionLog.front();
 		collisionLog.pop();
 
-		//NotifyPhysics(col);
+		NotifyPhysics(col);
 
 	}
 }

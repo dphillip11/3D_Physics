@@ -11,10 +11,10 @@ namespace CollisionManager {
 	TransformComponent& AddColliderTransform(int GameObjectID);
 	TransformComponent* GetColliderTransform(int GameObjectID);
 
-	float CheckSeperatingAxis(const glm::vec3 axis, const glm::vec3 cornersA[8], const glm::vec3 cornersB[8], bool& isALower, glm::vec3& contact_point);
 	void CheckCollisions();
 
-	collision GetCollision(int ID1, int ID2);
+	collision GetCollision_surface_test(int ID1, int ID2);
+	collision GetCollision_SAT_test(int ID1, int ID2);
 
 	void NotifyPhysics(collision col);
 
