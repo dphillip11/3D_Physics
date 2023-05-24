@@ -10,6 +10,8 @@
 #include "Camera.h"
 #include "GameEngine/FileManager.h"
 
+
+
 ColliderComponent::ColliderComponent(int objectID)
 	: Component(objectID),
 	colliderType_(ColliderType::Box),
@@ -95,25 +97,7 @@ void ColliderComponent::UpdateOBB() {
 	OBB_shader.setBool("wireframe", false);
 	OBB_Mesh.Unbind();
 	OBB_shader.Unuse();
-}
 
-void ColliderComponent::CreateOBBbuffer()
-{
-	OBB_vertices = CalculateOBBCorners();
-	glGenVertexArrays(1, &m_OBB_VAO);
-	glGenBuffers(1, &m_OBB_VBO);
-
-	glBindVertexArray(m_OBB_VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_OBB_VBO);
-	glBufferData(GL_ARRAY_BUFFER, OBB_vertices.size() * sizeof(glm::vec3), &OBB_vertices[0], GL_STREAM_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 

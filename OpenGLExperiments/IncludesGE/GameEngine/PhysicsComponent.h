@@ -121,5 +121,6 @@ private:
 
 	TransformComponent* m_transform;
 	std::queue<collision> m_collisionLog;
+
 };
 

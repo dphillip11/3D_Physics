@@ -13,8 +13,7 @@ public:
 
 	void Update(float deltaTime) override {}
 
-	void Render() override {
-	}
+	void Render() override {}
 
 	/*private*/
 	Mesh& m_mesh;

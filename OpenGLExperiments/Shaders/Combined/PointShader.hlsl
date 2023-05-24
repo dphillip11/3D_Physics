@@ -18,9 +18,12 @@ void main()
 #version 330
 out vec4 FragColor;
 
+uniform int color = 0;
+
+vec4 colors[6] = { vec4(1, 0, 0, 1), vec4(0, 1, 0, 1), vec4(0, 0, 1, 1), vec4(1, 1, 0, 1), vec4(1, 0.5, 0, 1), vec4(1, 0, 1, 1) };
+
 void main()
 {
-
-	FragColor = vec4(1, 0, 0, 1);
+	FragColor = colors[color % 6];
 
 }

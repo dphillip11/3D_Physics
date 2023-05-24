@@ -3,6 +3,7 @@
 #include "GameEngine/DataManager.h"
 #include "GameEngine/Quaternion.h"
 
+
 PhysicsComponent::PhysicsComponent(int GameObjectID, float mass, const glm::vec3& gravity)
 	: m_mass(mass), m_gravity(gravity), m_velocity(0.0f), m_acceleration(0.0f), Component(GameObjectID),
 	m_transform(DM.GetComponent<TransformComponent>(GameObjectID)) {}
@@ -64,7 +65,7 @@ void PhysicsComponent::ResolveCollisions() {
 		}
 
 		// Calculate the restitution coefficient (a measure of elasticity)
-		float restitution = 0.5f;  // Example value, you can adjust this
+		float restitution = 0.75f;  // Example value, you can adjust this
 
 		// Calculate the impulse magnitude using the impulse formula
 		float impulseMagnitude = -(1 + restitution) * relativeVelocityAlongNormal;
@@ -74,30 +75,32 @@ void PhysicsComponent::ResolveCollisions() {
 		float totalMass = m_mass + B_physics->GetMass();
 
 		// Apply the impulse to the objects' velocities based on their masses
-		if (!isStatic) {
-			m_velocity += (impulse / m_mass) * (B_physics->GetMass() / totalMass);
-			ApplyTorque(glm::cross((col.contact_point) - A_colliderPos, impulse));
-		}
 
-		if (!B_physics->isStatic) {
-			B_physics->SetVelocity(B_physics->GetVelocity() - (impulse / B_physics->GetMass()) * (m_mass / totalMass));
-			B_physics->ApplyTorque(glm::cross((col.contact_point) - B_colliderPos, impulse));
-		}
+		m_velocity -= (impulse / m_mass) * (B_physics->GetMass() / totalMass);
+		ApplyTorque(glm::cross((col.contact_point) - A_colliderPos, impulse));
+
+
+		B_physics->m_velocity += (impulse / B_physics->m_mass) * (m_mass / totalMass);
+		B_physics->ApplyTorque(glm::cross((col.contact_point) - B_colliderPos, impulse));
+
 
 		// Adjust the position based on the collision depth
 		float penetration = col.depth;  // Collision depth or penetration depth
 		float positionCorrectionFactor = 1.0f;  // Example value, you can adjust this
 
 		// Move the objects away from each other along the collision normal
-		glm::vec3 positionCorrection = (penetration / totalMass) * positionCorrectionFactor * col.normal;
-
+		//glm::vec3 positionCorrection = (penetration / totalMass) * positionCorrectionFactor * col.normal;
 		if (!isStatic) {
-			A_transform->Translate(positionCorrection);
+			//A_transform->Translate(positionCorrection);
+			A_transform->Translate(-0.51f * col.depth * col.normal);
 		}
 
 		if (!B_physics->isStatic) {
-			B_transform->Translate(-positionCorrection);
+			//B_transform->Translate(-positionCorrection);
+			B_transform->Translate(0.51f * col.depth * col.normal);
 		}
+
+
 	}
 }
 
