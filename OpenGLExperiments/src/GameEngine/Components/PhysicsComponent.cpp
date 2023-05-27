@@ -2,6 +2,7 @@
 #include "GameEngine/PhysicsComponent.h"
 #include "GameEngine/DataManager.h"
 #include "GameEngine/Quaternion.h"
+#include "GameEngine/PrimitiveRenderer.h"
 
 
 PhysicsComponent::PhysicsComponent(int GameObjectID, float mass, const glm::vec3& gravity)
@@ -50,23 +51,53 @@ void PhysicsComponent::ResolveCollisions() {
 		m_collisionLog.pop();
 		auto B_physics = DM.GetComponent<PhysicsComponent>(col.ID2);
 		auto A_transform = DM.GetComponent<TransformComponent>(col.ID1);
-		auto B_transform = DM.GetComponent<TransformComponent>(col.ID2);
 		auto A_colliderPos = CollisionManager::GetColliderTransform(col.ID1)->GetWorldPosition();
+		auto B_transform = DM.GetComponent<TransformComponent>(col.ID2);
 		auto B_colliderPos = CollisionManager::GetColliderTransform(col.ID2)->GetWorldPosition();
+		// Calculate the relative velocity of the two colliding objects
+		glm::vec3 relativeVelocity = B_physics->GetVelocity() - m_velocity;
 
-		//adjust position
-		A_transform->Translate(-0.51f * col.depth * col.normal);
-		B_transform->Translate(0.51f * col.depth * col.normal);
-		// Calculate momentum conservation
-		glm::vec3 relativeVelocity = m_velocity - B_physics->m_velocity; // Relative velocity of the objects
-		float collisionSpeed = glm::dot(relativeVelocity, col.normal); // Collision speed along the normal direction
-		float elasticity = 0.4f;
-		glm::vec3 normalImpulse = -(1 + elasticity) * col.normal * collisionSpeed / (m_mass + B_physics->m_mass); // Calculate impulse using masses, relative velocity, and coefficient of restitution
-		m_velocity -= normalImpulse * B_physics->m_mass; // Update velocity of object 1
-		B_physics->m_velocity += normalImpulse * m_mass; // Update velocity of object 2
+		// Calculate the relative velocity in terms of the collision normal
+		float relativeVelocityAlongNormal = glm::dot(relativeVelocity, col.normal);
 
-		ApplyTorque(glm::cross((col.contact_point) - A_colliderPos, normalImpulse));
-		B_physics->ApplyTorque(glm::cross((col.contact_point) - B_colliderPos, normalImpulse));
+		// Check if the objects are moving away from each other
+		if (relativeVelocityAlongNormal > 0) {
+			continue;  // No collision response needed
+		}
+
+		// Calculate the restitution coefficient (a measure of elasticity)
+		float restitution = 0.5f;  // Example value, you can adjust this
+
+		// Calculate the impulse magnitude using the impulse formula
+		float impulseMagnitude = -(1 + restitution) * relativeVelocityAlongNormal;
+
+		// Calculate the impulse vector
+		glm::vec3 impulse = impulseMagnitude * col.normal;
+		float totalMass = m_mass + B_physics->GetMass();
+
+		// Apply the impulse to the objects' velocities based on their masses
+
+		ApplyForce(-impulse / (B_physics->GetMass() / totalMass));
+		auto torque_dir = glm::cross((col.contact_point) - A_colliderPos, impulse);
+		ApplyTorque(torque_dir);
+		PrimitiveRenderer::DrawLines(std::vector<glm::vec3>({ col.contact_point, torque_dir }), 1);
+
+		B_physics->ApplyForce(impulse / (m_mass / totalMass));
+		B_physics->ApplyTorque(glm::cross((col.contact_point) - B_colliderPos, impulse));
+
+
+		// Adjust the position based on the collision depth
+		float penetration = col.depth;  // Collision depth or penetration depth
+		float positionCorrectionFactor = 1.0f;  // Example value, you can adjust this
+
+		// Move the objects away from each other along the collision normal
+		glm::vec3 positionCorrection = (penetration / totalMass) * positionCorrectionFactor * col.normal;
+
+		if (!isStatic)
+			A_transform->Translate(-positionCorrection);
+		if (!B_physics->isStatic)
+			B_transform->Translate(positionCorrection);
+
 	}
 }
 

@@ -15,7 +15,7 @@ public:
 	void setVertices(const void* vertices, int size, const int& VAO, const int& VBO);
 	void setIndices(const void* indices, int size, const int& EBO);
 	void setAttributes(int vaoPos, int count, GLenum type, bool normalized, int stride, const void* pos);
-	void draw(GLenum fillMode = GL_LINE, GLenum drawMode = GL_TRIANGLES);
+	void draw(GLenum fillMode = GL_FILL, GLenum drawMode = GL_TRIANGLES);
 	void Bind() const;
 	void Unbind() const;
 

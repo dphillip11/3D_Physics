@@ -8,7 +8,7 @@ public:
 	MeshComponent(int gameobjectID, const char* filepath);
 
 	void Draw() {
-		m_mesh.draw();
+		m_mesh.draw(GL_LINE);
 	}
 
 	void Update(float deltaTime) override {}

@@ -6,7 +6,7 @@
 #include "GameEngine/Geometry.h"
 
 //draw collisions
-#define DEBUG 1
+#define DEBUG 0
 //use SAT or surface test
 #define SAT 1
 
@@ -128,13 +128,15 @@ void CollisionManager::CheckCollisions()
 	for (auto it1 = std::begin(ColliderTransforms); it1 != std::end(ColliderTransforms); ++it1)
 	{
 		auto [id1, transform1] = *it1;
-		//only check with higher ID's
-		auto it2 = it1;
-		std::advance(it2, 1);
+		////only check with higher ID's
+		//auto it2 = it1;
+		//std::advance(it2, 1);
 
-		for (; it2 != std::end(ColliderTransforms); ++it2)
+		for (auto it2 = std::begin(ColliderTransforms); it2 != std::end(ColliderTransforms); ++it2)
 		{
 			auto [id2, transform2] = *it2;
+			if (id1 == id2)
+				continue;
 #if SAT
 			collision col = GetCollision_SAT_test(id1, id2);
 #else
