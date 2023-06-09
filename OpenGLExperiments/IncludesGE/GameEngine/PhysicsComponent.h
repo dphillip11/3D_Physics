@@ -89,6 +89,30 @@ public:
 		m_transform = transform;
 	}
 
+	// Calculate the inertia tensor for a box given its transformation matrix
+	glm::mat3 GetInertiaTensor() const
+	{
+		auto transformMatrix = m_transform->GetWorldTransform();
+		// Extract the scaling factors from the transformation matrix
+		glm::vec3 scaling;
+		scaling.x = glm::length(glm::vec3(transformMatrix[0]));
+		scaling.y = glm::length(glm::vec3(transformMatrix[1]));
+		scaling.z = glm::length(glm::vec3(transformMatrix[2]));
+
+		// Calculate the moments of inertia for a box
+		float ix = (m_mass / 12.0f) * (scaling.y * scaling.y + scaling.z * scaling.z);
+		float iy = (m_mass / 12.0f) * (scaling.x * scaling.x + scaling.z * scaling.z);
+		float iz = (m_mass / 12.0f) * (scaling.x * scaling.x + scaling.y * scaling.y);
+
+		// Construct the inertia tensor matrix
+		glm::mat3 inertiaTensor;
+		inertiaTensor[0][0] = ix;
+		inertiaTensor[1][1] = iy;
+		inertiaTensor[2][2] = iz;
+
+		return inertiaTensor;
+	}
+
 	void ToggleStatic()
 	{
 		isStatic = !isStatic;
@@ -105,8 +129,12 @@ public:
 
 	void ResolveCollisions();
 
+	glm::vec3 CalculateFriction(const glm::vec3& relativeVelocity, const glm::vec3& normal, const float& coefficient);
+	void ApplyTorqueAtContactPoints(PhysicsComponent* rb, const std::vector<glm::vec3>& contactPoints, const glm::vec3& torque, int color = 0);
+
 private:
 	float m_mass = 1;
+	float m_friction = 0.5f;
 	bool isStatic = true;
 	glm::vec3 m_gravity;
 

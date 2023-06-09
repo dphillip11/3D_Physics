@@ -21,7 +21,7 @@ public:
 		BM.min_restitution = 0.8f;
 		BM.max_restitution = 0.95f;
 		BM.max_bucket_size = 500;
-		BM.spawnObjects(8000);
+		BM.spawnObjects(8);
 		BM.generateBuffers();
 	}
 	void Run(float deltaTime)

@@ -20,6 +20,8 @@ private:
 
 	void DisplaySystemWindow();
 
+	void DisplayInspectorWindow();
+
 	void DisplayGameObject(int id);
 
 	void DisplayTransform(int id);
@@ -33,6 +35,9 @@ private:
 	bool hierarchy_window = true;
 	bool system_window = true;
 	bool demo_window = false;
+	bool inspector_window = true;
+	int inspectorID = -1;
+	std::string inspectorNamestring = "";
 	const char* glsl_version = "#version 130";
 	GLFWwindow* m_window;
 	ImGuiIO* io;

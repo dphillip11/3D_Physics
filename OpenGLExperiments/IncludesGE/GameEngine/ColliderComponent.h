@@ -19,7 +19,7 @@ struct Bounds {
 class ColliderComponent : public Component {
 public:
 
-	ColliderComponent(int objectID);
+	ColliderComponent(int objectID, bool isSphere = false);
 
 	TransformComponent& m_collider_transform;
 
@@ -54,7 +54,7 @@ public:
 	}
 
 private:
-	bool showBoxCollider = true;
+	bool showBoxCollider = false;
 	Shader& OBB_shader;
 	Mesh& OBB_Mesh;
 	ColliderType colliderType_;

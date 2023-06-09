@@ -111,18 +111,6 @@ void TransformComponent::SetLocalScale(const glm::vec3& scale) {
 }
 
 
-//glm::vec3 TransformComponent::GetWorldPosition() const
-//{
-//	glm::vec4 localPosition = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-//	glm::mat4 worldTransform = GetWorldTransform();
-//
-//	// Multiply the local position by the world transform to get the world position
-//	glm::vec4 worldPosition = worldTransform * localPosition;
-//
-//	return glm::vec3(worldPosition);
-//}
-
-
 
 
 

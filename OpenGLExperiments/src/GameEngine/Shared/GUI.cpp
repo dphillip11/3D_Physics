@@ -7,6 +7,7 @@
 #include "GameEngine/TransformComponent.h"
 #include "GameEngine/PhysicsComponent.h"
 #include "GameEngine/Quaternion.h"
+#include "GameEngine/PrimitiveRenderer.h"
 
 void GUI::Init(GLFWwindow* window)
 {
@@ -32,6 +33,8 @@ void GUI::Render() {
 		DisplaySystemWindow();
 	if (hierarchy_window)
 		DisplayHierarchy();
+	if (inspector_window)
+		DisplayInspectorWindow();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -61,19 +64,41 @@ void GUI::DisplayGameObject(int id)
 
 	auto namestring = gameobject->m_name.empty() ? "GameObject: " + std::to_string(id) : "GameObject: " + gameobject->m_name + " " + std::to_string(id);
 
-	ImGui::Indent(ImGui::GetWindowWidth() - 100);
+	ImGui::Text(namestring.c_str());
+	ImGui::SameLine(250);
+	auto pushed = false;
+	if (id == inspectorID)
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.8f, 0.2f, 1.0f)); // Set the background color when highlight is true
+		pushed = true;
+		auto collider = DM.GetComponent<ColliderComponent>(id);
+		if (collider)
+		{
+			std::vector<glm::vec3> corners;
+			collider->CalculateOBBCorners(corners);
+			PrimitiveRenderer::Get().DrawPoints(corners, 3);
+		}
+	}
+
+	if (ImGui::Button("Inspect"))
+	{
+		inspectorID = id;
+		inspectorNamestring = namestring;
+	}
+
+	if (pushed)
+	{
+		ImGui::PopStyleColor();
+		pushed = false;
+	}
+
+	ImGui::SameLine(350);
+
 	if (ImGui::Button("Delete"))
 		gameobject->deleted = true;
-	ImGui::Unindent(ImGui::GetWindowWidth() - 100);
-	ImGui::SameLine(1, 1);
-	if (ImGui::CollapsingHeader(namestring.c_str()))
-	{
-		ImGui::Indent(20.0f);
-		DisplayTransform(id);
-		DisplayBoxCollider(id);
-		DisplayRigidBody(id);
-		ImGui::Indent(-20.0f);
-	}
+
+
+
 	ImGui::PopID();
 }
 
@@ -103,6 +128,10 @@ void GUI::DisplaySpawnButton()
 	{
 		PrefabManager::Spawn(PrefabManager::selectedPrefab);
 	}
+	if (ImGui::Button("SpawnLevel"))
+	{
+		PrefabManager::SpawnLevel();
+	}
 }
 
 void GUI::DisplayDemoWindow()
@@ -121,6 +150,23 @@ void GUI::DisplaySystemWindow()
 	ImGui::ColorEdit3("clear color", (float*)&Window::instance->clearColor);
 	ImGui::DragFloat3("Camera Position", reinterpret_cast<float*>(&Camera::currentCamera->_position.x));
 	ImGui::Text(" %.3f ms/frame (%.1f FPS)", 1000.0f / io->Framerate, io->Framerate);
+	ImGui::End();
+}
+
+void GUI::DisplayInspectorWindow()
+{
+	auto gameobject = DM.GetGameObject(inspectorID);
+	if (gameobject == nullptr)
+		return;
+
+	ImGui::Begin("Inspector", &inspector_window);
+	ImGui::SetWindowFontScale(1.5f);
+	ImGui::Text(inspectorNamestring.c_str());
+	ImGui::Indent(20.0f);
+	DisplayTransform(inspectorID);
+	DisplayBoxCollider(inspectorID);
+	DisplayRigidBody(inspectorID);
+	ImGui::Indent(-20.0f);
 	ImGui::End();
 }
 

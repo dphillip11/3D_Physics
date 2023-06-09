@@ -12,8 +12,8 @@ public:
 		return instance;
 	}
 
-	static void DrawPoints(const std::vector<glm::vec3>& vertices, int color = 0);
-	static void DrawLines(const std::vector<glm::vec3>& vertices, int color = 0);
+	void DrawPoints(const std::vector<glm::vec3>& vertices, int color = 0);
+	void DrawLines(const std::vector<glm::vec3>& vertices, int color = 0);
 private:
 	void _Draw(const std::vector<glm::vec3>& vertices, int color);
 	PrimitiveRenderer();

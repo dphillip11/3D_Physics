@@ -11,7 +11,44 @@
 
 namespace PrefabManager {
 
-	void Spawn(Prefabs p)
+	void SpawnLevel()
+	{
+		int id;
+		TransformComponent* transform = nullptr;
+		PhysicsComponent* physics = nullptr;
+
+		auto createBlock = [&id, &transform, &physics]() {
+			id = Spawn(PrefabManager::Prefabs::CUBE);
+			transform = DM.GetComponent<TransformComponent>(id);
+			physics = DM.GetComponent<PhysicsComponent>(id);
+		};
+
+		//create ground
+		createBlock();
+		transform->SetLocalPosition(glm::vec3(0, -2.5, 0));
+		transform->SetLocalScale(glm::vec3(100, 1, 100));
+
+		//create back wall
+		createBlock();
+		transform->SetLocalPosition(glm::vec3(0, 49, 50));
+		transform->SetLocalScale(glm::vec3(100, 100, 2));
+
+		//create block wall
+		for (int i = 0; i < 12; i++)
+		{
+			createBlock();
+			physics->ToggleStatic();
+			transform->SetLocalPosition(glm::vec3(-10 + 5 * (i % 4), floor(i / 4) * 5, 20));
+		}
+
+		//create projectile
+		createBlock();
+		transform->SetLocalPosition(glm::vec3(0, 20, -30));
+		physics->SetVelocity(glm::vec3(0, -20, 50));
+
+	}
+
+	int Spawn(Prefabs p)
 	{
 		int new_id;
 
@@ -65,6 +102,12 @@ namespace PrefabManager {
 			DM.AddComponent<MeshComponent>(new_id, GetFilePath(Models::Airplane));
 			DM.AddComponent<ColliderComponent>(new_id);
 			break;
+		case(Prefabs::SPHERE):
+			addComponents("Sphere");
+			DM.AddComponent<MeshComponent>(new_id, GetFilePath(Models::Sphere));
+			DM.AddComponent<ColliderComponent>(new_id, true);
+			break;
 		}
+		return new_id;
 	}
 }

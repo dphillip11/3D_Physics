@@ -8,6 +8,9 @@
 #include "Programs/GameEngine.h"
 #include "GameEngine/GUI.h"
 
+#include <chrono>
+#include <thread>
+
 // settings
 const unsigned int SCR_WIDTH = 1920;
 const unsigned int SCR_HEIGHT = 1080;
@@ -49,9 +52,10 @@ int main()
 
 		gui.Render();
 
-		//displayFrameRate(frame_timer, deltaTime, frames);
 		window.input->ProcessInput(deltaTime);
 		window.update();
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 	}
 

@@ -20,6 +20,7 @@ public:
 		Taxi,
 		Tree,
 		Airplane,
+		Sphere,
 		// Add more model types as needed
 		VOID
 	};

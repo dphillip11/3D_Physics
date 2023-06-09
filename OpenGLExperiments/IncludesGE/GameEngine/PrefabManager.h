@@ -10,14 +10,17 @@ namespace PrefabManager {
 		ROBOT,
 		TREE,
 		AIRPLANE,
+		SPHERE,
 		VOID
 
 	};
 
 	inline Prefabs selectedPrefab = PrefabManager::Prefabs::CUBE; // default selection
 
-	inline const char* prefabLabels[] = { "CUBE", "HARE", "HAND", "TAXI", "BUTTERFLY", "ROBOT", "TREE" ,"AIRPLANE", "VOID" };
+	inline const char* prefabLabels[] = { "CUBE", "HARE", "HAND", "TAXI", "BUTTERFLY", "ROBOT", "TREE" ,"AIRPLANE","SPHERE", "VOID" };
 
-	void Spawn(Prefabs P);
+	int Spawn(Prefabs P);
+
+	void SpawnLevel();
 
 };

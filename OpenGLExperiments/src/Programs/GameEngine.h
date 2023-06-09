@@ -6,6 +6,8 @@
 #include "Program.h"
 #include <vector>
 
+
+
 class GameEngine :public Program
 {
 private:
@@ -16,9 +18,10 @@ public:
 
 	float time = 0;
 
+
 	void Setup() override
 	{
-		_camera.setPosition(glm::vec3(0, 0, -20));
+		_camera.setPosition(glm::vec3(144, 55, -63));
 		_camera.isLockedOn = true;
 		_camera.setFOV(70);
 	}

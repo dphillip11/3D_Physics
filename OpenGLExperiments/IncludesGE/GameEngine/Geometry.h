@@ -124,7 +124,8 @@ namespace Geometry
 		}
 	}
 
-	bool test_points_inside_cube(const glm::mat4& cubeTransform, const std::vector<glm::vec3>& points, glm::vec3& contact_point)
+	// adds contacts to a passed vector based on whether passed points are within cube transformed by passed matrix
+	bool test_points_inside_cube(const glm::mat4& cubeTransform, const std::vector<glm::vec3>& points, std::vector<glm::vec3>& contacts)
 	{
 		std::vector<plane> faces;
 
@@ -146,11 +147,10 @@ namespace Geometry
 			}
 			if (inside_cube)
 			{
-				contact_point = point;
-				return true;
+				contacts.push_back(point);
 			}
 		}
-		return false;
+		return (contacts.size() > 0);
 	}
 
 
@@ -170,15 +170,8 @@ namespace Geometry
 		isAlower = limitsA.max_projection < limitsB.max_projection;
 
 		// Update the contact point based on the corners contributing to the minimum and maximum projections, average them
+		contact_point = (limitsA.maximum_point + limitsA.minimum_point + limitsB.maximum_point + limitsB.minimum_point) / 4.0f;
 
-		if (isAlower)
-		{
-			contact_point = 0.5f * (limitsA.maximum_point + limitsB.minimum_point);
-		}
-		else
-		{
-			contact_point = 0.5f * (limitsA.minimum_point + limitsB.maximum_point);
-		}
 
 		return overlap;
 	}

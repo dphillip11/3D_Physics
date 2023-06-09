@@ -27,12 +27,9 @@ TransformComponent* CollisionManager::GetColliderTransform(int GameObjectID) {
 	return &(it->second);
 }
 
-collision CollisionManager::GetCollision_surface_test(int ID1, int ID2)
+std::vector<glm::vec3> CollisionManager::GetCollision_surface_test(int ID1, int ID2)
 {
-	collision col;
-
-	col.ID1 = ID1;
-	col.ID2 = ID2;
+	std::vector<glm::vec3> contacts;
 
 	auto IDs = { ID1,ID2 };
 
@@ -52,20 +49,10 @@ collision CollisionManager::GetCollision_surface_test(int ID1, int ID2)
 		DM.GetComponent<ColliderComponent>(other_ID)->CalculateOBBCorners(points);
 		//6 faces, 8 vertices
 		assert(points.size() == 14);
+		Geometry::test_points_inside_cube(world_transform, points, contacts);
 
-		col.valid = Geometry::test_points_inside_cube(world_transform, points, col.contact_point);
-
-		if (col.valid)
-		{
-			col.normal = glm::normalize(col.contact_point - pos);
-#if DEBUG
-			PrimitiveRenderer::DrawLines(std::vector<glm::vec3>({ pos, col.contact_point }), 1);
-			PrimitiveRenderer::DrawPoints(std::vector<glm::vec3>({ col.contact_point }), 3);
-#endif
-			return col;
-		}
 	}
-	return col;
+	return contacts;
 }
 
 collision CollisionManager::GetCollision_SAT_test(int ID1, int ID2)
@@ -103,7 +90,6 @@ collision CollisionManager::GetCollision_SAT_test(int ID1, int ID2)
 		if (overlap < minimim_overlap)
 		{
 			minimim_overlap = overlap;
-			col.contact_point = contact_point;
 			col.normal = isAlower ? axis : -axis;
 		}
 	}
@@ -111,8 +97,8 @@ collision CollisionManager::GetCollision_SAT_test(int ID1, int ID2)
 	col.depth = minimim_overlap;
 #if DEBUG
 	auto centre = transformA->GetWorldPosition();
-	PrimitiveRenderer::DrawLines(std::vector<glm::vec3>({ centre, centre + col.depth * col.normal }), 1);
-	PrimitiveRenderer::DrawPoints(std::vector<glm::vec3>({ centre }), 3);
+	PrimitiveRenderer::Get().DrawLines(std::vector<glm::vec3>({ centre, col.contact_point }), 1);
+	PrimitiveRenderer::Get().DrawPoints(std::vector<glm::vec3>({ centre }), 3);
 #endif
 	return col;
 
@@ -128,22 +114,26 @@ void CollisionManager::CheckCollisions()
 	for (auto it1 = std::begin(ColliderTransforms); it1 != std::end(ColliderTransforms); ++it1)
 	{
 		auto [id1, transform1] = *it1;
-		////only check with higher ID's
-		//auto it2 = it1;
-		//std::advance(it2, 1);
+		auto it2 = it1;
+		it2++;
 
-		for (auto it2 = std::begin(ColliderTransforms); it2 != std::end(ColliderTransforms); ++it2)
+		for (; it2 != std::end(ColliderTransforms); ++it2)
 		{
 			auto [id2, transform2] = *it2;
 			if (id1 == id2)
 				continue;
-#if SAT
-			collision col = GetCollision_SAT_test(id1, id2);
-#else
-			collision col = GetCollision_surface_test(id1, id2);
-#endif
+			collision col;
+
+			// get depth and normal using SAT
+			col = GetCollision_SAT_test(id1, id2);
+
 			if (col.valid)
+			{
+				//determine contact points using surface test
+				col.contacts = GetCollision_surface_test(id1, id2);
+
 				collisionLog.push(col);
+			}
 		}
 	}
 }

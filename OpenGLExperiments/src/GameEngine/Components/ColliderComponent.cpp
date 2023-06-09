@@ -12,11 +12,11 @@
 
 
 
-ColliderComponent::ColliderComponent(int objectID)
+ColliderComponent::ColliderComponent(int objectID, bool isSphere)
 	: Component(objectID),
-	colliderType_(ColliderType::Box),
+	colliderType_(isSphere ? ColliderType::Sphere : ColliderType::Box),
 	OBB_shader(ShaderManager::GetInstance().LoadShader(GetFilePath(Shaders::Basic))),
-	OBB_Mesh(MeshManager::GetInstance().LoadMesh(GetFilePath(Models::Cube))),
+	OBB_Mesh(MeshManager::GetInstance().LoadMesh(GetFilePath(isSphere ? Models::Sphere : Models::Cube))),
 	m_collider_transform(CollisionManager::AddColliderTransform(objectID))
 {
 	m_collider_transform.SetParent(DM.GetComponent<TransformComponent>(objectID));
@@ -25,6 +25,7 @@ ColliderComponent::ColliderComponent(int objectID)
 	{
 		auto pos = mesh->m_mesh.upper_bounds + mesh->m_mesh.lower_bounds;
 		auto scale = mesh->m_mesh.upper_bounds - mesh->m_mesh.lower_bounds;
+		scale = isSphere ? scale * 0.5f : scale;
 		//scale collider to fit object
 		m_collider_transform.Scale(scale);
 		m_collider_transform.Translate(0.5f * (pos));
