@@ -5,6 +5,8 @@ This repository contains a number of learning experiments related to 3D renderin
 ### Click the image to view the demo programs in action:
 
 [![Watch the video](https://img.youtube.com/vi/kZ6ezt4bB-s/maxresdefault.jpg)](https://youtu.be/kZ6ezt4bB-s)
+
+### This video shows a GLSL implemented newton's cradle:
 [![Watch the video](https://img.youtube.com/vi/h-1O1ScTmVw/maxresdefault.jpg)](https://youtu.be/h-1O1ScTmVw)
 
 ### This video shows a stable framerate achieved using an octree:
