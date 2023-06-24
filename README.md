@@ -3,6 +3,9 @@
 This repository contains a number of learning experiments related to 3D rendering and physics. The "OpenGLExperiments" repository contains what is essentially summed up in the demo programs. I have implemented a ball physics simulation utilising multithreading and spatial partitioning, an .obj viewer using Phong lighting and a ray traced Newton's cradle predominantly in GLSL. Some features that are not demonstrated in the demo programs inlcude geometry shaders for subdividing spheres and calculating normals for triangles as well as an attempt at hierarchical transform components.
 
 ### Click the image to view the demo programs in action:
+[![Watch the video](https://img.youtube.com/vi/m7AgvQykvuM/maxresdefault.jpg)](https://youtu.be/m7AgvQykvuM)
+
+[![Watch the video](https://img.youtube.com/vi/EpucW0lnHI0/maxresdefault.jpg)](https://youtu.be/EpucW0lnHI0)
 
 [![Watch the video](https://img.youtube.com/vi/kZ6ezt4bB-s/maxresdefault.jpg)](https://youtu.be/kZ6ezt4bB-s)
 
